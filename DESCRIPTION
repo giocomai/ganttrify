@@ -1,0 +1,27 @@
+Package: ganttrify
+Title: Create beautiful Gantt charts with ggplot2
+Version: 0.0.0.9000
+Authors@R: 
+    person(given = "Giorgio",
+           family = "Comai (OBCT/CCI)",
+           role = c("aut", "cre"),
+           email = "g@giorgiocomai.eu",
+           comment = c(ORCID = "0000-0002-0515-9542"))
+Description: 'ganttrify' facilitates the creation of nice-looking Gantt charts, commonly used in project proposals and project management.
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 6.1.1
+Imports: 
+    magrittr,
+    tibble,
+    dplyr,
+    ggplot2,
+    readr,
+    zoo,
+    wesanderson
+URL: https://github.com/giocomai/ganttrifier
+BugReports: https://github.com/giocomai/ganttrifier/issues
+Suggests: 
+    spelling
+Language: en-US
