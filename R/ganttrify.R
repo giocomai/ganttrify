@@ -5,6 +5,7 @@
 #' @param df A data frame.
 #' @param start_date The date when the project starts. It can be a date, or a string in the format "2020-03" or "2020-03-01".
 #' @param colour_palette A character vector of colours or a colour palette.
+#' @param size_text_relative Numeric, defaults to 1. Changes the size of all textual elements relative to their default size. If you set this to e.g. 1.5 all text elements will be 50% bigger.
 #'
 #' @return A processed data frame ready to be turned into a Gantt chart.
 #'
@@ -20,7 +21,8 @@ ganttrify <- function(df,
                       colour_palette = wesanderson::wes_palette("Darjeeling1"),
                       font_family = "Roboto Condensed",
                       size_wp = 6, 
-                      size_activity = 4) {
+                      size_activity = 4,
+                      size_text_relative = 1) {
   
   start_yearmon <- zoo::as.yearmon(start_date)-(1/12)
   
@@ -93,7 +95,9 @@ ganttrify <- function(df,
     ggplot2::theme(text = ggplot2::element_text(family = font_family),
                    axis.text.y.left = ggplot2::element_text(face = ifelse(test = df_yearmon_fct %>%
                                                                             dplyr::distinct(activity, wp, type) %>%
-                                                                            dplyr::pull(type)=="wp", yes = "bold", no = "plain")),
+                                                                            dplyr::pull(type)=="wp", yes = "bold", no = "plain"),
+                                                            size = ggplot2::rel(size_text_relative)),
+                   axis.text.x.bottom = ggplot2::element_text(size = ggplot2::rel(size_text_relative)),
                    legend.position = "none")
   if (is.null(spots)==FALSE) {
     spots_date <- spots %>% 
@@ -110,7 +114,7 @@ ganttrify <- function(df,
                           colour = "gray30",
                           fontface = "bold",
                           family = font_family,
-                          size = 3) 
+                          size = 3*size_text_relative) 
   } 
   
   return(gg_gantt)

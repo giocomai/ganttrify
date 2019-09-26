@@ -122,3 +122,12 @@ ganttrify(df = ganttrify::test_project,
 ```
 
 <img src="man/figures/README-gantt_charts_with_events-1.png" width="100%" />
+
+``` r
+ganttrify(df = ganttrify::test_project,
+          spots = ganttrify::test_spots,
+          start_date = "2020-03",
+          size_text_relative = 1.3)
+```
+
+<img src="man/figures/README-gantt_charts_resized_text-1.png" width="100%" />

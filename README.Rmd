@@ -92,3 +92,13 @@ ganttrify(df = ganttrify::test_project,
           start_date = "2020-03")
 ```
 
+"I can't read the text, can I change the text size?", I heard. 
+
+You're welcome. 
+
+```{r gantt_charts_resized_text}
+ganttrify(df = ganttrify::test_project,
+          spots = ganttrify::test_spots,
+          start_date = "2020-03",
+          size_text_relative = 1.2)
+```

@@ -6,7 +6,8 @@
 \usage{
 ganttrify(df, spots = NULL, start_date = Sys.Date(),
   colour_palette = wesanderson::wes_palette("Darjeeling1"),
-  font_family = "Roboto Condensed", size_wp = 6, size_activity = 4)
+  font_family = "Roboto Condensed", size_wp = 6, size_activity = 4,
+  size_text_relative = 1)
 }
 \arguments{
 \item{df}{A data frame.}
@@ -14,6 +15,8 @@ ganttrify(df, spots = NULL, start_date = Sys.Date(),
 \item{start_date}{The date when the project starts. It can be a date, or a string in the format "2020-03" or "2020-03-01".}
 
 \item{colour_palette}{A character vector of colours or a colour palette.}
+
+\item{size_text_relative}{Numeric, defaults to 1. Changes the size of all textual elements relative to their default size. If you set this to e.g. 1.5 all text elements will be 50% bigger.}
 }
 \value{
 A processed data frame ready to be turned into a Gantt chart.
