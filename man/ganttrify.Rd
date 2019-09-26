@@ -4,7 +4,7 @@
 \alias{ganttrify}
 \title{Illustration of crayon colors}
 \usage{
-ganttrify(df, start_date = Sys.Date(),
+ganttrify(df, spots = NULL, start_date = Sys.Date(),
   colour_palette = wesanderson::wes_palette("Darjeeling1"),
   font_family = "Roboto Condensed", size_wp = 6, size_activity = 4)
 }
@@ -12,6 +12,8 @@ ganttrify(df, start_date = Sys.Date(),
 \item{df}{A data frame.}
 
 \item{start_date}{The date when the project starts. It can be a date, or a string in the format "2020-03" or "2020-03-01".}
+
+\item{colour_palette}{A character vector of colours or a colour palette.}
 }
 \value{
 A processed data frame ready to be turned into a Gantt chart.

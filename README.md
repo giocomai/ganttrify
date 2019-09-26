@@ -36,7 +36,7 @@ don’t @ me\!)
 
 Given what is evidently my posh taste for Gantt charts, I had no other
 option than making this package with a pretentious, gentrified name,
-rather then the obvious “ganttr”.
+instead of the obvious “ganttr”.
 
 Please welcome `ganttrify`.
 
@@ -78,7 +78,7 @@ project:
 | :------------------------- | :-------------------------- | -----------: | ---------: |
 | WP1 - Whatever admin       | 1.1. That admin activity    |            1 |          6 |
 | WP1 - Whatever admin       | 1.2. Another admin activity |            3 |          6 |
-| WP1 - Whatever admin       | 1.3. Fancy admin activity   |            4 |          5 |
+| WP1 - Whatever admin       | 1.3. Fancy admin activity   |            4 |          7 |
 | WP2 - Whatever actual work | 2.1. Actual stuff           |            5 |         10 |
 | WP2 - Whatever actual work | 2.2. Actual R\&D stuff      |            6 |         12 |
 | WP2 - Whatever actual work | 2.3. Really real research   |            9 |         12 |
@@ -95,7 +95,30 @@ needing to change the timing of all activities.
 ``` r
 library("ganttrify")
 
-ganttrify(df = df, start_date = "2020-03")
+ganttrify(df = ganttrify::test_project, start_date = "2020-03")
 ```
 
 <img src="man/figures/README-gantt_chart-1.png" width="100%" />
+
+“But what if I wanted to add spot labels for events, deliverables,
+outputs, milestones, things like that?”, you asked.
+
+Just put them in a table with these column names, and you will be
+served.
+
+| activity                   | spot\_type | spot\_date |
+| :------------------------- | :--------- | ---------: |
+| 1.1. That admin activity   | D          |          5 |
+| 1.3. Fancy admin activity  | E          |          7 |
+| 2.2. Actual R\&D stuff     | O          |          7 |
+| 2.2. Actual R\&D stuff     | O          |          9 |
+| 2.2. Actual R\&D stuff     | O          |         11 |
+| WP2 - Whatever actual work | M          |          6 |
+
+``` r
+ganttrify(df = ganttrify::test_project,
+          spots = ganttrify::test_spots,
+          start_date = "2020-03")
+```
+
+<img src="man/figures/README-gantt_charts_with_events-1.png" width="100%" />
