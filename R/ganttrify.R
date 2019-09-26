@@ -5,7 +5,7 @@
 #' @param df A data frame.
 #' @param start_date The date when the project starts. It can be a date, or a string in the format "2020-03" or "2020-03-01".
 #' @param colour_palette A character vector of colours or a colour palette.
-#' @param size_text_relative Numeric, defaults to 1. Changes the size of all textual elements relative to their default size. If you set this to e.g. 1.5 all text elements will be 50% bigger.
+#' @param size_text_relative Numeric, defaults to 1. Changes the size of all textual elements relative to their default size. If you set this to e.g. 1.5 all text elements will be 50\% bigger.
 #'
 #' @return A processed data frame ready to be turned into a Gantt chart.
 #'
@@ -21,6 +21,7 @@ ganttrify <- function(df,
                       colour_palette = wesanderson::wes_palette("Darjeeling1"),
                       font_family = "Roboto Condensed",
                       mark_quarters = FALSE,
+                      month_number = TRUE, 
                       size_wp = 6, 
                       size_activity = 4,
                       size_text_relative = 1) {
@@ -96,11 +97,23 @@ ganttrify <- function(df,
     ggplot2::geom_segment(data = df_yearmon_fct %>%
                             dplyr::filter(type=="wp"),
                           lineend = "round",
-                          size = size_wp) +
-    ggplot2::scale_x_date(name = "",
-                          breaks = date_breaks,
-                          date_labels = "%b\n%Y",
-                          minor_breaks = NULL) +
+                          size = size_wp) 
+  
+  if (month_number==TRUE) {
+    gg_gantt <- gg_gantt +
+      ggplot2::scale_x_date(name = "",
+                            breaks = date_breaks,
+                            date_labels = "%b\n%Y",
+                            minor_breaks = NULL,
+                            sec.axis = ggplot2::dup_axis(labels = paste0("M", seq_along(date_breaks))))
+  } else {
+    gg_gantt <- gg_gantt +
+      ggplot2::scale_x_date(name = "",
+                            breaks = date_breaks,
+                            date_labels = "%b\n%Y",
+                            minor_breaks = NULL)
+  }
+  gg_gantt <- gg_gantt +
     ggplot2::scale_y_discrete("") +
     ggplot2::theme_minimal() +
     ggplot2::scale_colour_manual(values = colour_palette) +
@@ -109,7 +122,7 @@ ganttrify <- function(df,
                                                                             dplyr::distinct(activity, wp, type) %>%
                                                                             dplyr::pull(type)=="wp", yes = "bold", no = "plain"),
                                                             size = ggplot2::rel(size_text_relative)),
-                   axis.text.x.bottom = ggplot2::element_text(size = ggplot2::rel(size_text_relative)),
+                   axis.text.x = ggplot2::element_text(size = ggplot2::rel(size_text_relative)),
                    legend.position = "none")
   if (is.null(spots)==FALSE) {
     spots_date <- spots %>% 
