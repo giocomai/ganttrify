@@ -93,6 +93,7 @@ ganttrify(df = ganttrify::test_project,
 ```
 
 "I can't read the text, can I change the text size?", I heard. 
+"Also, is it possible to outline quarters?"
 
 You're welcome. 
 
@@ -100,5 +101,6 @@ You're welcome.
 ganttrify(df = ganttrify::test_project,
           spots = ganttrify::test_spots,
           start_date = "2020-03",
-          size_text_relative = 1.2)
+          size_text_relative = 1.2, 
+          mark_quarters = TRUE)
 ```

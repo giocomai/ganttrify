@@ -6,8 +6,8 @@
 \usage{
 ganttrify(df, spots = NULL, start_date = Sys.Date(),
   colour_palette = wesanderson::wes_palette("Darjeeling1"),
-  font_family = "Roboto Condensed", size_wp = 6, size_activity = 4,
-  size_text_relative = 1)
+  font_family = "Roboto Condensed", mark_quarters = FALSE,
+  size_wp = 6, size_activity = 4, size_text_relative = 1)
 }
 \arguments{
 \item{df}{A data frame.}

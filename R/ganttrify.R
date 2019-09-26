@@ -20,6 +20,7 @@ ganttrify <- function(df,
                       start_date = Sys.Date(),
                       colour_palette = wesanderson::wes_palette("Darjeeling1"),
                       font_family = "Roboto Condensed",
+                      mark_quarters = FALSE,
                       size_wp = 6, 
                       size_activity = 4,
                       size_text_relative = 1) {
@@ -48,6 +49,10 @@ ganttrify <- function(df,
                                                        to = max(df_yearmon[["end_date"]]+15),
                                                        by = "1 month")), frac = 0.5)
   
+  date_breaks_q <- seq.Date(from = lubridate::floor_date(x = min(df_yearmon[["start_date"]]), unit = "year"),
+                            to = lubridate::ceiling_date(x = max(df_yearmon[["end_date"]]), unit = "year"),
+                            by = "1 quarter")
+  
   df_levels <- rev(df_yearmon %>%
                      dplyr::select(wp, activity) %>%
                      t() %>%
@@ -75,7 +80,14 @@ ganttrify <- function(df,
                                                           ymax = Inf),
                        inherit.aes=FALSE,
                        alpha = 0.4,
-                       fill = c("lightgray"))+
+                       fill = c("lightgray")) 
+  
+  if (mark_quarters == TRUE) {
+    gg_gantt <- gg_gantt +
+      ggplot2::geom_vline(xintercept = date_breaks_q, colour = "gray50")
+  }
+  
+  gg_gantt <- gg_gantt +
     ### activities
     ggplot2::geom_segment(data = df_yearmon_fct,
                           lineend = "round",

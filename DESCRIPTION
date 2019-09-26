@@ -19,7 +19,8 @@ Imports:
     ggplot2,
     readr,
     zoo,
-    wesanderson
+    wesanderson,
+    lubridate
 URL: https://github.com/giocomai/ganttrifier
 BugReports: https://github.com/giocomai/ganttrifier/issues
 Suggests: 
