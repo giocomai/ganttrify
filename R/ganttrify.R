@@ -1,6 +1,6 @@
-#' Illustration of crayon colors
+#' Create Gantt charts from a data frame
 #'
-#' Creates a plot of the crayon colors in \code{\link{brocolors}}
+#' Creates Gantt charts with ggplot2.
 #'
 #' @param df A data frame.
 #' @param start_date The date when the project starts. It can be a date, or a string in the format "2020-03" or "2020-03-01".
@@ -10,7 +10,7 @@
 #' @return A processed data frame ready to be turned into a Gantt chart.
 #'
 #' @examples
-#' ganttrify()
+#' ganttrify(ganttrify::test_project)
 #'
 #' @export
 #'

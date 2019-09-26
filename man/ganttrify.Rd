@@ -2,7 +2,7 @@
 % Please edit documentation in R/ganttrify.R
 \name{ganttrify}
 \alias{ganttrify}
-\title{Illustration of crayon colors}
+\title{Create Gantt charts from a data frame}
 \usage{
 ganttrify(df, spots = NULL, start_date = Sys.Date(),
   colour_palette = wesanderson::wes_palette("Darjeeling1"),
@@ -22,9 +22,9 @@ ganttrify(df, spots = NULL, start_date = Sys.Date(),
 A processed data frame ready to be turned into a Gantt chart.
 }
 \description{
-Creates a plot of the crayon colors in \code{\link{brocolors}}
+Creates Gantt charts with ggplot2.
 }
 \examples{
-ganttrify()
+ganttrify(ganttrify::test_project)
 
 }
