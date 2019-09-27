@@ -18,15 +18,27 @@ server <- function(input, output) {
   shiny::observeEvent(eventExpr = input$project_file, {
     output$gantt <- renderPlot({
       ganttrify::ganttrify(df = current_project_df(),
-                           start_date = input$start_date)
+                           start_date = input$start_date,
+                           mark_quarters = input$mark_quarters,
+                           month_number = input$month_number,
+                           size_wp = input$size_wp,
+                           size_activity = input$size_activity,
+                           size_text_relative = input$size_text_relative/100
+      )
     })
   })
   
   shiny::observeEvent(eventExpr = input$spot_file, {
     output$gantt <- renderPlot({
       ganttrify::ganttrify(df = current_project_df(),
+                           start_date = input$start_date,
                            spots = current_spots_df(),
-                           start_date = input$start_date)
+                           mark_quarters = input$mark_quarters,
+                           month_number = input$month_number,
+                           size_wp = input$size_wp,
+                           size_activity = input$size_activity,
+                           size_text_relative = input$size_text_relative/100
+      )
     })
   })
     
@@ -46,7 +58,13 @@ server <- function(input, output) {
   output$gantt <- renderPlot({
       ganttrify::ganttrify(df = current_project_df(),
                            start_date = input$start_date,
-                           spots = current_spots_df())
+                           spots = current_spots_df(),
+                           mark_quarters = input$mark_quarters,
+                           month_number = input$month_number,
+                           size_wp = input$size_wp,
+                           size_activity = input$size_activity,
+                           size_text_relative = input$size_text_relative/100
+                           )
   })
   
 }
