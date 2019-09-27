@@ -20,7 +20,8 @@ Imports:
     readr,
     zoo,
     wesanderson,
-    lubridate
+    lubridate,
+    tidyr
 URL: https://github.com/giocomai/ganttrifier
 BugReports: https://github.com/giocomai/ganttrifier/issues
 Suggests: 

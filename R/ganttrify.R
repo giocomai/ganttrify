@@ -126,6 +126,7 @@ ganttrify <- function(df,
                    legend.position = "none")
   if (is.null(spots)==FALSE) {
     spots_date <- spots %>% 
+      tidyr::drop_na() %>% 
       dplyr::mutate(activity = factor(x = activity, levels = df_levels), 
                     spot_date = zoo::as.Date(start_yearmon+(1/12)*zoo::as.yearmon(spot_date), frac = 0.5), 
                     end_date = as.Date(NA), 
