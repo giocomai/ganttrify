@@ -2,4 +2,5 @@
 
 export("%>%")
 export(ganttrify)
+export(shiny_ganttrify)
 importFrom(magrittr,"%>%")

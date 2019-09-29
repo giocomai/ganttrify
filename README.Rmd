@@ -104,3 +104,10 @@ ganttrify(df = ganttrify::test_project,
           size_text_relative = 1.2, 
           mark_quarters = TRUE)
 ```
+
+
+If you prefer interactive web interfaces to coding, you can still have a fancy *ganttrified* chart.
+
+```{r eval=FALSE}
+shiny_ganttrify()
+```

@@ -137,3 +137,10 @@ ganttrify(df = ganttrify::test_project,
 ```
 
 <img src="man/figures/README-gantt_charts_resized_text-1.png" width="100%" />
+
+If you prefer interactive web interfaces to coding, you can still have a
+fancy *ganttrified* chart.
+
+``` r
+shiny_ganttrify()
+```

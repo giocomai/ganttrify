@@ -21,7 +21,8 @@ Imports:
     zoo,
     wesanderson,
     lubridate,
-    tidyr
+    tidyr,
+    shiny
 URL: https://github.com/giocomai/ganttrifier
 BugReports: https://github.com/giocomai/ganttrifier/issues
 Suggests: 
