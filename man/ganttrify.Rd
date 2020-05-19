@@ -4,11 +4,18 @@
 \alias{ganttrify}
 \title{Create Gantt charts from a data frame}
 \usage{
-ganttrify(df, spots = NULL, start_date = Sys.Date(),
+ganttrify(
+  df,
+  spots = NULL,
+  start_date = Sys.Date(),
   colour_palette = wesanderson::wes_palette("Darjeeling1"),
-  font_family = "Roboto Condensed", mark_quarters = FALSE,
-  month_number = TRUE, size_wp = 6, size_activity = 4,
-  size_text_relative = 1)
+  font_family = "Roboto Condensed",
+  mark_quarters = FALSE,
+  month_number = TRUE,
+  size_wp = 6,
+  size_activity = 4,
+  size_text_relative = 1
+)
 }
 \arguments{
 \item{df}{A data frame.}
