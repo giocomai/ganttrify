@@ -25,6 +25,9 @@ ganttrify <- function(df,
                       size_wp = 6, 
                       size_activity = 4,
                       size_text_relative = 1) {
+  df <- df %>% 
+    mutate(start_month = as.numeric(start_month),
+           end_month = as.numeric(end_month))
   
   start_yearmon <- zoo::as.yearmon(start_date)-(1/12)
   
@@ -125,22 +128,27 @@ ganttrify <- function(df,
                    axis.text.x = ggplot2::element_text(size = ggplot2::rel(size_text_relative)),
                    legend.position = "none")
   if (is.null(spots)==FALSE) {
-    spots_date <- spots %>% 
-      tidyr::drop_na() %>% 
-      dplyr::mutate(activity = factor(x = activity, levels = df_levels), 
-                    spot_date = zoo::as.Date(start_yearmon+(1/12)*zoo::as.yearmon(spot_date), frac = 0.5), 
-                    end_date = as.Date(NA), 
-                    wp = NA)
+    if (is.data.frame(spots)==TRUE) {
+      spots_date <- spots %>% 
+        tidyr::drop_na() %>% 
+        dplyr::mutate(spot_date = as.numeric(spot_date)) %>% 
+        dplyr::mutate(activity = factor(x = activity, levels = df_levels), 
+                      spot_date = zoo::as.Date(start_yearmon+(1/12)*zoo::as.yearmon(spot_date), frac = 0.5), 
+                      end_date = as.Date(NA), 
+                      wp = NA)
+      
+      gg_gantt <- gg_gantt +
+        ggplot2::geom_label(data = spots_date, 
+                            mapping = ggplot2::aes(x = spot_date,
+                                                   y = activity,
+                                                   label = spot_type),
+                            colour = "gray30",
+                            fontface = "bold",
+                            family = font_family,
+                            size = 3*size_text_relative) 
+      
+    }
     
-    gg_gantt <- gg_gantt +
-      ggplot2::geom_label(data = spots_date, 
-                          mapping = ggplot2::aes(x = spot_date,
-                                                 y = activity,
-                                                 label = spot_type),
-                          colour = "gray30",
-                          fontface = "bold",
-                          family = font_family,
-                          size = 3*size_text_relative) 
   } 
   
   return(gg_gantt)
