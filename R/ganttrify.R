@@ -26,7 +26,7 @@ ganttrify <- function(df,
                       size_activity = 4,
                       size_text_relative = 1) {
   df <- df %>% 
-    mutate(start_month = as.numeric(start_month),
+    dplyr::mutate(start_month = as.numeric(start_month),
            end_month = as.numeric(end_month))
   
   start_yearmon <- zoo::as.yearmon(start_date)-(1/12)
