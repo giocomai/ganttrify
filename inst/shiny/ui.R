@@ -53,11 +53,18 @@ ui <- fluidPage(
    
       
       shiny::textInput(inputId = "start_date", label = "Starting date of the project", value = substring(text = as.character(Sys.Date()), first = 1, last = 7)),
+      shiny::radioButtons(inputId = "by_date_radio", label = "Input timing format", choices = c("By project month number", "By date")),
+      conditionalPanel(
+        condition = "input.by_date_radio == 'By date'",
+        shiny::radioButtons(inputId = "precision_radio", label = "Precision of the timeline", choices = c("Month", "Day"))),
+      shiny::checkboxInput(inputId = "customisation_check", label = "Show additional customisation options", value = FALSE),
+      conditionalPanel(
+        condition = "input.customisation_check == true",
       shiny::checkboxInput(inputId = "month_number", label = "Include month numbers on top", value = TRUE),
       shiny::checkboxInput(inputId = "mark_quarters", label = "Add vertical lines to mark quarters", value = TRUE),
       shiny::sliderInput(inputId = "size_wp", label = "Thickness of the line for working packages", min = 1, max = 10, value = 6, step = 1, round = TRUE),
       shiny::sliderInput(inputId = "size_activity", label = "Thickness of the line for activities", min = 1, max = 10, value = 4, step = 1, round = TRUE),
-      shiny::sliderInput(inputId = "size_text_relative", label = "Relative size of all text", value = 100, min = 20, max = 200, round = TRUE, post = "%"),
+      shiny::sliderInput(inputId = "size_text_relative", label = "Relative size of all text", value = 120, min = 50, max = 250, round = TRUE, post = "%"),
       shiny::selectInput(inputId = "wes_palette", label = "Pick colour palette", choices = names(wesanderson::wes_palettes), selected = "Darjeeling1", multiple = FALSE),
       shiny::checkboxInput(inputId = "custom_palette_check", label = "Custom colour palette?", value = FALSE),
       conditionalPanel(
@@ -78,9 +85,10 @@ ui <- fluidPage(
                          min = 5,
                          max = 50,
                          step = 1,
-                         round = TRUE),
+                         round = TRUE)),
       shiny::h3(tags$a("A tool by EDJNet", href='https://www.europeandatajournalism.eu/')),
-      shiny::h3(tags$a(tags$img(src = "img/edjnet_logo_full.svg"), href='https://www.europeandatajournalism.eu/'))
+      shiny::h3(tags$a(tags$img(src = "img/edjnet_logo_full.svg"), href='https://www.europeandatajournalism.eu/')
+      )
       
     ),
     mainPanel(

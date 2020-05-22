@@ -1,9 +1,23 @@
 server <- function(input, output) {
   
-  current_project_df <- shiny::eventReactive(input$go, {
+  current_project_df <- shiny::eventReactive(
+    {
+      input$go
+      input$by_date_radio
+      input$precision_radio
+    }, {
     
     if (input$source_type=="demo") {
-      ganttrify::test_project
+      if (input$by_date_radio=="By date") {
+        if (input$precision_radio=="Day") {
+          ganttrify::test_project_date_day
+        } else {
+          ganttrify::test_project_date_month 
+        }
+      } else {
+        ganttrify::test_project
+      }
+      
     } else if (input$source_type=="csv") {
       req(input$project_file)
       readr::read_csv(file = input$project_file$datapath)
@@ -16,9 +30,23 @@ server <- function(input, output) {
     }
   }, ignoreNULL = FALSE)
   
-  current_spots_df <- shiny::eventReactive(input$go, {
+  current_spots_df <- shiny::eventReactive({
+    input$go
+    input$by_date_radio
+    input$precision_radio
+  }, {
     if (input$source_type=="demo") {
-      ganttrify::test_spots
+      
+      if (input$by_date_radio=="By date") {
+        if (input$precision_radio=="Day") {
+          ganttrify::test_spots_date_day
+        } else {
+          ganttrify::test_spots_date_month
+        }
+      } else {
+        ganttrify::test_spots
+      }
+      
     } else if (input$source_type=="csv") {
       req(input$spot_file)
       readr::read_csv(file = input$spot_file$datapath)
@@ -59,9 +87,11 @@ server <- function(input, output) {
   )
 
   gantt_chart <- shiny::reactive({
-      ganttrify::ganttrify(df = current_project_df(),
-                           start_date = input$start_date,
+      ganttrify::ganttrify(project = current_project_df(),
+                           project_start_date = input$start_date,
                            spots = current_spots_df(),
+                           by_date = ifelse(input$by_date_radio=="By date", TRUE, FALSE),
+                           exact_date = ifelse(input$precision_radio=="Day", ifelse(input$by_date_radio=="By date", TRUE, FALSE), FALSE),
                            mark_quarters = input$mark_quarters,
                            month_number = input$month_number,
                            size_wp = input$size_wp,
