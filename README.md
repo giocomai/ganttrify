@@ -104,10 +104,15 @@ additional examples below.
 ``` r
 library("ganttrify")
 
-ganttrify(project = ganttrify::test_project, project_start_date = "2020-03")
+ganttrify(project = ganttrify::test_project,
+          project_start_date = "2020-03",
+          font_family = "Roboto Condensed")
 ```
 
-<img src="man/figures/README-gantt_chart-1.png" width="100%" />
+<img src="man/figures/README-gantt_chart-1.png" width="100%" /> \[all
+examples in this page will use the `Roboto condensed` font; if it is not
+installed, you can use the default `sans`. See the *Troubleshooting*
+section at the bottom of this readme.\]
 
 “But what if I wanted to add spot labels for events, deliverables,
 outputs, milestones, things like that?”, you asked.
@@ -127,7 +132,8 @@ served.
 ``` r
 ganttrify(project = ganttrify::test_project,
           spots = ganttrify::test_spots,
-          project_start_date = "2020-03")
+          project_start_date = "2020-03",
+          font_family = "Roboto Condensed")
 ```
 
 <img src="man/figures/README-gantt_charts_with_events-1.png" width="100%" />
@@ -142,7 +148,8 @@ ganttrify(project = ganttrify::test_project,
           spots = ganttrify::test_spots,
           project_start_date = "2020-03",
           size_text_relative = 1.2, 
-          mark_quarters = TRUE)
+          mark_quarters = TRUE,
+          font_family = "Roboto Condensed")
 ```
 
 <img src="man/figures/README-gantt_charts_resized_text-1.png" width="100%" />
@@ -208,7 +215,8 @@ ganttrify(project = ganttrify::test_project_date_month,
           spots = ganttrify::test_spots_date_month,
           by_date = TRUE,
           size_text_relative = 1.2, 
-          mark_quarters = TRUE)
+          mark_quarters = TRUE,
+          font_family = "Roboto Condensed")
 ```
 
 <img src="man/figures/README-unnamed-chunk-7-1.png" width="100%" />
@@ -240,18 +248,19 @@ ganttrify(project = ganttrify::test_project_date_day,
           by_date = TRUE,
           exact_date = TRUE,
           size_text_relative = 1.2,
-          month_number = FALSE)
+          month_number = FALSE,
+          font_family = "Roboto Condensed")
 ```
 
 <img src="man/figures/README-unnamed-chunk-9-1.png" width="100%" />
 
 ## Troubleshooting
 
-By default, this package uses the *[Roboto
-Condensed](https://fonts.google.com/specimen/Roboto+Condensed)* font, a
-free font that can be downloaded and installed on any desktop. Using a
-condensed (or narrow) font is recommended in order to make it possible
-to fit more text in less space.
+By default, this package uses a generic *sans* font but it is
+recommended to use a narrow (or condensed font such as *[Roboto
+Condensed](https://fonts.google.com/specimen/Roboto+Condensed)* font - a
+free font that can be downloaded and installed on any desktop - as they
+make more efficient use of text space.
 
 On Fedora, you can install it with `sudo dnf install
 google-roboto-condensed-fonts`
@@ -262,6 +271,9 @@ fonts-roboto-fontface`
 After installation, you should make sure the font is available to R by
 installing the `extrafont` package, and running
 `extrafont::font_import()`.
+
+You can check available fonts also with the package `systemfonts` and
+the command `systemfonts::system_fonts()`.
 
 To reduce the number of dependencies, `extrafont`, as well as the
 packages used by the Shiny app needed to import data (`googlesheets4`,

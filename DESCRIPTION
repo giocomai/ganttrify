@@ -1,6 +1,6 @@
 Package: ganttrify
 Title: Create beautiful Gantt charts with ggplot2
-Version: 0.0.0.9001
+Version: 0.0.0.9003
 Authors@R: 
     person(given = "Giorgio",
            family = "Comai (OBCT/CCI)",

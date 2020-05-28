@@ -113,6 +113,7 @@ server <- function(input, output, session) {
                                      by_date = ifelse(input$by_date_radio=="By date", TRUE, FALSE),
                                      exact_date = ifelse(input$precision_radio=="Day", ifelse(input$by_date_radio=="By date", TRUE, FALSE), FALSE),
                                      mark_quarters = input$mark_quarters,
+                                     font_family = "Roboto Condensed",
                                      month_number = input$month_number,
                                      size_wp = input$size_wp,
                                      size_activity = input$size_activity,

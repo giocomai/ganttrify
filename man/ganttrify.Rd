@@ -11,7 +11,7 @@ ganttrify(
   exact_date = FALSE,
   project_start_date = Sys.Date(),
   colour_palette = wesanderson::wes_palette("Darjeeling1"),
-  font_family = "Roboto Condensed",
+  font_family = "sans",
   mark_quarters = FALSE,
   size_wp = 6,
   size_activity = 4,
@@ -32,6 +32,8 @@ ganttrify(
 \item{project_start_date}{The date when the project starts. It can be a date, or a string in the format "2020-03" or "2020-03-01". Ignored if `month_number` is set to FALSE.}
 
 \item{colour_palette}{A character vector of colours or a colour palette.}
+
+\item{font_family}{A character vector of length 1, defaults to "sans". It is recommended to use a narrow/condensed font such as Roboto Condensed for more efficient use of text space.}
 
 \item{size_text_relative}{Numeric, defaults to 1. Changes the size of all textual elements relative to their default size. If you set this to e.g. 1.5 all text elements will be 50\% bigger.}
 
