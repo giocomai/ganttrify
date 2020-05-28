@@ -1,4 +1,4 @@
-# ganttrifier 0.0.0.9001
+# ganttrifier 0.0.0.9003
 
 * Default to sans font for better compatibility across systems
 
