@@ -13,7 +13,10 @@ experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](h
 commonly used in project proposals and project management.
 
 If you just want to check this out in an interactive web interface,
-[click here and enjoy](https://ganttrify.giorgiocomai.eu/).
+[click here and
+enjoy](https://apps.europeandatajournalism.eu/app/ganttrify). Some more
+[context in this blog
+post](https://medium.com/european-data-journalism-network/beautiful-gantt-charts-with-ggplot2-80ccd8c2c788).
 
 Read on for more details and examples.
 
@@ -170,7 +173,7 @@ app](man/figures/shiny_ganttrify_screenshot.png)
 
 You can check it online with no further ado at the following link:
 
-<https://ganttrify.giorgiocomai.eu/>
+<https://apps.europeandatajournalism.eu/app/ganttrify>
 
 ### Shiny app on Docker
 
