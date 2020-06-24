@@ -37,6 +37,12 @@ ganttrify <- function(project,
                       size_text_relative = 1,
                       month_number = TRUE,
                       colour_stripe = "lightgray") {
+  if (is.numeric(project$wp))
+    project$wp <- as.character(project$wp)
+
+  if (is.numeric(project$activity))
+    project$activity <- as.character(project$activity)
+
   if (by_date==FALSE) {
     df <- project %>% 
       dplyr::mutate(start_date = as.numeric(start_date),
