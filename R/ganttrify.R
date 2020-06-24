@@ -141,7 +141,7 @@ ganttrify <- function(project,
                                                      # colour = wp
                                                      ))
     # background shaded bands
-    ggplot2::geom_rect(data = date_range_df, ggplot2::aes(xmin = start,
+  gg_gantt <- gg_gantt + ggplot2::geom_rect(data = date_range_df, ggplot2::aes(xmin = start,
                                                           xmax = end,
                                                           ymin = -Inf,
                                                           ymax = Inf),
@@ -178,11 +178,10 @@ ganttrify <- function(project,
                               minor_breaks = NULL)
   }
   
-  gg_gantt <- suppressWarnings(gg_gantt +
-    ggplot2::scale_y_discrete("") +
-    ggplot2::theme_minimal() +
-    ggplot2::scale_colour_manual(values = colour_palette) +
-    ggplot2::theme(text = ggplot2::element_text(family = font_family),
+  gg_gantt <- gg_gantt + ggplot2::scale_y_discrete("")
+  gg_gantt <- gg_gantt + ggplot2::theme_minimal()
+  gg_gantt <- gg_gantt + ggplot2::scale_colour_manual(values = colour_palette)
+  gg_gantt <- gg_gantt + suppressWarnings(ggplot2::theme(text = ggplot2::element_text(family = font_family),
                    axis.text.y.left = ggplot2::element_text(face = ifelse(test = df_yearmon_fct %>%
                                                                             dplyr::distinct(activity, wp, type) %>%
                                                                             dplyr::pull(type)=="wp", yes = "bold", no = "plain"),
