@@ -246,3 +246,29 @@ gantt_levels <- function(project) {
   return(rev(unique(aux)))
 }
 
+#' Add points to the gantt chart
+#' 
+#' @param x The points data frame (with an 'activity' and a 'date' column)
+#' @param shape The shape of the points
+#' @param size The size of the points
+#' @param colour The colour of the points
+#' @param fill The fill of the points
+#' 
+#' @examples
+#' p <- data.frame(activity = "1.1. That admin activity", 
+#'                 date = as.Date("2020-12-12"))
+#' ganttrify(ganttrify::test_project) + gantt_points(p)
+#' 
+#' @export
+#' 
+gantt_points <- function(x, shape = 21, size = 1, colour = "black", fill = "black") {
+  if (any(is.na(match(c("activity", "date"), colnames(x)))))
+    stop("'x' must have an 'activity' and a 'date' column.")
+
+  if (is.character(x$date))
+    x$date <- as.Date(x$date)
+
+  x <- x[(!is.na(x$activity) & !is.na(x$date)), ]
+  ggplot2::geom_point(data = x, ggplot2::aes(x = date, y = activity), 
+    shape = shape, size = size, colour = colour, fill = fill)
+}
