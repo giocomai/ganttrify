@@ -2,6 +2,7 @@
 
 export("%>%")
 export(gantt_levels)
+export(gantt_points)
 export(ganttrify)
 export(shiny_ganttrify)
 importFrom(magrittr,"%>%")

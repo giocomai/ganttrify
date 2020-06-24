@@ -17,7 +17,8 @@ ganttrify(
   size_activity = 4,
   size_text_relative = 1,
   month_number = TRUE,
-  colour_stripe = "lightgray"
+  colour_stripe = "lightgray",
+  line_end = "round"
 )
 }
 \arguments{
@@ -46,6 +47,8 @@ ganttrify(
 \item{month_number}{Logical, defaults to TRUE. If TRUE, it included month numbering on top of the chart.}
 
 \item{colour_stripe}{Character, defaults to "lightgray". This is the stripe colour in the background used in alternate months.}
+
+\item{line_end}{Activity edge style (round, butt, square).}
 }
 \value{
 A processed data frame ready to be turned into a Gantt chart.

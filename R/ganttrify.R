@@ -15,6 +15,7 @@
 #' @param size_text_relative Numeric, defaults to 1. Changes the size of all textual elements relative to their default size. If you set this to e.g. 1.5 all text elements will be 50\% bigger.
 #' @param month_number Logical, defaults to TRUE. If TRUE, it included month numbering on top of the chart.
 #' @param colour_stripe Character, defaults to "lightgray". This is the stripe colour in the background used in alternate months.
+#' @param line_end Activity edge style (round, butt, square).
 #'
 #' @return A processed data frame ready to be turned into a Gantt chart.
 #'
@@ -23,7 +24,6 @@
 #'
 #' @export
 #'
-
 ganttrify <- function(project,
                       spots = NULL,
                       by_date = FALSE,
@@ -36,7 +36,9 @@ ganttrify <- function(project,
                       size_activity = 4,
                       size_text_relative = 1,
                       month_number = TRUE,
-                      colour_stripe = "lightgray") {
+                      colour_stripe = "lightgray",
+                      line_end = "round") {
+
   if (is.numeric(project$wp))
     project$wp <- as.character(project$wp)
 
@@ -185,6 +187,7 @@ ganttrify <- function(project,
                                                             size = ggplot2::rel(size_text_relative)),
                    axis.text.x = ggplot2::element_text(size = ggplot2::rel(size_text_relative)),
                    legend.position = "none"))
+
   if (is.null(spots)==FALSE) {
     if (is.data.frame(spots)==TRUE) {
       if (by_date==FALSE) {
@@ -210,7 +213,6 @@ ganttrify <- function(project,
         }
       }
 
-      
       gg_gantt <- gg_gantt +
         ggplot2::geom_label(data = spots_date, 
                             mapping = ggplot2::aes(x = spot_date,
