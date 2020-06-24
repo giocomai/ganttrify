@@ -106,11 +106,8 @@ ganttrify <- function(project,
                             to = lubridate::ceiling_date(x = max(df_yearmon[["end_date"]]), unit = "year"),
                             by = "1 quarter")
   
-  df_levels <- rev(df_yearmon %>%
-                     dplyr::select(wp, activity) %>%
-                     t() %>%
-                     as.character() %>%
-                     unique())
+  df_levels <- gantt_levels(df_yearmon)
+
   if (exact_date==TRUE) {
     df_yearmon_fct <-
       dplyr::bind_rows(activity = df,
@@ -228,5 +225,22 @@ ganttrify <- function(project,
   
   return(gg_gantt)
   
+}
+
+#' Compute y levels matching the Gantt plot
+#' 
+#' @inheritParams ganttrify
+#' 
+#' @examples
+#' gantt_levels(ganttrify::test_project)
+#' 
+#' @return A character string with the y levels
+#' 
+#' @export
+#' 
+gantt_levels <- function(project) {
+  aux <- dplyr::select(project, wp, activity)
+  aux <- as.character(t(aux))
+  return(rev(unique(aux)))
 }
 
