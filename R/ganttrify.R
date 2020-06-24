@@ -197,25 +197,19 @@ ganttrify <- function(project,
                         activity = as.character(activity),
                         spot_type = as.character(spot_type)) %>% 
           dplyr::mutate(activity = factor(x = activity, levels = df_levels), 
-                        spot_date = zoo::as.Date(start_yearmon+(1/12)*zoo::as.yearmon(spot_date), frac = 0.5), 
-                        end_date = as.Date(NA), 
-                        wp = NA)
+                        spot_date = zoo::as.Date(start_yearmon+(1/12)*zoo::as.yearmon(spot_date), frac = 0.5))
       } else {
         if (exact_date==TRUE) {
           spots_date <- spots %>% 
             tidyr::drop_na() %>% 
             dplyr::mutate(activity = as.character(activity)) %>% 
             dplyr::mutate(activity = factor(x = activity, levels = df_levels), 
-                          spot_date = as.Date(spot_date), 
-                          end_date = as.Date(NA), 
-                          wp = NA)
+                          spot_date = as.Date(spot_date))
         } else {
           spots_date <- spots %>% 
             tidyr::drop_na() %>% 
             dplyr::mutate(activity = factor(x = activity, levels = df_levels), 
-                          spot_date = zoo::as.Date(zoo::as.yearmon(spot_date), frac = 0.5), 
-                          end_date = as.Date(NA), 
-                          wp = NA)
+                          spot_date = zoo::as.Date(zoo::as.yearmon(spot_date), frac = 0.5))
         }
       }
 
