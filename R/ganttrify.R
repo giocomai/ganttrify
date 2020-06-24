@@ -130,7 +130,8 @@ ganttrify <- function(project,
       dplyr::arrange(activity)
   }
   
-  
+  df_yearmon_fct$size <- size_activity
+  df_yearmon_fct$size[df_yearmon_fct$type == "wp"] <- size_wp
   
   gg_gantt <- ggplot2::ggplot(data = df_yearmon_fct,
                               mapping = ggplot2::aes(x = start_date,
@@ -152,17 +153,15 @@ ganttrify <- function(project,
       ggplot2::geom_vline(xintercept = date_breaks_q, colour = "gray50")
   }
   
-  gg_gantt <- gg_gantt +
-    ### activities
-    ggplot2::geom_segment(data = df_yearmon_fct,
-                          lineend = "round",
-                          size = size_activity) +
-    ### wp
-    ggplot2::geom_segment(data = df_yearmon_fct %>%
-                            dplyr::filter(type=="wp"),
-                          lineend = "round",
-                          size = size_wp) 
   
+  ### segments
+  gg_gantt <- gg_gantt + ggplot2::geom_segment(data = df_yearmon_fct,
+                        mapping = ggplot2::aes(xend = end_date,
+                                               yend = activity,
+                                               colour = wp),
+                        lineend = line_end,
+                        size = df_yearmon_fct$size)
+
   if (month_number==TRUE) {
     gg_gantt <- gg_gantt +
       ggplot2::scale_x_date(name = "",
