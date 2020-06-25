@@ -48,8 +48,8 @@ ganttrify <- function(project,
     df_yearmon <- df %>%
       dplyr::mutate(start_date_yearmon = start_yearmon+(1/12)*start_date,
                     end_date_yearmon = start_yearmon+(1/12)*zoo::as.yearmon(end_date)) %>%
-      dplyr::transmute(wp,
-                       activity,
+      dplyr::transmute(wp = as.character(wp),
+                       activity = as.character(activity),
                        start_date = zoo::as.Date(start_date_yearmon, frac = 0),
                        end_date = zoo::as.Date(end_date_yearmon, frac = 1))
   } else {
@@ -59,17 +59,19 @@ ganttrify <- function(project,
       df_yearmon <- project %>% 
         dplyr::mutate(start_date_yearmon = zoo::as.yearmon(start_date),
                       end_date_yearmon = zoo::as.yearmon(end_date)) %>% 
-        dplyr::transmute(wp,
-                         activity,
+        dplyr::transmute(wp = as.character(wp),
+                         activity = as.character(activity),
                          start_date = zoo::as.Date(start_date_yearmon, frac = 0),
                          end_date = zoo::as.Date(end_date_yearmon, frac = 1))
-      
     }
   }
   
   if (exact_date==TRUE) {
     df <-  project %>% 
-      dplyr::mutate(start_date = as.Date(start_date), end_date = as.Date(end_date))
+      dplyr::mutate(start_date = as.Date(start_date),
+                    end_date = as.Date(end_date),
+                    wp = as.character(wp),
+                    activity = as.character(activity))
     
     df_yearmon <- df %>% 
       dplyr::mutate(start_date = zoo::as.Date(zoo::as.yearmon(start_date), frac = 0),
@@ -190,7 +192,9 @@ ganttrify <- function(project,
       if (by_date==FALSE) {
         spots_date <- spots %>% 
           tidyr::drop_na() %>% 
-          dplyr::mutate(spot_date = as.numeric(spot_date)) %>% 
+          dplyr::mutate(spot_date = as.numeric(spot_date), 
+                        activity = as.character(activity),
+                        spot_type = as.character(spot_type)) %>% 
           dplyr::mutate(activity = factor(x = activity, levels = df_levels), 
                         spot_date = zoo::as.Date(start_yearmon+(1/12)*zoo::as.yearmon(spot_date), frac = 0.5), 
                         end_date = as.Date(NA), 
@@ -199,6 +203,7 @@ ganttrify <- function(project,
         if (exact_date==TRUE) {
           spots_date <- spots %>% 
             tidyr::drop_na() %>% 
+            dplyr::mutate(activity = as.character(activity)) %>% 
             dplyr::mutate(activity = factor(x = activity, levels = df_levels), 
                           spot_date = as.Date(spot_date), 
                           end_date = as.Date(NA), 
