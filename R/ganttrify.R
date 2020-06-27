@@ -128,10 +128,7 @@ ganttrify <- function(project,
   
   gg_gantt <- ggplot2::ggplot(data = df_yearmon_fct,
                               mapping = ggplot2::aes(x = start_date,
-                                                     y = activity,
-                                                     # xend = end_date,
-                                                     # yend = activity,
-                                                     # colour = wp
+                                                     y = activity
                                                      ))
     # background shaded bands
   gg_gantt <- gg_gantt + ggplot2::geom_rect(data = date_range_df, ggplot2::aes(xmin = start,
