@@ -79,21 +79,22 @@ ganttrify <- function(project,
     df_yearmon <- df %>% 
       dplyr::mutate(start_date = zoo::as.Date(zoo::as.yearmon(start_date), frac = 0),
                     end_date = zoo::as.Date(zoo::as.yearmon(end_date), frac = 1))
-    
-    date_range_matrix <- matrix(as.numeric(seq.Date(from = min(df_yearmon[["start_date"]]),
-                                                    to = max(df_yearmon[["end_date"]]),
-                                                    by = "1 month")),
-                                ncol = 2,
-                                byrow = TRUE)
-    
-  } else {
-    date_range_matrix <- matrix(as.numeric(seq.Date(from = min(df_yearmon[["start_date"]]),
-                                                    to = max(df_yearmon[["end_date"]]),
-                                                    by = "1 month")),
-                                ncol = 2,
-                                byrow = TRUE)
-  }
+  } 
 
+  
+  sequence_months <- seq.Date(from = min(df_yearmon[["start_date"]]),
+                              to = max(df_yearmon[["end_date"]]),
+                              by = "1 month")
+  
+  if (length(sequence_months) %% 2 != 0) {
+    sequence_months <- seq.Date(from = min(df_yearmon[["start_date"]]),
+                                to = max(df_yearmon[["end_date"]])+1,
+                                by = "1 month")
+  }
+  
+  date_range_matrix <- matrix(as.numeric(sequence_months),
+                              ncol = 2,
+                              byrow = TRUE)
   
   date_range_df <- tibble::tibble(start = zoo::as.Date.numeric(date_range_matrix[,1]),
                                   end = zoo::as.Date.numeric(date_range_matrix[,2]))
