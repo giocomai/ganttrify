@@ -15,6 +15,7 @@
 #' @param size_text_relative Numeric, defaults to 1. Changes the size of all textual elements relative to their default size. If you set this to e.g. 1.5 all text elements will be 50\% bigger.
 #' @param month_number Logical, defaults to TRUE. If TRUE, it included month numbering on top of the chart.
 #' @param colour_stripe Character, defaults to "lightgray". This is the stripe colour in the background used in alternate months.
+#' @param line_end Activity edge style (round, butt, square).
 #'
 #' @return A processed data frame ready to be turned into a Gantt chart.
 #'
@@ -23,7 +24,6 @@
 #'
 #' @export
 #'
-
 ganttrify <- function(project,
                       spots = NULL,
                       by_date = FALSE,
@@ -36,7 +36,9 @@ ganttrify <- function(project,
                       size_activity = 4,
                       size_text_relative = 1,
                       month_number = TRUE,
-                      colour_stripe = "lightgray") {
+                      colour_stripe = "lightgray",
+                      line_end = "round") {
+
   if (by_date==FALSE) {
     df <- project %>% 
       dplyr::mutate(start_date = as.numeric(start_date),
@@ -57,7 +59,15 @@ ganttrify <- function(project,
                        end_date = zoo::as.Date(end_date_yearmon, frac = 1))
   } else {
     if (exact_date==TRUE) {
-      #do nothing
+      df <-  project %>% 
+        dplyr::mutate(start_date = as.Date(start_date),
+                      end_date = as.Date(end_date),
+                      wp = as.character(wp),
+                      activity = as.character(activity))
+
+      df_yearmon <- df %>% 
+        dplyr::mutate(start_date = zoo::as.Date(zoo::as.yearmon(start_date), frac = 0),
+                    end_date = zoo::as.Date(zoo::as.yearmon(end_date), frac = 1))
     } else {
       df_yearmon <- project %>% 
         dplyr::mutate(start_date_yearmon = zoo::as.yearmon(start_date),
@@ -68,19 +78,6 @@ ganttrify <- function(project,
                          end_date = zoo::as.Date(end_date_yearmon, frac = 1))
     }
   }
-  
-  if (exact_date==TRUE) {
-    df <-  project %>% 
-      dplyr::mutate(start_date = as.Date(start_date),
-                    end_date = as.Date(end_date),
-                    wp = as.character(wp),
-                    activity = as.character(activity))
-    
-    df_yearmon <- df %>% 
-      dplyr::mutate(start_date = zoo::as.Date(zoo::as.yearmon(start_date), frac = 0),
-                    end_date = zoo::as.Date(zoo::as.yearmon(end_date), frac = 1))
-  } 
-
   
   sequence_months <- seq.Date(from = min(df_yearmon[["start_date"]]),
                               to = max(df_yearmon[["end_date"]]),
@@ -95,7 +92,7 @@ ganttrify <- function(project,
   date_range_matrix <- matrix(as.numeric(sequence_months),
                               ncol = 2,
                               byrow = TRUE)
-  
+
   date_range_df <- tibble::tibble(start = zoo::as.Date.numeric(date_range_matrix[,1]),
                                   end = zoo::as.Date.numeric(date_range_matrix[,2]))
   
@@ -108,11 +105,8 @@ ganttrify <- function(project,
                             to = lubridate::ceiling_date(x = max(df_yearmon[["end_date"]]), unit = "year"),
                             by = "1 quarter")
   
-  df_levels <- rev(df_yearmon %>%
-                     dplyr::select(wp, activity) %>%
-                     t() %>%
-                     as.character() %>%
-                     unique())
+  df_levels <- gantt_levels(df_yearmon)
+
   if (exact_date==TRUE) {
     df_yearmon_fct <-
       dplyr::bind_rows(activity = df,
@@ -132,16 +126,15 @@ ganttrify <- function(project,
       dplyr::arrange(activity)
   }
   
-  
+  df_yearmon_fct$size <- size_activity
+  df_yearmon_fct$size[df_yearmon_fct$type == "wp"] <- size_wp
   
   gg_gantt <- ggplot2::ggplot(data = df_yearmon_fct,
                               mapping = ggplot2::aes(x = start_date,
-                                                     y = activity,
-                                                     xend = end_date,
-                                                     yend = activity,
-                                                     colour = wp)) +
+                                                     y = activity
+                                                     ))
     # background shaded bands
-    ggplot2::geom_rect(data = date_range_df, ggplot2::aes(xmin = start,
+  gg_gantt <- gg_gantt + ggplot2::geom_rect(data = date_range_df, ggplot2::aes(xmin = start,
                                                           xmax = end,
                                                           ymin = -Inf,
                                                           ymax = Inf),
@@ -154,17 +147,15 @@ ganttrify <- function(project,
       ggplot2::geom_vline(xintercept = date_breaks_q, colour = "gray50")
   }
   
-  gg_gantt <- gg_gantt +
-    ### activities
-    ggplot2::geom_segment(data = df_yearmon_fct,
-                          lineend = "round",
-                          size = size_activity) +
-    ### wp
-    ggplot2::geom_segment(data = df_yearmon_fct %>%
-                            dplyr::filter(type=="wp"),
-                          lineend = "round",
-                          size = size_wp) 
   
+  ### segments
+  gg_gantt <- gg_gantt + ggplot2::geom_segment(data = df_yearmon_fct,
+                        mapping = ggplot2::aes(xend = end_date,
+                                               yend = activity,
+                                               colour = wp),
+                        lineend = line_end,
+                        size = df_yearmon_fct$size)
+
   if (month_number==TRUE) {
     gg_gantt <- gg_gantt +
       ggplot2::scale_x_date(name = "",
@@ -180,17 +171,17 @@ ganttrify <- function(project,
                               minor_breaks = NULL)
   }
   
-  gg_gantt <- suppressWarnings(gg_gantt +
-    ggplot2::scale_y_discrete("") +
-    ggplot2::theme_minimal() +
-    ggplot2::scale_colour_manual(values = colour_palette) +
-    ggplot2::theme(text = ggplot2::element_text(family = font_family),
+  gg_gantt <- gg_gantt + ggplot2::scale_y_discrete("")
+  gg_gantt <- gg_gantt + ggplot2::theme_minimal()
+  gg_gantt <- gg_gantt + ggplot2::scale_colour_manual(values = colour_palette)
+  gg_gantt <- gg_gantt + suppressWarnings(ggplot2::theme(text = ggplot2::element_text(family = font_family),
                    axis.text.y.left = ggplot2::element_text(face = ifelse(test = df_yearmon_fct %>%
                                                                             dplyr::distinct(activity, wp, type) %>%
                                                                             dplyr::pull(type)=="wp", yes = "bold", no = "plain"),
                                                             size = ggplot2::rel(size_text_relative)),
                    axis.text.x = ggplot2::element_text(size = ggplot2::rel(size_text_relative)),
                    legend.position = "none"))
+
   if (is.null(spots)==FALSE) {
     if (is.data.frame(spots)==TRUE) {
       if (by_date==FALSE) {
@@ -200,29 +191,22 @@ ganttrify <- function(project,
                         activity = as.character(activity),
                         spot_type = as.character(spot_type)) %>% 
           dplyr::mutate(activity = factor(x = activity, levels = df_levels), 
-                        spot_date = zoo::as.Date(start_yearmon+(1/12)*zoo::as.yearmon(spot_date), frac = 0.5), 
-                        end_date = as.Date(NA), 
-                        wp = NA)
+                        spot_date = zoo::as.Date(start_yearmon+(1/12)*zoo::as.yearmon(spot_date), frac = 0.5))
       } else {
         if (exact_date==TRUE) {
           spots_date <- spots %>% 
             tidyr::drop_na() %>% 
             dplyr::mutate(activity = as.character(activity)) %>% 
             dplyr::mutate(activity = factor(x = activity, levels = df_levels), 
-                          spot_date = as.Date(spot_date), 
-                          end_date = as.Date(NA), 
-                          wp = NA)
+                          spot_date = as.Date(spot_date))
         } else {
           spots_date <- spots %>% 
             tidyr::drop_na() %>% 
             dplyr::mutate(activity = factor(x = activity, levels = df_levels), 
-                          spot_date = zoo::as.Date(zoo::as.yearmon(spot_date), frac = 0.5), 
-                          end_date = as.Date(NA), 
-                          wp = NA)
+                          spot_date = zoo::as.Date(zoo::as.yearmon(spot_date), frac = 0.5))
         }
       }
 
-      
       gg_gantt <- gg_gantt +
         ggplot2::geom_label(data = spots_date, 
                             mapping = ggplot2::aes(x = spot_date,
@@ -239,3 +223,46 @@ ganttrify <- function(project,
   
 }
 
+#' Compute y levels matching the Gantt plot
+#' 
+#' @inheritParams ganttrify
+#' 
+#' @examples
+#' gantt_levels(ganttrify::test_project)
+#' 
+#' @return A character string with the y levels
+#' 
+#' @export
+#' 
+gantt_levels <- function(project) {
+  aux <- dplyr::select(project, wp, activity)
+  aux <- as.character(t(aux))
+  return(rev(unique(aux)))
+}
+
+#' Add points to the gantt chart
+#' 
+#' @param x The points data frame (with an 'activity' and a 'date' column)
+#' @param shape The shape of the points
+#' @param size The size of the points
+#' @param colour The colour of the points
+#' @param fill The fill of the points
+#' 
+#' @examples
+#' p <- data.frame(activity = "1.1. That admin activity", 
+#'                 date = as.Date("2020-12-12"))
+#' ganttrify(ganttrify::test_project) + gantt_points(p)
+#' 
+#' @export
+#' 
+gantt_points <- function(x, shape = 21, size = 1, colour = "black", fill = "black") {
+  if (any(is.na(match(c("activity", "date"), colnames(x)))))
+    stop("'x' must have an 'activity' and a 'date' column.")
+
+  if (is.character(x$date))
+    x$date <- as.Date(x$date)
+
+  x <- x[(!is.na(x$activity) & !is.na(x$date)), ]
+  ggplot2::geom_point(data = x, ggplot2::aes(x = date, y = activity), 
+    shape = shape, size = size, colour = colour, fill = fill)
+}
