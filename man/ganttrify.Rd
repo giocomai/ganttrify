@@ -35,6 +35,12 @@ ganttrify(
 
 \item{font_family}{A character vector of length 1, defaults to "sans". It is recommended to use a narrow/condensed font such as Roboto Condensed for more efficient use of text space.}
 
+\item{mark_quarters}{Logical, defaults to FALSE. If TRUE, vertical lines are added in correspondence of change of quarter (end of March, end of June, end of September, end of December).}
+
+\item{size_wp}{Numeric, defaults to 6. It defines the thickness of the line used to represent WPs.}
+
+\item{size_activity}{Numeric, defaults to 4. It defines the thickness of the line used to represent activities.}
+
 \item{size_text_relative}{Numeric, defaults to 1. Changes the size of all textual elements relative to their default size. If you set this to e.g. 1.5 all text elements will be 50\% bigger.}
 
 \item{month_number}{Logical, defaults to TRUE. If TRUE, it included month numbering on top of the chart.}
