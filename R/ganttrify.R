@@ -59,11 +59,11 @@ ganttrify <- function(project,
                        end_date = zoo::as.Date(end_date_yearmon, frac = 1))
   } else {
     if (exact_date==TRUE) {
-    df <-  project %>% 
-      dplyr::mutate(start_date = as.Date(start_date),
-                    end_date = as.Date(end_date),
-                    wp = as.character(wp),
-                    activity = as.character(activity))
+      df <-  project %>% 
+        dplyr::mutate(start_date = as.Date(start_date),
+                      end_date = as.Date(end_date),
+                      wp = as.character(wp),
+                      activity = as.character(activity))
 
       df_yearmon <- df %>% 
         dplyr::mutate(start_date = zoo::as.Date(zoo::as.yearmon(start_date), frac = 0),
