@@ -37,6 +37,12 @@ ganttrify <- function(project,
                       size_text_relative = 1,
                       month_number = TRUE,
                       colour_stripe = "lightgray") {
+  
+  # repeat colours if not enough colours given
+  if (length(unique(project$wp))>length(as.character(wesanderson::wes_palette("Darjeeling1")))) {
+    colour_palette <- rep(colour_palette, length(unique(project$wp)))[1:length(unique(project$wp))]
+  }
+  
   if (by_date==FALSE) {
     df <- project %>% 
       dplyr::mutate(start_date = as.numeric(start_date),
