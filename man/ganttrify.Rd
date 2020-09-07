@@ -13,6 +13,7 @@ ganttrify(
   colour_palette = wesanderson::wes_palette("Darjeeling1"),
   font_family = "sans",
   mark_quarters = FALSE,
+  mark_years = FALSE,
   size_wp = 6,
   size_activity = 4,
   size_text_relative = 1,
@@ -36,6 +37,8 @@ ganttrify(
 \item{font_family}{A character vector of length 1, defaults to "sans". It is recommended to use a narrow/condensed font such as Roboto Condensed for more efficient use of text space.}
 
 \item{mark_quarters}{Logical, defaults to FALSE. If TRUE, vertical lines are added in correspondence of change of quarter (end of March, end of June, end of September, end of December).}
+
+\item{mark_years}{Logical, defaults to FALSE. If TRUE, vertical lines are added in correspondence of change of year (1 January).}
 
 \item{size_wp}{Numeric, defaults to 6. It defines the thickness of the line used to represent WPs.}
 

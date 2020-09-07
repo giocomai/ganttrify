@@ -10,6 +10,7 @@
 #' @param colour_palette A character vector of colours or a colour palette.
 #' @param font_family A character vector of length 1, defaults to "sans". It is recommended to use a narrow/condensed font such as Roboto Condensed for more efficient use of text space.
 #' @param mark_quarters Logical, defaults to FALSE. If TRUE, vertical lines are added in correspondence of change of quarter (end of March, end of June, end of September, end of December).
+#' @param mark_years Logical, defaults to FALSE. If TRUE, vertical lines are added in correspondence of change of year (1 January).
 #' @param size_wp Numeric, defaults to 6. It defines the thickness of the line used to represent WPs.
 #' @param size_activity Numeric, defaults to 4. It defines the thickness of the line used to represent activities.
 #' @param size_text_relative Numeric, defaults to 1. Changes the size of all textual elements relative to their default size. If you set this to e.g. 1.5 all text elements will be 50\% bigger.
@@ -32,6 +33,7 @@ ganttrify <- function(project,
                       colour_palette = wesanderson::wes_palette("Darjeeling1"),
                       font_family = "sans",
                       mark_quarters = FALSE,
+                      mark_years = FALSE,
                       size_wp = 6, 
                       size_activity = 4,
                       size_text_relative = 1,
@@ -114,6 +116,10 @@ ganttrify <- function(project,
                             to = lubridate::ceiling_date(x = max(df_yearmon[["end_date"]]), unit = "year"),
                             by = "1 quarter")
   
+  date_breaks_y <- seq.Date(from = lubridate::floor_date(x = min(df_yearmon[["start_date"]]), unit = "year"),
+                            to = lubridate::ceiling_date(x = max(df_yearmon[["end_date"]]), unit = "year"),
+                            by = "1 year")
+  
   df_levels <- rev(df_yearmon %>%
                      dplyr::select(wp, activity) %>%
                      t() %>%
@@ -158,6 +164,11 @@ ganttrify <- function(project,
   if (mark_quarters == TRUE) {
     gg_gantt <- gg_gantt +
       ggplot2::geom_vline(xintercept = date_breaks_q, colour = "gray50")
+  }
+  
+  if (mark_years == TRUE) {
+    gg_gantt <- gg_gantt +
+      ggplot2::geom_vline(xintercept = date_breaks_y, colour = "gray50")
   }
   
   gg_gantt <- gg_gantt +
