@@ -6,7 +6,7 @@
 #' @param spots A data frame. See `ganttrify::test_spots` for an example.
 #' @param by_date Logical, defaults to FALSE If FALSE, the the start and end columns in the data frame should correspond to month numbers from the beginning of the project. If TRUE, dates in the format ("2020-10" or "2020-10-01") should be given.
 #' @param exact_date Logical, defaults to FALSE. If FALSE, then periods are always understood to include full months. If FALSE, then exact dates can be given.
-#' @param project_start_date The date when the project starts. It can be a date, or a string in the format "2020-03" or "2020-03-01". Ignored if `month_number` is set to FALSE.
+#' @param project_start_date The date when the project starts. It can be a date, or a string in the format "2020-03" or "2020-03-01". Ignored if `month_number_date` is set to FALSE.
 #' @param colour_palette A character vector of colours or a colour palette.
 #' @param font_family A character vector of length 1, defaults to "sans". It is recommended to use a narrow/condensed font such as Roboto Condensed for more efficient use of text space.
 #' @param mark_quarters Logical, defaults to FALSE. If TRUE, vertical lines are added in correspondence of change of quarter (end of March, end of June, end of September, end of December).
@@ -14,10 +14,12 @@
 #' @param size_wp Numeric, defaults to 6. It defines the thickness of the line used to represent WPs.
 #' @param size_activity Numeric, defaults to 4. It defines the thickness of the line used to represent activities.
 #' @param size_text_relative Numeric, defaults to 1. Changes the size of all textual elements relative to their default size. If you set this to e.g. 1.5 all text elements will be 50\% bigger.
-#' @param month_number Logical, defaults to TRUE. If TRUE, it included month numbering on top of the chart.
+#' @param month_number_label Logical, defaults to TRUE. If TRUE, it includes month numbering on x axis.
+#' @param month_date_label Logical, defaults to TRUE. If TRUE, it includes month names and dates on the x axis.
+#' @param x_axis_position Logical, defaults to "top". Can also be "bottom". Used only when only one of `month_number_label` and `month_date_label` is TRUE, otherwise ignored.
 #' @param colour_stripe Character, defaults to "lightgray". This is the stripe colour in the background used in alternate months.
 #'
-#' @return A processed data frame ready to be turned into a Gantt chart.
+#' @return A Gantt chart as a ggplot2 object.
 #'
 #' @examples
 #' ganttrify(ganttrify::test_project)
@@ -37,7 +39,9 @@ ganttrify <- function(project,
                       size_wp = 6, 
                       size_activity = 4,
                       size_text_relative = 1,
-                      month_number = TRUE,
+                      month_number_label = TRUE,
+                      month_date_label = TRUE,
+                      x_axis_position = "top",
                       colour_stripe = "lightgray") {
   
   # repeat colours if not enough colours given
@@ -182,19 +186,27 @@ ganttrify <- function(project,
                           lineend = "round",
                           size = size_wp) 
   
-  if (month_number==TRUE) {
+  if (month_number_label==TRUE&month_date_label==TRUE) {
     gg_gantt <- gg_gantt +
       ggplot2::scale_x_date(name = "",
                             breaks = date_breaks,
                             date_labels = "%b\n%Y",
                             minor_breaks = NULL,
                             sec.axis = ggplot2::dup_axis(labels = paste0("M", seq_along(date_breaks))))
-  } else {
-      gg_gantt <- gg_gantt +
-        ggplot2::scale_x_date(name = "",
-                              breaks = date_breaks,
-                              date_labels = "%b\n%Y",
-                              minor_breaks = NULL)
+  } else if (month_number_label==FALSE&month_date_label==TRUE) {
+    gg_gantt <- gg_gantt +
+      ggplot2::scale_x_date(name = "",
+                            breaks = date_breaks,
+                            date_labels = "%b\n%Y",
+                            minor_breaks = NULL,
+                            position = x_axis_position)
+  } else if (month_number_label==TRUE&month_date_label==FALSE) {
+    gg_gantt <- gg_gantt +
+      ggplot2::scale_x_date(name = "",
+                            breaks = date_breaks,
+                            date_labels = paste0("M", seq_along(date_breaks)),
+                            minor_breaks = NULL,
+                            position = x_axis_position)
   }
   
   gg_gantt <- suppressWarnings(gg_gantt +

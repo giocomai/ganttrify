@@ -17,7 +17,9 @@ ganttrify(
   size_wp = 6,
   size_activity = 4,
   size_text_relative = 1,
-  month_number = TRUE,
+  month_number_label = TRUE,
+  month_date_label = TRUE,
+  x_axis_position = "top",
   colour_stripe = "lightgray"
 )
 }
@@ -30,7 +32,7 @@ ganttrify(
 
 \item{exact_date}{Logical, defaults to FALSE. If FALSE, then periods are always understood to include full months. If FALSE, then exact dates can be given.}
 
-\item{project_start_date}{The date when the project starts. It can be a date, or a string in the format "2020-03" or "2020-03-01". Ignored if `month_number` is set to FALSE.}
+\item{project_start_date}{The date when the project starts. It can be a date, or a string in the format "2020-03" or "2020-03-01". Ignored if `month_number_date` is set to FALSE.}
 
 \item{colour_palette}{A character vector of colours or a colour palette.}
 
@@ -46,12 +48,16 @@ ganttrify(
 
 \item{size_text_relative}{Numeric, defaults to 1. Changes the size of all textual elements relative to their default size. If you set this to e.g. 1.5 all text elements will be 50\% bigger.}
 
-\item{month_number}{Logical, defaults to TRUE. If TRUE, it included month numbering on top of the chart.}
+\item{month_number_label}{Logical, defaults to TRUE. If TRUE, it includes month numbering on x axis.}
+
+\item{month_date_label}{Logical, defaults to TRUE. If TRUE, it includes month names and dates on the x axis.}
+
+\item{x_axis_position}{Logical, defaults to "top". Can also be "bottom". Used only when only one of `month_number_label` and `month_date_label` is TRUE, otherwise ignored.}
 
 \item{colour_stripe}{Character, defaults to "lightgray". This is the stripe colour in the background used in alternate months.}
 }
 \value{
-A processed data frame ready to be turned into a Gantt chart.
+A Gantt chart as a ggplot2 object.
 }
 \description{
 Creates Gantt charts with ggplot2.

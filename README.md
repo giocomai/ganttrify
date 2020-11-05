@@ -190,10 +190,10 @@ included in this repo.
 
 Alright, you prefer to use dates rather than month numbers from the
 beginning of the project. You’re welcome: just format the date as
-follows, and remember to include the `month_number = FALSE` parameter.
-You can also use exact dates (e.g. `2021-01-01`), but by default they
-would still be converted to include the entire month were that given day
-falls.
+follows, and remember to include the `month_number_label = FALSE`
+parameter. You can also use exact dates (e.g. `2021-01-01`), but by
+default they would still be converted to include the entire month were
+that given day falls.
 
 ``` r
 knitr::kable(ganttrify::test_project_date_month)
@@ -251,7 +251,7 @@ ganttrify(project = ganttrify::test_project_date_day,
           by_date = TRUE,
           exact_date = TRUE,
           size_text_relative = 1.2,
-          month_number = FALSE,
+          month_number_label = FALSE,
           font_family = "Roboto Condensed")
 ```
 
