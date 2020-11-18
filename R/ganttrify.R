@@ -207,6 +207,9 @@ ganttrify <- function(project,
                             date_labels = paste0("M", seq_along(date_breaks)),
                             minor_breaks = NULL,
                             position = x_axis_position)
+  } else if (month_number_label==FALSE&month_date_label==FALSE) {
+    gg_gantt <- gg_gantt +
+      ggplot2::scale_x_date(name = "")
   }
   
   gg_gantt <- suppressWarnings(gg_gantt +
