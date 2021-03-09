@@ -56,14 +56,6 @@ Gantt charts.
 And yes, I will enable all the customisations you like, but first I
 actually need to submit this project.
 
-### 2020-05 update
-
-As I’ve seen some people actually started using this package, I have
-added some functionalities and significantly improved the shiny app. If
-you have used an earlier version, you may need to adapt column names and
-some parameter names to the new syntax, following the updated examples
-(it should take just a few seconds).
-
 ## Features
 
 Take an adequately formatted spreadsheet and turn it into a Gantt chart
