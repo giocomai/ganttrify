@@ -15,6 +15,7 @@ ganttrify(
   mark_quarters = FALSE,
   mark_years = FALSE,
   size_wp = 6,
+  hide_wp = FALSE,
   size_activity = 4,
   size_text_relative = 1,
   month_number_label = TRUE,
@@ -43,6 +44,8 @@ ganttrify(
 \item{mark_years}{Logical, defaults to FALSE. If TRUE, vertical lines are added in correspondence of change of year (1 January).}
 
 \item{size_wp}{Numeric, defaults to 6. It defines the thickness of the line used to represent WPs.}
+
+\item{hide_wp}{Logical, defaults to FALSE. If TRUE, the lines of the WP are hidden and only activities are shown.}
 
 \item{size_activity}{Numeric, defaults to 4. It defines the thickness of the line used to represent activities.}
 

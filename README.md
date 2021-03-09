@@ -108,7 +108,7 @@ additional examples below.
 library("ganttrify")
 
 ganttrify(project = ganttrify::test_project,
-          project_start_date = "2020-03",
+          project_start_date = "2021-03",
           font_family = "Roboto Condensed")
 ```
 
@@ -135,7 +135,7 @@ served.
 ``` r
 ganttrify(project = ganttrify::test_project,
           spots = ganttrify::test_spots,
-          project_start_date = "2020-03",
+          project_start_date = "2021-03",
           font_family = "Roboto Condensed")
 ```
 
@@ -149,13 +149,25 @@ You’re welcome.
 ``` r
 ganttrify(project = ganttrify::test_project,
           spots = ganttrify::test_spots,
-          project_start_date = "2020-03",
+          project_start_date = "2021-03",
           size_text_relative = 1.2, 
           mark_quarters = TRUE,
           font_family = "Roboto Condensed")
 ```
 
 <img src="man/figures/README-gantt_charts_resized_text-1.png" width="100%" />
+
+It appears that some of you don’t like having a line for the working
+package and are fine with just lines for activities. Did you mean it
+like this?
+
+``` r
+ganttrify(project = ganttrify::test_project,
+          hide_wp = TRUE,
+          font_family = "Roboto Condensed")
+```
+
+<img src="man/figures/README-gantt_no_wp-1.png" width="100%" />
 
 ## Shiny app
 

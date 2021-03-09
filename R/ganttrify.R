@@ -12,6 +12,7 @@
 #' @param mark_quarters Logical, defaults to FALSE. If TRUE, vertical lines are added in correspondence of change of quarter (end of March, end of June, end of September, end of December).
 #' @param mark_years Logical, defaults to FALSE. If TRUE, vertical lines are added in correspondence of change of year (1 January).
 #' @param size_wp Numeric, defaults to 6. It defines the thickness of the line used to represent WPs.
+#' @param hide_wp Logical, defaults to FALSE. If TRUE, the lines of the WP are hidden and only activities are shown.
 #' @param size_activity Numeric, defaults to 4. It defines the thickness of the line used to represent activities.
 #' @param size_text_relative Numeric, defaults to 1. Changes the size of all textual elements relative to their default size. If you set this to e.g. 1.5 all text elements will be 50\% bigger.
 #' @param month_number_label Logical, defaults to TRUE. If TRUE, it includes month numbering on x axis.
@@ -36,7 +37,8 @@ ganttrify <- function(project,
                       font_family = "sans",
                       mark_quarters = FALSE,
                       mark_years = FALSE,
-                      size_wp = 6, 
+                      size_wp = 6,
+                      hide_wp = FALSE,
                       size_activity = 4,
                       size_text_relative = 1,
                       month_number_label = TRUE,
@@ -148,7 +150,10 @@ ganttrify <- function(project,
       dplyr::arrange(activity)
   }
   
-  
+  if (hide_wp==TRUE) {
+    df_yearmon_fct <- df_yearmon_fct %>% 
+      dplyr::filter(type!="wp")
+  }
   
   gg_gantt <- ggplot2::ggplot(data = df_yearmon_fct,
                               mapping = ggplot2::aes(x = start_date,
@@ -184,7 +189,7 @@ ganttrify <- function(project,
     ggplot2::geom_segment(data = df_yearmon_fct %>%
                             dplyr::filter(type=="wp"),
                           lineend = "round",
-                          size = size_wp) 
+                          size = size_wp)
   
   if (month_number_label==TRUE&month_date_label==TRUE) {
     gg_gantt <- gg_gantt +
@@ -223,6 +228,7 @@ ganttrify <- function(project,
                                                             size = ggplot2::rel(size_text_relative)),
                    axis.text.x = ggplot2::element_text(size = ggplot2::rel(size_text_relative)),
                    legend.position = "none"))
+  
   if (is.null(spots)==FALSE) {
     if (is.data.frame(spots)==TRUE) {
       if (by_date==FALSE) {

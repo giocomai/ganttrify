@@ -79,7 +79,7 @@ If you prefer to include dates instead of month numbers, please see additional e
 library("ganttrify")
 
 ganttrify(project = ganttrify::test_project,
-          project_start_date = "2020-03",
+          project_start_date = "2021-03",
           font_family = "Roboto Condensed")
 ```
 [all examples in this page will use the `Roboto condensed` font; if it is not installed, you can use the default `sans`. See the *Troubleshooting* section at the bottom of this readme.]
@@ -95,7 +95,7 @@ knitr::kable(ganttrify::test_spots)
 ```{r gantt_charts_with_events}
 ganttrify(project = ganttrify::test_project,
           spots = ganttrify::test_spots,
-          project_start_date = "2020-03",
+          project_start_date = "2021-03",
           font_family = "Roboto Condensed")
 ```
 
@@ -107,11 +107,21 @@ You're welcome.
 ```{r gantt_charts_resized_text}
 ganttrify(project = ganttrify::test_project,
           spots = ganttrify::test_spots,
-          project_start_date = "2020-03",
+          project_start_date = "2021-03",
           size_text_relative = 1.2, 
           mark_quarters = TRUE,
           font_family = "Roboto Condensed")
 ```
+
+
+It appears that some of you don't like having a line for the working package and are fine with just lines for activities. Did you mean it like this?
+
+```{r gantt_no_wp}
+ganttrify(project = ganttrify::test_project,
+          hide_wp = TRUE,
+          font_family = "Roboto Condensed")
+```
+
 
 ## Shiny app
 
