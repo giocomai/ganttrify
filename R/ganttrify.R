@@ -19,6 +19,9 @@
 #' @param month_date_label Logical, defaults to TRUE. If TRUE, it includes month names and dates on the x axis.
 #' @param x_axis_position Logical, defaults to "top". Can also be "bottom". Used only when only one of `month_number_label` and `month_date_label` is TRUE, otherwise ignored.
 #' @param colour_stripe Character, defaults to "lightgray". This is the stripe colour in the background used in alternate months.
+#' @param alpha_wp Numeric, defaults to 1. Controls transparency of the line used to represent WPs.
+#' @param alpha_activity Numeric, defaults to 1. Controls transparency of the line used to represent activities.
+#' @param line_end Character, defaults to "round". One of "round", "butt", "square". Controls line ends.
 #'
 #' @return A Gantt chart as a ggplot2 object.
 #'
@@ -44,7 +47,10 @@ ganttrify <- function(project,
                       month_number_label = TRUE,
                       month_date_label = TRUE,
                       x_axis_position = "top",
-                      colour_stripe = "lightgray") {
+                      colour_stripe = "lightgray",
+                      alpha_wp = 1,
+                      alpha_activity = 1,
+                      line_end = "round") {
   
   # repeat colours if not enough colours given
   if (length(unique(project$wp))>length(as.character(wesanderson::wes_palette("Darjeeling1")))) {
@@ -180,16 +186,25 @@ ganttrify <- function(project,
       ggplot2::geom_vline(xintercept = date_breaks_y, colour = "gray50")
   }
   
+  # set alpha to 0 for wp
+  df_yearmon_fct$wp_alpha <- 0
+  df_yearmon_fct$activity_alpha <- 0
+  df_yearmon_fct <- df_yearmon_fct %>% 
+    dplyr::mutate(activity_alpha = ifelse(type=="activity", alpha_activity, 0))
+  df_yearmon_fct <- df_yearmon_fct %>% 
+    dplyr::mutate(wp_alpha = ifelse(type=="wp", alpha_wp, 0))
+  
   gg_gantt <- gg_gantt +
     ### activities
     ggplot2::geom_segment(data = df_yearmon_fct,
-                          lineend = "round",
-                          size = size_activity) +
+                          lineend = line_end,
+                          size = size_activity,
+                          alpha = df_yearmon_fct$activity_alpha) +
     ### wp
-    ggplot2::geom_segment(data = df_yearmon_fct %>%
-                            dplyr::filter(type=="wp"),
-                          lineend = "round",
-                          size = size_wp)
+    ggplot2::geom_segment(data = df_yearmon_fct,
+                          lineend = line_end,
+                          size = size_wp,
+                          alpha = df_yearmon_fct$wp_alpha)
   
   if (month_number_label==TRUE&month_date_label==TRUE) {
     gg_gantt <- gg_gantt +
