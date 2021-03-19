@@ -26,7 +26,8 @@ ganttrify(
   alpha_activity = 1,
   line_end = "round",
   month_breaks = 1,
-  show_vertical_lines = TRUE
+  show_vertical_lines = TRUE,
+  axis_text_align = "right"
 )
 }
 \arguments{
@@ -73,6 +74,8 @@ ganttrify(
 \item{month_breaks}{Numeric, defaults to 1. It defines if labels for all months are shown or only once every x months. Useful for longer projects.}
 
 \item{show_vertical_lines}{Logical, defaults to TRUE. If set to FALSE, it hides the thin vertical lines corresponding to month numbers. Useful in particular for longer projects.}
+
+\item{axis_text_align}{Character, defaults to "right". Defines alignment of text on the y-axis is left. Accepted values are "left", "right", "centre", or "center".}
 }
 \value{
 A Gantt chart as a ggplot2 object.

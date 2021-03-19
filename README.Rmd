@@ -145,6 +145,36 @@ ganttrify(project = test_36,
   
 ```
 
+Does right-aligned text bother you
+
+```{r gantt_left_aligned}
+
+ganttrify(project = ganttrify::test_project,
+          spots = ganttrify::test_spots,
+          project_start_date = "2021-04",
+          axis_text_align = "left") 
+```
+
+```{r gantt_centre_aligned}
+
+ganttrify(project = ganttrify::test_project,
+          spots = ganttrify::test_spots,
+          project_start_date = "2021-04",
+          axis_text_align = "centre") 
+```
+
+Finally, keep in mind that ganttrify outputs `ggplot` objects. Some theming options may not behave exactly as you expect, but for example adding title, subtitle, and captions can be done as you would normally do with any `ggplot` graphs. 
+
+```{r gantt_with_text}
+ganttrify(project = ganttrify::test_project,
+          spots = ganttrify::test_spots,
+          project_start_date = "2020-01",
+          font_family = "Roboto Condensed")+
+  ggplot2::labs(title = "My beautiful plans for 2020",
+                subtitle = "I will definitely comply with the exact timing of each and all activities*",
+                caption = "* I mean, I'll do my best, but if there's a pandemic or something, it's not my fault really")
+```
+
 
 
 ## Shiny app

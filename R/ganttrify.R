@@ -23,7 +23,8 @@
 #' @param alpha_activity Numeric, defaults to 1. Controls transparency of the line used to represent activities.
 #' @param line_end Character, defaults to "round". One of "round", "butt", "square". Controls line ends.
 #' @param month_breaks Numeric, defaults to 1. It defines if labels for all months are shown or only once every x months. Useful for longer projects.
-#' @param show_vertical_lines Logical, defaults to TRUE. If set to FALSE, it hides the thin vertical lines corresponding to month numbers. Useful in particular for longer projects.  
+#' @param show_vertical_lines Logical, defaults to TRUE. If set to FALSE, it hides the thin vertical lines corresponding to month numbers. Useful in particular for longer projects. 
+#' @param axis_text_align Character, defaults to "right". Defines alignment of text on the y-axis is left. Accepted values are "left", "right", "centre", or "center".
 #'
 #' @return A Gantt chart as a ggplot2 object.
 #'
@@ -54,7 +55,8 @@ ganttrify <- function(project,
                       alpha_activity = 1,
                       line_end = "round",
                       month_breaks = 1, 
-                      show_vertical_lines = TRUE) {
+                      show_vertical_lines = TRUE,
+                      axis_text_align = "right") {
   
   # repeat colours if not enough colours given
   if (length(unique(project$wp))>length(as.character(wesanderson::wes_palette("Darjeeling1")))) {
@@ -239,6 +241,17 @@ ganttrify <- function(project,
       ggplot2::scale_x_date(name = "")
   }
   
+  if (axis_text_align == "right") {
+    axis_text_align_n <- 1
+  } else if (axis_text_align == "centre"|axis_text_align=="center") {
+    axis_text_align_n <- 0.5
+  } else if (axis_text_align == "left") {
+    axis_text_align_n <- 0
+  } else {
+    axis_text_align_n <- 1
+  }
+  
+  
   gg_gantt <- suppressWarnings(gg_gantt +
     ggplot2::scale_y_discrete("") +
     ggplot2::theme_minimal() +
@@ -247,7 +260,8 @@ ganttrify <- function(project,
                    axis.text.y.left = ggplot2::element_text(face = ifelse(test = df_yearmon_fct %>%
                                                                             dplyr::distinct(activity, wp, type) %>%
                                                                             dplyr::pull(type)=="wp", yes = "bold", no = "plain"),
-                                                            size = ggplot2::rel(size_text_relative)),
+                                                            size = ggplot2::rel(size_text_relative),
+                                                            hjust = axis_text_align_n),
                    axis.text.x = ggplot2::element_text(size = ggplot2::rel(size_text_relative)),
                    legend.position = "none"))
   
