@@ -22,6 +22,8 @@
 #' @param alpha_wp Numeric, defaults to 1. Controls transparency of the line used to represent WPs.
 #' @param alpha_activity Numeric, defaults to 1. Controls transparency of the line used to represent activities.
 #' @param line_end Character, defaults to "round". One of "round", "butt", "square". Controls line ends.
+#' @param month_breaks Numeric, defaults to 1. It defines if labels for all months are shown or only once every x months. Useful for longer projects.
+#' @param show_vertical_lines Logical, defaults to TRUE. If set to FALSE, it hides the thin vertical lines corresponding to month numbers. Useful in particular for longer projects.  
 #'
 #' @return A Gantt chart as a ggplot2 object.
 #'
@@ -50,7 +52,9 @@ ganttrify <- function(project,
                       colour_stripe = "lightgray",
                       alpha_wp = 1,
                       alpha_activity = 1,
-                      line_end = "round") {
+                      line_end = "round",
+                      month_breaks = 1, 
+                      show_vertical_lines = TRUE) {
   
   # repeat colours if not enough colours given
   if (length(unique(project$wp))>length(as.character(wesanderson::wes_palette("Darjeeling1")))) {
@@ -122,7 +126,8 @@ ganttrify <- function(project,
   # date breaks in the middle of the month
   date_breaks <- zoo::as.Date(zoo::as.yearmon(seq.Date(from = min(df_yearmon[["start_date"]]+15),
                                                        to = max(df_yearmon[["end_date"]]+15),
-                                                       by = "1 month")), frac = 0.5)
+                                                       by =paste(month_breaks, "month"))), frac = 0.5)
+  
   
   date_breaks_q <- seq.Date(from = lubridate::floor_date(x = min(df_yearmon[["start_date"]]), unit = "year"),
                             to = lubridate::ceiling_date(x = max(df_yearmon[["end_date"]]), unit = "year"),
@@ -212,7 +217,9 @@ ganttrify <- function(project,
                             breaks = date_breaks,
                             date_labels = "%b\n%Y",
                             minor_breaks = NULL,
-                            sec.axis = ggplot2::dup_axis(labels = paste0("M", seq_along(date_breaks))))
+                            sec.axis = ggplot2::dup_axis(labels = paste0("M", seq_along(date_breaks)*month_breaks-(month_breaks-1))))
+    
+    
   } else if (month_number_label==FALSE&month_date_label==TRUE) {
     gg_gantt <- gg_gantt +
       ggplot2::scale_x_date(name = "",
@@ -287,6 +294,11 @@ ganttrify <- function(project,
                             size = 3*size_text_relative) 
     }
   } 
+  
+  if (show_vertical_lines==FALSE) {
+    gg_gantt <- gg_gantt +
+      ggplot2::theme(panel.grid.major.x = ggplot2::element_line(size = 0)) 
+  }
   
   return(gg_gantt)
   

@@ -24,7 +24,9 @@ ganttrify(
   colour_stripe = "lightgray",
   alpha_wp = 1,
   alpha_activity = 1,
-  line_end = "round"
+  line_end = "round",
+  month_breaks = 1,
+  show_vertical_lines = TRUE
 )
 }
 \arguments{
@@ -67,6 +69,10 @@ ganttrify(
 \item{alpha_activity}{Numeric, defaults to 1. Controls transparency of the line used to represent activities.}
 
 \item{line_end}{Character, defaults to "round". One of "round", "butt", "square". Controls line ends.}
+
+\item{month_breaks}{Numeric, defaults to 1. It defines if labels for all months are shown or only once every x months. Useful for longer projects.}
+
+\item{show_vertical_lines}{Logical, defaults to TRUE. If set to FALSE, it hides the thin vertical lines corresponding to month numbers. Useful in particular for longer projects.}
 }
 \value{
 A Gantt chart as a ggplot2 object.

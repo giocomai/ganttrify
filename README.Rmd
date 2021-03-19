@@ -44,6 +44,8 @@ More seriously, this has been a quick attempt at making decent-looking Gantt cha
 
 And yes, I will enable all the customisations you like, but first I actually need to submit this project.
 
+[Thanks to all who contributed suggestions via issues and pull request!]
+
 ## Features
 
 Take an adequately formatted spreadsheet and turn it into a Gantt chart made with ggplot2.
@@ -119,6 +121,32 @@ ganttrify(project = ganttrify::test_project,
 ```
 
 
+I thought we all liked rounded lines and full opacity, but it's ok if you don't:
+  
+```{r gantt_butt_line_transparency}
+ganttrify(project = ganttrify::test_project,
+          project_start_date = "2021-04",
+          alpha_wp = 0.9,
+          alpha_activity = 0.6,
+          line_end = "butt")
+```
+
+
+Some of us work on very long projects, and may need to declutter the chart to increase readability. So let's show the month number only once every three months, and hide the thin vertical lines included by default.
+
+```{r gantt_36_months}
+test_36 <- ganttrify::test_project
+test_36[11,4] <- 36
+
+ganttrify(project = test_36,
+          project_start_date = "2021-04", 
+          month_breaks = 3,
+          show_vertical_lines = FALSE)
+  
+```
+
+
+
 ## Shiny app
 
 If you prefer interactive web interfaces to coding, you can still have a fancy *ganttrified* chart.
@@ -135,6 +163,7 @@ You can check it online with no further ado at the following link:
 
 https://apps.europeandatajournalism.eu/app/ganttrify
 
+(N.B.: not all features are exposed in the shiny app)
 
 ### Shiny app on Docker
 
