@@ -21,7 +21,10 @@ ganttrify(
   month_number_label = TRUE,
   month_date_label = TRUE,
   x_axis_position = "top",
-  colour_stripe = "lightgray"
+  colour_stripe = "lightgray",
+  alpha_wp = 1,
+  alpha_activity = 1,
+  line_end = "round"
 )
 }
 \arguments{
@@ -58,6 +61,12 @@ ganttrify(
 \item{x_axis_position}{Logical, defaults to "top". Can also be "bottom". Used only when only one of `month_number_label` and `month_date_label` is TRUE, otherwise ignored.}
 
 \item{colour_stripe}{Character, defaults to "lightgray". This is the stripe colour in the background used in alternate months.}
+
+\item{alpha_wp}{Numeric, defaults to 1. Controls transparency of the line used to represent WPs.}
+
+\item{alpha_activity}{Numeric, defaults to 1. Controls transparency of the line used to represent activities.}
+
+\item{line_end}{Character, defaults to "round". One of "round", "butt", "square". Controls line ends.}
 }
 \value{
 A Gantt chart as a ggplot2 object.
