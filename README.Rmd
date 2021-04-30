@@ -243,6 +243,18 @@ ganttrify(project = ganttrify::test_project_date_day,
 
 ## Troubleshooting
 
+### Structure of the input table
+
+At this stage, the package has strong expectations about the input format, and does not provide meaningful error messages. If you see unexpected results, please consider that:
+
+- no cell in the activity column must be empty
+- an activity cannot be called the same as a wp
+- activities in different wp should have different names (or at least add a space at the end or something so that they look different to the computer).
+
+Some of this limitations should be dealt with in a future update.
+
+### Fonts
+
 By default, this package uses a generic *sans* font but it is recommended to use a narrow (or condensed font such as *[Roboto Condensed](https://fonts.google.com/specimen/Roboto+Condensed)* font - a free font that can be downloaded and installed on any desktop - as they make more efficient use of text space. 
 
 On Fedora, you can install it with `sudo dnf install google-roboto-condensed-fonts`
@@ -252,6 +264,8 @@ On Debian, you can install it with `sudo apt-get install fonts-roboto-fontface`
 After installation, you should make sure the font is available to R by installing the `extrafont` package, and running `extrafont::font_import()`.
 
 You can check available fonts also with the package `systemfonts` and the command `systemfonts::system_fonts()`.
+
+### Dependencies
 
 To reduce the number of dependencies, `extrafont`, as well as the packages used by the Shiny app needed to import data (`googlesheets4`, `readxl`) and to export the chart in svg (`svglite`) are only suggested. 
 

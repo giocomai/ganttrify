@@ -337,6 +337,22 @@ ganttrify(project = ganttrify::test_project_date_day,
 
 ## Troubleshooting
 
+### Structure of the input table
+
+At this stage, the package has strong expectations about the input
+format, and does not provide meaningful error messages. If you see
+unexpected results, please consider that:
+
+  - no cell in the activity column must be empty
+  - an activity cannot be called the same as a wp
+  - activities in different wp should have different names (or at least
+    add a space at the end or something so that they look different to
+    the computer).
+
+Some of this limitations should be dealt with in a future update.
+
+### Fonts
+
 By default, this package uses a generic *sans* font but it is
 recommended to use a narrow (or condensed font such as *[Roboto
 Condensed](https://fonts.google.com/specimen/Roboto+Condensed)* font - a
@@ -355,6 +371,8 @@ installing the `extrafont` package, and running
 
 You can check available fonts also with the package `systemfonts` and
 the command `systemfonts::system_fonts()`.
+
+### Dependencies
 
 To reduce the number of dependencies, `extrafont`, as well as the
 packages used by the Shiny app needed to import data (`googlesheets4`,
