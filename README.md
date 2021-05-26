@@ -249,7 +249,7 @@ app](man/figures/shiny_ganttrify_screenshot.png)
 
 You can check it online with no further ado at the following link:
 
-<https://apps.europeandatajournalism.eu/app/ganttrify>
+<https://ganttrify.europeandatajournalism.eu/>
 
 (N.B.: not all features are exposed in the shiny app)
 
