@@ -356,7 +356,7 @@ Some of this limitations should be dealt with in a future update.
 By default, this package uses a generic *sans* font but it is
 recommended to use a narrow (or condensed font such as *[Roboto
 Condensed](https://fonts.google.com/specimen/Roboto+Condensed)* font - a
-free font that can be downloaded and installed on any desktop - as they
+free font that can be downloaded and installed on any desktop) as they
 make more efficient use of text space.
 
 On Fedora, you can install it with `sudo dnf install
