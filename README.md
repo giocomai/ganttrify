@@ -14,7 +14,7 @@ commonly used in project proposals and project management.
 
 If you just want to check this out in an interactive web interface,
 [click here and
-enjoy](https://apps.europeandatajournalism.eu/app/ganttrify). Some more
+enjoy](https://ganttrify.europeandatajournalism.eu/). Some more
 [context in this blog
 post](https://medium.com/european-data-journalism-network/beautiful-gantt-charts-with-ggplot2-80ccd8c2c788).
 
