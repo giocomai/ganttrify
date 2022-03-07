@@ -118,6 +118,7 @@ server <- function(input, output, session) {
                                      size_wp = input$size_wp,
                                      size_activity = input$size_activity,
                                      size_text_relative = input$size_text_relative/100,
+                                     axis_text_align = input$text_alignment,
                                      colour_palette = unlist(ifelse(test = input$custom_palette_check, strsplit(input$custom_palette_text, split = ","), list(as.character(wesanderson::wes_palette(input$wes_palette))))))
     if (ggplot2::is.ggplot(gantt_gg)==FALSE) {
       warning("Please make sure that you have provided properly formatted data and selected the relevant option between 'By project month number' and 'By date'. Check the demo file for reference.")
