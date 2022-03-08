@@ -139,7 +139,8 @@ server <- function(input, output, session) {
                                                              width = input$download_width,
                                                              height = input$download_height,
                                                              units = "cm",
-                                                             type = "cairo")
+                                                             type = "cairo",
+                                                             bg = "white")
                                            }
   )
   
@@ -150,6 +151,7 @@ server <- function(input, output, session) {
                                                                  width = input$download_width,
                                                                  height = input$download_height,
                                                                  device = cairo_pdf,
+                                                                 bg = "white",
                                                                  units = "cm")
                                                }
   )
@@ -161,7 +163,8 @@ server <- function(input, output, session) {
                                                                  plot = gantt_chart(),
                                                                  width = input$download_width,
                                                                  height = input$download_height,
-                                                                 units = "cm")
+                                                                 units = "cm",
+                                                                 bg = "white")
                                                }
   )
   
