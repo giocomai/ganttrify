@@ -67,7 +67,7 @@ ui <- fluidPage(
       shiny::checkboxInput(inputId = "customisation_check", label = "Show additional customisation options", value = FALSE),
       conditionalPanel(
         condition = "input.customisation_check == true",
-      shiny::radioButtons(inputId = "text_alignment", label = "Input text alignment", choices = c("left", "right")),
+      shiny::radioButtons(inputId = "text_alignment", label = "Text alignment", choices = c("left", "right"), selected = "right", inline = TRUE),
       shiny::checkboxInput(inputId = "month_number", label = "Include month numbers on top", value = TRUE),
       shiny::checkboxInput(inputId = "mark_quarters", label = "Add vertical lines to mark quarters", value = TRUE),
       shiny::sliderInput(inputId = "size_wp", label = "Thickness of the line for working packages", min = 1, max = 10, value = 6, step = 1, round = TRUE),
