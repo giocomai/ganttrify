@@ -15,6 +15,7 @@
 #' @param hide_wp Logical, defaults to FALSE. If TRUE, the lines of the WP are hidden and only activities are shown.
 #' @param size_activity Numeric, defaults to 4. It defines the thickness of the line used to represent activities.
 #' @param size_text_relative Numeric, defaults to 1. Changes the size of all textual elements relative to their default size. If you set this to e.g. 1.5 all text elements will be 50\% bigger.
+#' @param label_wrap Defaults to FALSE. If given, must be numeric, referring to the number of characters per line allowed in the labels of projects and activities, or logical (if set to TRUE, it will default to 32). To be used when labels would otherwise be excessively long.
 #' @param month_number_label Logical, defaults to TRUE. If TRUE, it includes month numbering on x axis.
 #' @param month_date_label Logical, defaults to TRUE. If TRUE, it includes month names and dates on the x axis.
 #' @param x_axis_position Logical, defaults to "top". Can also be "bottom". Used only when only one of `month_number_label` and `month_date_label` is TRUE, otherwise ignored.
@@ -47,6 +48,7 @@ ganttrify <- function(project,
                       hide_wp = FALSE,
                       size_activity = 4,
                       size_text_relative = 1,
+                      label_wrap = FALSE,
                       month_number_label = TRUE,
                       month_date_label = TRUE,
                       x_axis_position = "top",
@@ -61,6 +63,17 @@ ganttrify <- function(project,
   # repeat colours if not enough colours given
   if (length(unique(project$wp))>length(as.character(wesanderson::wes_palette("Darjeeling1")))) {
     colour_palette <- rep(colour_palette, length(unique(project$wp)))[1:length(unique(project$wp))]
+  }
+  
+  if (label_wrap!=FALSE) {
+    if (isTRUE(label_wrap)) {
+      label_wrap <- 32
+    }
+    project$wp <- stringr::str_wrap(string = project$wp, width = label_wrap)
+    project$activity <- stringr::str_wrap(string = project$activity, width = label_wrap)
+    if (is.null(spots)==FALSE) {
+      spots$activity <- stringr::str_wrap(string = spots$activity, width = label_wrap)
+    }
   }
   
   if (by_date==FALSE) {

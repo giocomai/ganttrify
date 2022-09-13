@@ -21,7 +21,7 @@ knitr::opts_chunk$set(
 
 `ganttrify` facilitates the creation of nice-looking Gantt charts, commonly used in project proposals and project management.
 
-If you just want to check this out in an interactive web interface, [click here and enjoy](https://ganttrify.europeandatajournalism.eu/. Some more [context in this blog post](https://medium.com/european-data-journalism-network/beautiful-gantt-charts-with-ggplot2-80ccd8c2c788). 
+If you just want to check this out in an interactive web interface, [click here and enjoy](https://ganttrify.europeandatajournalism.eu/). Some more [context in this blog post](https://medium.com/european-data-journalism-network/beautiful-gantt-charts-with-ggplot2-80ccd8c2c788). 
 
 Read on for more details and examples.
 
@@ -145,7 +145,7 @@ ganttrify(project = test_36,
   
 ```
 
-Does right-aligned text bother you
+Does right-aligned text bother you?
 
 ```{r gantt_left_aligned}
 
@@ -162,6 +162,21 @@ ganttrify(project = ganttrify::test_project,
           project_start_date = "2021-04",
           axis_text_align = "centre") 
 ```
+  
+Do you have *very* long names for your activities? The parameter `label_wrap` is there to help you.
+
+```{r gantt_long_labels}
+tibble::tribble(~wp, ~activity, ~start_date, ~end_date,
+                "WP 1", "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Aliquet eget sit amet tellus", 1, 6,
+                "WP 2", "Proin sed libero enim sed faucibus turpis in eu mi. Massa ultricies mi quis hendrerit dolor magna eget est.", 6, 7, 
+                                "WP 2", "Proin sed libero enim sed faucibus turpis in eu mi. Massa ultricies mi quis hendrerit dolor magna eget est.", 3, 4, 
+                "WP 2", "Neque laoreet suspendisse interdum consectetur libero id faucibus nisl tincidunt.", 4, 8) %>% 
+  ganttrify(label_wrap = 32, 
+            project_start_date = "2023-01",
+            font_family = "Roboto Condensed") 
+```
+
+
 
 Finally, keep in mind that ganttrify outputs `ggplot` objects. Some theming options may not behave exactly as you expect, but for example adding title, subtitle, and captions can be done as you would normally do with any `ggplot` graphs. 
 
@@ -215,7 +230,7 @@ Alright, you prefer to use dates rather than month numbers from the beginning of
 knitr::kable(ganttrify::test_project_date_month)
 ```
 
-```{r}
+```{r gantt_date_month}
 ganttrify(project = ganttrify::test_project_date_month,
           spots = ganttrify::test_spots_date_month,
           by_date = TRUE,
@@ -231,7 +246,7 @@ knitr::kable(ganttrify::test_project_date_day)
 ```
 
 
-```{r}
+```{r gantt_date_day}
 ganttrify(project = ganttrify::test_project_date_day,
           spots = ganttrify::test_spots_date_day,
           by_date = TRUE,

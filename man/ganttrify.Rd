@@ -18,6 +18,7 @@ ganttrify(
   hide_wp = FALSE,
   size_activity = 4,
   size_text_relative = 1,
+  label_wrap = FALSE,
   month_number_label = TRUE,
   month_date_label = TRUE,
   x_axis_position = "top",
@@ -56,6 +57,8 @@ ganttrify(
 \item{size_activity}{Numeric, defaults to 4. It defines the thickness of the line used to represent activities.}
 
 \item{size_text_relative}{Numeric, defaults to 1. Changes the size of all textual elements relative to their default size. If you set this to e.g. 1.5 all text elements will be 50\% bigger.}
+
+\item{label_wrap}{Defaults to FALSE. If given, must be numeric, referring to the number of characters per line allowed in the labels of projects and activities, or logical (if set to TRUE, it will default to 32). To be used when labels would otherwise be excessively long.}
 
 \item{month_number_label}{Logical, defaults to TRUE. If TRUE, it includes month numbering on x axis.}
 

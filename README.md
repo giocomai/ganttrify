@@ -13,9 +13,8 @@ experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](h
 commonly used in project proposals and project management.
 
 If you just want to check this out in an interactive web interface,
-[click here and
-enjoy](https://ganttrify.europeandatajournalism.eu/). Some more
-[context in this blog
+[click here and enjoy](https://ganttrify.europeandatajournalism.eu/).
+Some more [context in this blog
 post](https://medium.com/european-data-journalism-network/beautiful-gantt-charts-with-ggplot2-80ccd8c2c788).
 
 Read on for more details and examples.
@@ -39,8 +38,8 @@ I did find a [solution that was rather visually
 satisfying](https://insileco.github.io/2017/09/20/gantt-charts-in-r/),
 but it was in base R, and all the cool kids nowadays know that base
 plotting in R exists only [for compatibility with
-S](https://twitter.com/whydoesr): not an option\! (Hey, I’m joking,
-don’t @ me\!)
+S](https://twitter.com/whydoesr): not an option! (Hey, I’m joking, don’t
+@ me!)
 
 Given what is evidently my posh taste for Gantt charts, I had no other
 option than making this package with a pretentious, gentrified name,
@@ -57,7 +56,7 @@ And yes, I will enable all the customisations you like, but first I
 actually need to submit this project.
 
 \[Thanks to all who contributed suggestions via issues and pull
-request\!\]
+request!\]
 
 ## Features
 
@@ -78,19 +77,19 @@ remotes::install_github("giocomai/ganttrify")
 
 Here is an example project:
 
-| wp                         | activity                    | start\_date | end\_date |
-| :------------------------- | :-------------------------- | ----------: | --------: |
-| WP1 - Whatever admin       | 1.1. That admin activity    |           1 |         6 |
-| WP1 - Whatever admin       | 1.2. Another admin activity |           3 |         6 |
-| WP1 - Whatever admin       | 1.3. Fancy admin activity   |           4 |         7 |
-| WP2 - Whatever actual work | 2.1. Actual stuff           |           5 |        10 |
-| WP2 - Whatever actual work | 2.2. Actual R\&D stuff      |           6 |        12 |
-| WP2 - Whatever actual work | 2.3. Really real research   |           9 |        12 |
-| WP2 - Whatever actual work | 2.4. Ethics\!               |           3 |         5 |
-| WP2 - Whatever actual work | 2.4. Ethics\!               |           8 |         9 |
-| WP3 - Dissemination        | 3.1. Disseminate near       |           6 |         9 |
-| WP3 - Dissemination        | 3.1. Disseminate near       |          12 |        12 |
-| WP3 - Dissemination        | 3.2. Disseminate far        |           8 |        12 |
+| wp                         | activity                    | start_date | end_date |
+|:---------------------------|:----------------------------|-----------:|---------:|
+| WP1 - Whatever admin       | 1.1. That admin activity    |          1 |        6 |
+| WP1 - Whatever admin       | 1.2. Another admin activity |          3 |        6 |
+| WP1 - Whatever admin       | 1.3. Fancy admin activity   |          4 |        7 |
+| WP2 - Whatever actual work | 2.1. Actual stuff           |          5 |       10 |
+| WP2 - Whatever actual work | 2.2. Actual R&D stuff       |          6 |       12 |
+| WP2 - Whatever actual work | 2.3. Really real research   |          9 |       12 |
+| WP2 - Whatever actual work | 2.4. Ethics!                |          3 |        5 |
+| WP2 - Whatever actual work | 2.4. Ethics!                |          8 |        9 |
+| WP3 - Dissemination        | 3.1. Disseminate near       |          6 |        9 |
+| WP3 - Dissemination        | 3.1. Disseminate near       |         12 |       12 |
+| WP3 - Dissemination        | 3.2. Disseminate far        |          8 |       12 |
 
 Month since the beginning of the project are used as reference in order
 to make it easier to change the date when the project starts without
@@ -118,14 +117,14 @@ outputs, milestones, things like that?”, you asked.
 Just put them in a table with these column names, and you will be
 served.
 
-| activity                   | spot\_type | spot\_date |
-| :------------------------- | :--------- | ---------: |
-| 1.1. That admin activity   | D          |          5 |
-| 1.3. Fancy admin activity  | E          |          7 |
-| 2.2. Actual R\&D stuff     | O          |          7 |
-| 2.2. Actual R\&D stuff     | O          |          9 |
-| 2.2. Actual R\&D stuff     | O          |         11 |
-| WP2 - Whatever actual work | M          |          6 |
+| activity                   | spot_type | spot_date |
+|:---------------------------|:----------|----------:|
+| 1.1. That admin activity   | D         |         5 |
+| 1.3. Fancy admin activity  | E         |         7 |
+| 2.2. Actual R&D stuff      | O         |         7 |
+| 2.2. Actual R&D stuff      | O         |         9 |
+| 2.2. Actual R&D stuff      | O         |        11 |
+| WP2 - Whatever actual work | M         |         6 |
 
 ``` r
 ganttrify(project = ganttrify::test_project,
@@ -194,7 +193,7 @@ ganttrify(project = test_36,
 
 <img src="man/figures/README-gantt_36_months-1.png" width="100%" />
 
-Does right-aligned text bother you
+Does right-aligned text bother you?
 
 ``` r
 
@@ -215,6 +214,22 @@ ganttrify(project = ganttrify::test_project,
 ```
 
 <img src="man/figures/README-gantt_centre_aligned-1.png" width="100%" />
+
+Do you have *very* long names for your activities? The parameter
+`label_wrap` is there to help you.
+
+``` r
+tibble::tribble(~wp, ~activity, ~start_date, ~end_date,
+                "WP 1", "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Aliquet eget sit amet tellus", 1, 6,
+                "WP 2", "Proin sed libero enim sed faucibus turpis in eu mi. Massa ultricies mi quis hendrerit dolor magna eget est.", 6, 7, 
+                                "WP 2", "Proin sed libero enim sed faucibus turpis in eu mi. Massa ultricies mi quis hendrerit dolor magna eget est.", 3, 4, 
+                "WP 2", "Neque laoreet suspendisse interdum consectetur libero id faucibus nisl tincidunt.", 4, 8) %>% 
+  ganttrify(label_wrap = 32, 
+            project_start_date = "2023-01",
+            font_family = "Roboto Condensed") 
+```
+
+<img src="man/figures/README-gantt_long_labels-1.png" width="100%" />
 
 Finally, keep in mind that ganttrify outputs `ggplot` objects. Some
 theming options may not behave exactly as you expect, but for example
@@ -242,7 +257,7 @@ fancy *ganttrified* chart.
 shiny_ganttrify()
 ```
 
-And there you go\!
+And there you go!
 
 ![A screenshot of the Shiny
 app](man/figures/shiny_ganttrify_screenshot.png)
@@ -277,19 +292,19 @@ that given day falls.
 knitr::kable(ganttrify::test_project_date_month)
 ```
 
-| wp                         | activity                    | start\_date | end\_date |
-| :------------------------- | :-------------------------- | :---------- | :-------- |
-| WP1 - Whatever admin       | 1.1. That admin activity    | 2021-01     | 2021-06   |
-| WP1 - Whatever admin       | 1.2. Another admin activity | 2021-03     | 2021-06   |
-| WP1 - Whatever admin       | 1.3. Fancy admin activity   | 2021-04     | 2021-07   |
-| WP2 - Whatever actual work | 2.1. Actual stuff           | 2021-05     | 2021-10   |
-| WP2 - Whatever actual work | 2.2. Actual R\&D stuff      | 2021-06     | 2021-12   |
-| WP2 - Whatever actual work | 2.3. Really real research   | 2021-09     | 2021-12   |
-| WP2 - Whatever actual work | 2.4. Ethics\!               | 2021-03     | 2021-05   |
-| WP2 - Whatever actual work | 2.4. Ethics\!               | 2021-08     | 2021-09   |
-| WP3 - Dissemination        | 3.1. Disseminate near       | 2021-06     | 2021-09   |
-| WP3 - Dissemination        | 3.1. Disseminate near       | 2021-12     | 2021-12   |
-| WP3 - Dissemination        | 3.2. Disseminate far        | 2021-08     | 2021-12   |
+| wp                         | activity                    | start_date | end_date |
+|:---------------------------|:----------------------------|:-----------|:---------|
+| WP1 - Whatever admin       | 1.1. That admin activity    | 2021-01    | 2021-06  |
+| WP1 - Whatever admin       | 1.2. Another admin activity | 2021-03    | 2021-06  |
+| WP1 - Whatever admin       | 1.3. Fancy admin activity   | 2021-04    | 2021-07  |
+| WP2 - Whatever actual work | 2.1. Actual stuff           | 2021-05    | 2021-10  |
+| WP2 - Whatever actual work | 2.2. Actual R&D stuff       | 2021-06    | 2021-12  |
+| WP2 - Whatever actual work | 2.3. Really real research   | 2021-09    | 2021-12  |
+| WP2 - Whatever actual work | 2.4. Ethics!                | 2021-03    | 2021-05  |
+| WP2 - Whatever actual work | 2.4. Ethics!                | 2021-08    | 2021-09  |
+| WP3 - Dissemination        | 3.1. Disseminate near       | 2021-06    | 2021-09  |
+| WP3 - Dissemination        | 3.1. Disseminate near       | 2021-12    | 2021-12  |
+| WP3 - Dissemination        | 3.2. Disseminate far        | 2021-08    | 2021-12  |
 
 ``` r
 ganttrify(project = ganttrify::test_project_date_month,
@@ -300,7 +315,7 @@ ganttrify(project = ganttrify::test_project_date_month,
           font_family = "Roboto Condensed")
 ```
 
-<img src="man/figures/README-unnamed-chunk-7-1.png" width="100%" />
+<img src="man/figures/README-gantt_date_month-1.png" width="100%" />
 
 As it turns out, someone wants more detail: they’d like to be able to
 input activities with an exact start and end date. I start to suspect
@@ -311,17 +326,17 @@ for, but perhaps this works for you?
 knitr::kable(ganttrify::test_project_date_day)
 ```
 
-| wp                 | activity           | start\_date | end\_date  |
-| :----------------- | :----------------- | :---------- | :--------- |
-| Data team          | Data collection    | 2020-09-01  | 2020-09-10 |
-| Data team          | Data processing    | 2020-09-08  | 2020-09-14 |
-| Data team          | Reporting          | 2020-09-14  | 2020-09-16 |
-| Data team          | Data visualisation | 2020-10-23  | 2020-10-30 |
-| Investigative team | Fieldwork          | 2020-09-05  | 2020-09-15 |
-| Investigative team | Fieldwork          | 2020-10-10  | 2020-10-20 |
-| Investigative team | Writing            | 2020-10-21  | 2020-10-31 |
-| Social media team  | Draft outputs      | 2020-10-25  | 2020-10-28 |
-| Social media team  | Active promo       | 2020-10-31  | 2020-12-15 |
+| wp                 | activity           | start_date | end_date   |
+|:-------------------|:-------------------|:-----------|:-----------|
+| Data team          | Data collection    | 2020-09-01 | 2020-09-10 |
+| Data team          | Data processing    | 2020-09-08 | 2020-09-14 |
+| Data team          | Reporting          | 2020-09-14 | 2020-09-16 |
+| Data team          | Data visualisation | 2020-10-23 | 2020-10-30 |
+| Investigative team | Fieldwork          | 2020-09-05 | 2020-09-15 |
+| Investigative team | Fieldwork          | 2020-10-10 | 2020-10-20 |
+| Investigative team | Writing            | 2020-10-21 | 2020-10-31 |
+| Social media team  | Draft outputs      | 2020-10-25 | 2020-10-28 |
+| Social media team  | Active promo       | 2020-10-31 | 2020-12-15 |
 
 ``` r
 ganttrify(project = ganttrify::test_project_date_day,
@@ -333,7 +348,7 @@ ganttrify(project = ganttrify::test_project_date_day,
           font_family = "Roboto Condensed")
 ```
 
-<img src="man/figures/README-unnamed-chunk-9-1.png" width="100%" />
+<img src="man/figures/README-gantt_date_day-1.png" width="100%" />
 
 ## Troubleshooting
 
@@ -343,9 +358,9 @@ At this stage, the package has strong expectations about the input
 format, and does not provide meaningful error messages. If you see
 unexpected results, please consider that:
 
-  - no cell in the activity column must be empty
-  - an activity cannot be called the same as a wp
-  - activities in different wp should have different names (or at least
+-   no cell in the activity column must be empty
+-   an activity cannot be called the same as a wp
+-   activities in different wp should have different names (or at least
     add a space at the end or something so that they look different to
     the computer).
 
@@ -359,11 +374,11 @@ Condensed](https://fonts.google.com/specimen/Roboto+Condensed)* font - a
 free font that can be downloaded and installed on any desktop) as they
 make more efficient use of text space.
 
-On Fedora, you can install it with `sudo dnf install
-google-roboto-condensed-fonts`
+On Fedora, you can install it with
+`sudo dnf install google-roboto-condensed-fonts`
 
-On Debian, you can install it with `sudo apt-get install
-fonts-roboto-fontface`
+On Debian, you can install it with
+`sudo apt-get install fonts-roboto-fontface`
 
 After installation, you should make sure the font is available to R by
 installing the `extrafont` package, and running
