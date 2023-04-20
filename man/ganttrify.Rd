@@ -50,7 +50,7 @@ ganttrify(
 
 \item{project_start_date}{The date when the project starts. It can be a date, or a string in the format "2020-03" or "2020-03-01". Ignored if `month_number_date` is set to FALSE.}
 
-\item{colour_palette}{A character vector of colours or a colour palette.}
+\item{colour_palette}{A character vector of colours or a colour palette. If necessary, colours are recycled as needed. Defaults to `wesanderson::wes_palette("Darjeeling1")`. For more palettes, consider also the `MetBrewer` package, e.g. `colour_palette =  MetBrewer::met.brewer("Lakota")`. Colours can be passed as a vector of hex codes (e.g. `colour_palette = c("#6ACCEA", "#00FFB8", "#B90000", "#6C919C")`)}
 
 \item{font_family}{A character vector of length 1, defaults to "sans". It is recommended to use a narrow/condensed font such as Roboto Condensed for more efficient use of text space.}
 

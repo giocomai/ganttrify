@@ -7,7 +7,7 @@
 #' @param by_date Logical, defaults to FALSE If FALSE, the the start and end columns in the data frame should correspond to month numbers from the beginning of the project. If TRUE, dates in the format ("2020-10" or "2020-10-01") should be given.
 #' @param exact_date Logical, defaults to FALSE. If FALSE, then periods are always understood to include full months. If FALSE, then exact dates can be given.
 #' @param project_start_date The date when the project starts. It can be a date, or a string in the format "2020-03" or "2020-03-01". Ignored if `month_number_date` is set to FALSE.
-#' @param colour_palette A character vector of colours or a colour palette.
+#' @param colour_palette A character vector of colours or a colour palette. If necessary, colours are recycled as needed. Defaults to `wesanderson::wes_palette("Darjeeling1")`. For more palettes, consider also the `MetBrewer` package, e.g. `colour_palette =  MetBrewer::met.brewer("Lakota")`. Colours can be passed as a vector of hex codes (e.g. `colour_palette = c("#6ACCEA", "#00FFB8", "#B90000", "#6C919C")`)
 #' @param font_family A character vector of length 1, defaults to "sans". It is recommended to use a narrow/condensed font such as Roboto Condensed for more efficient use of text space.
 #' @param mark_quarters Logical, defaults to FALSE. If TRUE, vertical lines are added in correspondence of change of quarter (end of March, end of June, end of September, end of December).
 #' @param mark_years Logical, defaults to FALSE. If TRUE, vertical lines are added in correspondence of change of year (1 January).

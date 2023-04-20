@@ -235,7 +235,9 @@ ganttrify(project = test_36,
 
 If you have many working packages, you may want to adjust the size of
 the output, and choose palettes with more colours. You can always pass a
-custom palette, but if you’re looking for some inspiration, the package
+custom palette (e.g. by setting
+`colour_palette = c("#6ACCEA", "#00FFB8", "#B90000", "#6C919C")`), but
+if you’re looking for some inspiration, the package
 [`MetBrewer`](https://github.com/BlakeRMills/MetBrewer) with palettes
 inspired by works at the Metropolitan Museum of Art in New York has some
 options that may make your gantt chart even fancier.
@@ -256,7 +258,7 @@ ganttrify(project = test_project_df,
           month_breaks = 2,
           project_start_date = "2023-01",
           font_family = "Roboto Condensed",
-          colour_palette =  MetBrewer::met.brewer("Lakota"))
+          colour_palette =  MetBrewer::met.brewer("Lakota")) # or e.g. colour_palette = c("#6ACCEA", "#00FFB8", "#B90000", "#6C919C")
 #> Registered S3 method overwritten by 'MetBrewer':
 #>   method        from       
 #>   print.palette wesanderson
