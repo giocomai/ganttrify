@@ -25,7 +25,15 @@ ganttrify(
   colour_stripe = "lightgray",
   alpha_wp = 1,
   alpha_activity = 1,
-  line_end = "round",
+  line_end = NULL,
+  line_end_wp = "round",
+  line_end_activity = "butt",
+  spot_padding = ggplot2::unit(0.2, "lines"),
+  spot_fill = ggplot2::alpha(c("white"), 1),
+  spot_text_colour = "gray20",
+  spot_size_text_relative = 1,
+  spot_fontface = "bold",
+  spot_border = 0.25,
   month_breaks = 1,
   show_vertical_lines = TRUE,
   axis_text_align = "right"
@@ -72,7 +80,23 @@ ganttrify(
 
 \item{alpha_activity}{Numeric, defaults to 1. Controls transparency of the line used to represent activities.}
 
-\item{line_end}{Character, defaults to "round". One of "round", "butt", "square". Controls line ends.}
+\item{line_end}{Character, defaults to NULL. If given, takes precedence over `line_end_wp` and `line_end_activity` and applies the value to both. One of "round", "butt", "square". Controls line ends.}
+
+\item{line_end_wp}{Character, defaults to "round". One of "round", "butt", "square". Controls line ends.}
+
+\item{line_end_activity}{Character, defaults to "butt". One of "round", "butt", "square". Controls line ends.}
+
+\item{spot_padding}{Unit, defaults to `ggplot2::unit(0.2, "lines")`. If you use spot events, this is the padding around the text. Smaller value are best for busy gantt charts; if you have lots of space or use larger font sizes you may want to increase this value.}
+
+\item{spot_fill}{Defaults to `ggplot2::alpha(c("white"), 1)`. This is the background fill colour of spot events. By default, it is set to solid white. If you want to add some transparency to enable visual continuity of the underlying lines, adjust the transparency value to your taste adapting the function used by default.}
+
+\item{spot_text_colour}{Defaults to "grey20", for a dark but not quite black text.}
+
+\item{spot_size_text_relative}{Defaults to 1. This is combined with `size_text_relative`.}
+
+\item{spot_fontface}{Defaults to "bold". Available values are "plain", "bold", "italic" and "bold.italic".}
+
+\item{spot_border}{Defaults to 0.25. Internally passed as `label.size` to `geom_label()`.  Set to 0 or NA to remove the border.}
 
 \item{month_breaks}{Numeric, defaults to 1. It defines if labels for all months are shown or only once every x months. Useful for longer projects.}
 

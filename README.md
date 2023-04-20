@@ -56,7 +56,7 @@ And yes, I will enable all the customisations you like, but first I
 actually need to submit this project.
 
 \[Thanks to all who contributed suggestions via issues and pull
-request!\]
+requests!\]
 
 ## Features
 
@@ -163,18 +163,57 @@ ganttrify(project = ganttrify::test_project,
 
 <img src="man/figures/README-gantt_no_wp-1.png" width="100%" />
 
-I thought we all liked rounded lines and full opacity, but it’s ok if
-you don’t:
+I felt that rounded line endings for the working packages, and “butt”
+ending for activities is the best combination of elegance and clarity.
+
+Also, I like full opacity for the lines, but it’s ok if you don’t:
 
 ``` r
 ganttrify(project = ganttrify::test_project,
           project_start_date = "2021-04",
           alpha_wp = 0.9,
           alpha_activity = 0.6,
-          line_end = "butt")
+          line_end_wp = "round", # alternative values: "butt" or "square"
+          line_end_activity = "round", # alternative values: "butt" or "square"
+          font_family = "Roboto Condensed")
 ```
 
 <img src="man/figures/README-gantt_butt_line_transparency-1.png" width="100%" />
+If you use spot events, then there’s all sorts of opinions you can have
+about the color and transparency of spot events, as well as the size and
+padding around the text. Say, you want a larger box around the text, but
+a semi-transparent background? There you go!
+
+``` r
+ganttrify(project = ganttrify::test_project,
+          spots = ganttrify::test_spots,
+          project_start_date = "2021-04",
+          font_family = "Roboto Condensed",
+          spot_size_text_relative = 1.5,
+          spot_fill = ggplot2::alpha(c("white"), 0.7),
+          spot_padding = ggplot2::unit(0.4, "lines")
+          ) 
+```
+
+<img src="man/figures/README-spot_customisations-1.png" width="100%" />
+Or perhaps you actually just want the label text, without any
+background, or perhaps change the text colour. Be mindful that the text
+may become hard to read on darker backgrounds, especially if reviewers
+then print your proposal, but… you have been warned:
+
+``` r
+ganttrify(project = ganttrify::test_project,
+          spots = ganttrify::test_spots,
+          project_start_date = "2021-04",
+          font_family = "Roboto Condensed",
+          spot_text_colour = "grey10",
+          spot_fontface = "bold",
+          spot_fill = NA,
+          spot_border = NA
+          ) 
+```
+
+<img src="man/figures/README-spot_text-1.png" width="100%" />
 
 Some of us work on very long projects, and may need to declutter the
 chart to increase readability. So let’s show the month number only once
@@ -188,7 +227,8 @@ test_36[11,4] <- 36
 ganttrify(project = test_36,
           project_start_date = "2021-04", 
           month_breaks = 3,
-          show_vertical_lines = FALSE)
+          show_vertical_lines = FALSE,
+          font_family = "Roboto Condensed")
 ```
 
 <img src="man/figures/README-gantt_36_months-1.png" width="100%" />
@@ -200,7 +240,8 @@ Does right-aligned text bother you?
 ganttrify(project = ganttrify::test_project,
           spots = ganttrify::test_spots,
           project_start_date = "2021-04",
-          axis_text_align = "left") 
+          axis_text_align = "left",
+          font_family = "Roboto Condensed") 
 ```
 
 <img src="man/figures/README-gantt_left_aligned-1.png" width="100%" />
@@ -210,7 +251,8 @@ ganttrify(project = ganttrify::test_project,
 ganttrify(project = ganttrify::test_project,
           spots = ganttrify::test_spots,
           project_start_date = "2021-04",
-          axis_text_align = "centre") 
+          axis_text_align = "centre",
+          font_family = "Roboto Condensed") 
 ```
 
 <img src="man/figures/README-gantt_centre_aligned-1.png" width="100%" />
@@ -234,7 +276,7 @@ tibble::tribble(~wp, ~activity, ~start_date, ~end_date,
 Finally, keep in mind that ganttrify outputs `ggplot` objects. Some
 theming options may not behave exactly as you expect, but for example
 adding title, subtitle, and captions can be done as you would normally
-do with any `ggplot` graphs.
+do with any `ggplot2` graph.
 
 ``` r
 ganttrify(project = ganttrify::test_project,
@@ -358,11 +400,11 @@ At this stage, the package has strong expectations about the input
 format, and does not provide meaningful error messages. If you see
 unexpected results, please consider that:
 
--   no cell in the activity column must be empty
--   an activity cannot be called the same as a wp
--   activities in different wp should have different names (or at least
-    add a space at the end or something so that they look different to
-    the computer).
+- no cell in the activity column must be empty
+- an activity cannot be called the same as a wp
+- activities in different wp should have different names (or at least
+  add a space at the end or something so that they look different to the
+  computer).
 
 Some of this limitations should be dealt with in a future update.
 

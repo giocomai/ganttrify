@@ -22,7 +22,15 @@
 #' @param colour_stripe Character, defaults to "lightgray". This is the stripe colour in the background used in alternate months.
 #' @param alpha_wp Numeric, defaults to 1. Controls transparency of the line used to represent WPs.
 #' @param alpha_activity Numeric, defaults to 1. Controls transparency of the line used to represent activities.
-#' @param line_end Character, defaults to "round". One of "round", "butt", "square". Controls line ends.
+#' @param line_end Character, defaults to NULL. If given, takes precedence over `line_end_wp` and `line_end_activity` and applies the value to both. One of "round", "butt", "square". Controls line ends.
+#' @param line_end_wp Character, defaults to "round". One of "round", "butt", "square". Controls line ends.
+#' @param line_end_activity Character, defaults to "butt". One of "round", "butt", "square". Controls line ends.
+#' @param spot_padding Unit, defaults to `ggplot2::unit(0.2, "lines")`. If you use spot events, this is the padding around the text. Smaller value are best for busy gantt charts; if you have lots of space or use larger font sizes you may want to increase this value.
+#' @param spot_fontface Defaults to "bold". Available values are "plain", "bold", "italic" and "bold.italic".
+#' @param spot_text_colour Defaults to "grey20", for a dark but not quite black text. 
+#' @param spot_size_text_relative Defaults to 1. This is combined with `size_text_relative`. 
+#' @param spot_fill Defaults to `ggplot2::alpha(c("white"), 1)`. This is the background fill colour of spot events. By default, it is set to solid white. If you want to add some transparency to enable visual continuity of the underlying lines, adjust the transparency value to your taste adapting the function used by default.
+#' @param spot_border Defaults to 0.25. Internally passed as `label.size` to `geom_label()`.  Set to 0 or NA to remove the border. 
 #' @param month_breaks Numeric, defaults to 1. It defines if labels for all months are shown or only once every x months. Useful for longer projects.
 #' @param show_vertical_lines Logical, defaults to TRUE. If set to FALSE, it hides the thin vertical lines corresponding to month numbers. Useful in particular for longer projects. 
 #' @param axis_text_align Character, defaults to "right". Defines alignment of text on the y-axis is left. Accepted values are "left", "right", "centre", or "center".
@@ -55,7 +63,15 @@ ganttrify <- function(project,
                       colour_stripe = "lightgray",
                       alpha_wp = 1,
                       alpha_activity = 1,
-                      line_end = "round",
+                      line_end = NULL,
+                      line_end_wp = "round",
+                      line_end_activity = "butt",
+                      spot_padding = ggplot2::unit(0.2, "lines"),
+                      spot_fill = ggplot2::alpha(c("white"),1),
+                      spot_text_colour = "gray20",
+                      spot_size_text_relative = 1,
+                      spot_fontface = "bold",
+                      spot_border = 0.25,
                       month_breaks = 1, 
                       show_vertical_lines = TRUE,
                       axis_text_align = "right") {
@@ -63,6 +79,11 @@ ganttrify <- function(project,
   # repeat colours if not enough colours given
   if (length(unique(project$wp))>length(as.character(wesanderson::wes_palette("Darjeeling1")))) {
     colour_palette <- rep(colour_palette, length(unique(project$wp)))[1:length(unique(project$wp))]
+  }
+  
+  if (is.null(line_end)==FALSE) {
+    line_end_wp <- line_end
+    line_end_activity <- line_end
   }
   
   if (label_wrap!=FALSE) {
@@ -217,12 +238,12 @@ ganttrify <- function(project,
   gg_gantt <- gg_gantt +
     ### activities
     ggplot2::geom_segment(data = df_yearmon_fct,
-                          lineend = line_end,
+                          lineend = line_end_activity,
                           size = size_activity,
                           alpha = df_yearmon_fct$activity_alpha) +
     ### wp
     ggplot2::geom_segment(data = df_yearmon_fct,
-                          lineend = line_end,
+                          lineend = line_end_wp,
                           size = size_wp,
                           alpha = df_yearmon_fct$wp_alpha)
   
@@ -315,10 +336,13 @@ ganttrify <- function(project,
                             mapping = ggplot2::aes(x = spot_date,
                                                    y = activity,
                                                    label = spot_type),
-                            colour = "gray30",
-                            fontface = "bold",
+                            label.padding = spot_padding,
+                            label.size = spot_border,
+                            colour = spot_text_colour,
+                            fontface = spot_fontface,
                             family = font_family,
-                            size = 3*size_text_relative) 
+                            size = 3*size_text_relative*spot_size_text_relative,
+                            fill = spot_fill) 
     }
   } 
   
