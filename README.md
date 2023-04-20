@@ -233,6 +233,37 @@ ganttrify(project = test_36,
 
 <img src="man/figures/README-gantt_36_months-1.png" width="100%" />
 
+If you have many working packages, you may want to adjust the size of
+the output, and choose palettes with more colours. You can always pass a
+custom palette, but if you’re looking for some inspiration, the package
+[`MetBrewer`](https://github.com/BlakeRMills/MetBrewer) with palettes
+inspired by works at the Metropolitan Museum of Art in New York has some
+options that may make your gantt chart even fancier.
+
+``` r
+
+test_project_df <- dplyr::bind_rows(
+  ganttrify::test_project,
+  tibble::tibble(
+    wp = ganttrify::test_project$wp %>% stringr::str_replace(pattern = "1", replacement = "4") %>% stringr::str_replace(pattern = "2", replacement = "5") %>%  stringr::str_replace(pattern = "3", replacement = "6"),
+    activity = ganttrify::test_project$activity %>% stringr::str_replace(pattern = "^1", replacement = "4") %>% stringr::str_replace(pattern = "^2", replacement = "5") %>%  stringr::str_replace(pattern = "^3", replacement = "6"), 
+    start_date = test_project$start_date + 12, 
+    end_date = test_project$end_date + 12))
+
+
+ganttrify(project = test_project_df,
+          size_text_relative = 1.2,
+          month_breaks = 2,
+          project_start_date = "2023-01",
+          font_family = "Roboto Condensed",
+          colour_palette =  MetBrewer::met.brewer("Lakota"))
+#> Registered S3 method overwritten by 'MetBrewer':
+#>   method        from       
+#>   print.palette wesanderson
+```
+
+<img src="man/figures/README-lakota-1.png" width="100%" />
+
 Does right-aligned text bother you?
 
 ``` r
@@ -282,7 +313,7 @@ do with any `ggplot2` graph.
 ganttrify(project = ganttrify::test_project,
           spots = ganttrify::test_spots,
           project_start_date = "2020-01",
-          font_family = "Roboto Condensed")+
+          font_family = "Roboto Condensed") +
   ggplot2::labs(title = "My beautiful plans for 2020",
                 subtitle = "I will definitely comply with the exact timing of each and all activities*",
                 caption = "* I mean, I'll do my best, but if there's a pandemic or something, it's not my fault really")
