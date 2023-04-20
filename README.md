@@ -290,6 +290,18 @@ ganttrify(project = ganttrify::test_project,
 
 <img src="man/figures/README-gantt_with_text-1.png" width="100%" />
 
+And since it’s a `ggplot2` object, you can export it as you would any
+other ggplot graph, by using `ggplot2::ggsave`. This allows also to
+customise the size of the final input, running
+e.g. `ggplot2::ggsave(filename = "my_gantt.png", width = 12, height = 8, bg = "white")`
+after you run the `ganttrify` function (if you set the file extension to
+`pdf` or `svg`, you will get the chart in vector format for more clarity
+at different zoom levels).
+
+If you are using this in an `rmarkdown` document, keep in mind that you
+can set the size at the chunk level, e.g. with something like
+`{r fig.width=12, fig.height=8}` in the chunk header.
+
 ## Shiny app
 
 If you prefer interactive web interfaces to coding, you can still have a
