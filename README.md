@@ -161,7 +161,18 @@ ganttrify(project = ganttrify::test_project,
           font_family = "Roboto Condensed")
 ```
 
-<img src="man/figures/README-gantt_no_wp-1.png" width="100%" />
+<img src="man/figures/README-gantt_no_wp-1.png" width="100%" /> Or
+perhaps, you did want to keep the name of working package on the left,
+but just felt that the horizontal line for the WP is redundant? Let’s
+make the WP lines invisible, and nobody will ever know they’re there!
+
+``` r
+ganttrify(project = ganttrify::test_project,
+          alpha_wp = 0,
+          font_family = "Roboto Condensed")
+```
+
+<img src="man/figures/README-gantt_no_wp_with_title-1.png" width="100%" />
 
 I felt that rounded line endings for the working packages, and “butt”
 ending for activities is the best combination of elegance and clarity.
@@ -346,8 +357,12 @@ shiny_ganttrify()
 
 And there you go!
 
-![A screenshot of the Shiny
-app](man/figures/shiny_ganttrify_screenshot.png)
+<figure>
+<img src="man/figures/shiny_ganttrify_screenshot.png"
+alt="A screenshot of the Shiny app" />
+<figcaption aria-hidden="true">A screenshot of the Shiny
+app</figcaption>
+</figure>
 
 You can check it online with no further ado at the following link:
 

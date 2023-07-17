@@ -119,6 +119,13 @@ ganttrify(project = ganttrify::test_project,
           hide_wp = TRUE,
           font_family = "Roboto Condensed")
 ```
+Or perhaps, you did want to keep the name of working package on the left, but just felt that the horizontal line for the WP is redundant? Let's make the WP lines invisible, and nobody will ever know they're there!
+
+```{r gantt_no_wp_with_title}
+ganttrify(project = ganttrify::test_project,
+          alpha_wp = 0,
+          font_family = "Roboto Condensed")
+```
 
 I felt that rounded line endings for the working packages, and "butt" ending for activities is the best combination of elegance and clarity. 
 
