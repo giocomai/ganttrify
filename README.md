@@ -38,8 +38,8 @@ I did find a [solution that was rather visually
 satisfying](https://insileco.github.io/2017/09/20/gantt-charts-in-r/),
 but it was in base R, and all the cool kids nowadays know that base
 plotting in R exists only [for compatibility with
-S](https://twitter.com/whydoesr): not an option! (Hey, I’m joking, don’t
-@ me!)
+S](https://botsin.space/@whydoesr): not an option! (Hey, I’m joking,
+don’t @ me!)
 
 Given what is evidently my posh taste for Gantt charts, I had no other
 option than making this package with a pretentious, gentrified name,
