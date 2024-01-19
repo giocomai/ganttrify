@@ -20,6 +20,7 @@ ganttrify(
   size_text_relative = 1,
   label_wrap = FALSE,
   month_number_label = TRUE,
+  month_label_string = "M",
   month_date_label = TRUE,
   x_axis_position = "top",
   colour_stripe = "lightgray",
@@ -69,6 +70,8 @@ ganttrify(
 \item{label_wrap}{Defaults to FALSE. If given, must be numeric, referring to the number of characters per line allowed in the labels of projects and activities, or logical (if set to TRUE, it will default to 32). To be used when labels would otherwise be excessively long.}
 
 \item{month_number_label}{Logical, defaults to TRUE. If TRUE, it includes month numbering on x axis.}
+
+\item{month_label_string}{Defaults to "M", relevant only if `month_number_label` is set to \code{TRUE}. String that precedes the month number: e.g. if set to "M", then months are labeled as "M1", "M2", etc.}
 
 \item{month_date_label}{Logical, defaults to TRUE. If TRUE, it includes month names and dates on the x axis.}
 
