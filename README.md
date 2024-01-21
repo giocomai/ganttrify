@@ -101,9 +101,11 @@ additional examples below.
 ``` r
 library("ganttrify")
 
-ganttrify(project = ganttrify::test_project,
-          project_start_date = "2021-03",
-          font_family = "Roboto Condensed")
+ganttrify(
+  project = ganttrify::test_project,
+  project_start_date = "2021-03",
+  font_family = "Roboto Condensed"
+)
 ```
 
 <img src="man/figures/README-gantt_chart-1.png" width="100%" /> \[all
@@ -127,10 +129,12 @@ served.
 | WP2 - Whatever actual work | M         |         6 |
 
 ``` r
-ganttrify(project = ganttrify::test_project,
-          spots = ganttrify::test_spots,
-          project_start_date = "2021-03",
-          font_family = "Roboto Condensed")
+ganttrify(
+  project = ganttrify::test_project,
+  spots = ganttrify::test_spots,
+  project_start_date = "2021-03",
+  font_family = "Roboto Condensed"
+)
 ```
 
 <img src="man/figures/README-gantt_charts_with_events-1.png" width="100%" />
@@ -141,12 +145,14 @@ it possible to outline quarters?”
 You’re welcome.
 
 ``` r
-ganttrify(project = ganttrify::test_project,
-          spots = ganttrify::test_spots,
-          project_start_date = "2021-03",
-          size_text_relative = 1.2, 
-          mark_quarters = TRUE,
-          font_family = "Roboto Condensed")
+ganttrify(
+  project = ganttrify::test_project,
+  spots = ganttrify::test_spots,
+  project_start_date = "2021-03",
+  size_text_relative = 1.2,
+  mark_quarters = TRUE,
+  font_family = "Roboto Condensed"
+)
 ```
 
 <img src="man/figures/README-gantt_charts_resized_text-1.png" width="100%" />
@@ -156,9 +162,11 @@ package and are fine with just lines for activities. Did you mean it
 like this?
 
 ``` r
-ganttrify(project = ganttrify::test_project,
-          hide_wp = TRUE,
-          font_family = "Roboto Condensed")
+ganttrify(
+  project = ganttrify::test_project,
+  hide_wp = TRUE,
+  font_family = "Roboto Condensed"
+)
 ```
 
 <img src="man/figures/README-gantt_no_wp-1.png" width="100%" /> Or
@@ -167,9 +175,11 @@ but just felt that the horizontal line for the WP is redundant? Let’s
 make the WP lines invisible, and nobody will ever know they’re there!
 
 ``` r
-ganttrify(project = ganttrify::test_project,
-          alpha_wp = 0,
-          font_family = "Roboto Condensed")
+ganttrify(
+  project = ganttrify::test_project,
+  alpha_wp = 0,
+  font_family = "Roboto Condensed"
+)
 ```
 
 <img src="man/figures/README-gantt_no_wp_with_title-1.png" width="100%" />
@@ -180,13 +190,15 @@ ending for activities is the best combination of elegance and clarity.
 Also, I like full opacity for the lines, but it’s ok if you don’t:
 
 ``` r
-ganttrify(project = ganttrify::test_project,
-          project_start_date = "2021-04",
-          alpha_wp = 0.9,
-          alpha_activity = 0.6,
-          line_end_wp = "round", # alternative values: "butt" or "square"
-          line_end_activity = "round", # alternative values: "butt" or "square"
-          font_family = "Roboto Condensed")
+ganttrify(
+  project = ganttrify::test_project,
+  project_start_date = "2021-04",
+  alpha_wp = 0.9,
+  alpha_activity = 0.6,
+  line_end_wp = "round", # alternative values: "butt" or "square"
+  line_end_activity = "round", # alternative values: "butt" or "square"
+  font_family = "Roboto Condensed"
+)
 ```
 
 <img src="man/figures/README-gantt_butt_line_transparency-1.png" width="100%" />
@@ -196,14 +208,15 @@ padding around the text. Say, you want a larger box around the text, but
 a semi-transparent background? There you go!
 
 ``` r
-ganttrify(project = ganttrify::test_project,
-          spots = ganttrify::test_spots,
-          project_start_date = "2021-04",
-          font_family = "Roboto Condensed",
-          spot_size_text_relative = 1.5,
-          spot_fill = ggplot2::alpha(c("white"), 0.7),
-          spot_padding = ggplot2::unit(0.4, "lines")
-          ) 
+ganttrify(
+  project = ganttrify::test_project,
+  spots = ganttrify::test_spots,
+  project_start_date = "2021-04",
+  font_family = "Roboto Condensed",
+  spot_size_text_relative = 1.5,
+  spot_fill = ggplot2::alpha(c("white"), 0.7),
+  spot_padding = ggplot2::unit(0.4, "lines")
+)
 ```
 
 <img src="man/figures/README-spot_customisations-1.png" width="100%" />
@@ -213,15 +226,16 @@ may become hard to read on darker backgrounds, especially if reviewers
 then print your proposal, but… you have been warned:
 
 ``` r
-ganttrify(project = ganttrify::test_project,
-          spots = ganttrify::test_spots,
-          project_start_date = "2021-04",
-          font_family = "Roboto Condensed",
-          spot_text_colour = "grey10",
-          spot_fontface = "bold",
-          spot_fill = NA,
-          spot_border = NA
-          ) 
+ganttrify(
+  project = ganttrify::test_project,
+  spots = ganttrify::test_spots,
+  project_start_date = "2021-04",
+  font_family = "Roboto Condensed",
+  spot_text_colour = "grey10",
+  spot_fontface = "bold",
+  spot_fill = NA,
+  spot_border = NA
+)
 ```
 
 <img src="man/figures/README-spot_text-1.png" width="100%" />
@@ -233,13 +247,15 @@ default.
 
 ``` r
 test_36 <- ganttrify::test_project
-test_36[11,4] <- 36
+test_36[11, 4] <- 36
 
-ganttrify(project = test_36,
-          project_start_date = "2021-04", 
-          month_breaks = 3,
-          show_vertical_lines = FALSE,
-          font_family = "Roboto Condensed")
+ganttrify(
+  project = test_36,
+  project_start_date = "2021-04",
+  month_breaks = 3,
+  show_vertical_lines = FALSE,
+  font_family = "Roboto Condensed"
+)
 ```
 
 <img src="man/figures/README-gantt_36_months-1.png" width="100%" />
@@ -254,22 +270,25 @@ inspired by works at the Metropolitan Museum of Art in New York has some
 options that may make your gantt chart even fancier.
 
 ``` r
-
 test_project_df <- dplyr::bind_rows(
   ganttrify::test_project,
   tibble::tibble(
-    wp = ganttrify::test_project$wp %>% stringr::str_replace(pattern = "1", replacement = "4") %>% stringr::str_replace(pattern = "2", replacement = "5") %>%  stringr::str_replace(pattern = "3", replacement = "6"),
-    activity = ganttrify::test_project$activity %>% stringr::str_replace(pattern = "^1", replacement = "4") %>% stringr::str_replace(pattern = "^2", replacement = "5") %>%  stringr::str_replace(pattern = "^3", replacement = "6"), 
-    start_date = test_project$start_date + 12, 
-    end_date = test_project$end_date + 12))
+    wp = ganttrify::test_project$wp %>% stringr::str_replace(pattern = "1", replacement = "4") %>% stringr::str_replace(pattern = "2", replacement = "5") %>% stringr::str_replace(pattern = "3", replacement = "6"),
+    activity = ganttrify::test_project$activity %>% stringr::str_replace(pattern = "^1", replacement = "4") %>% stringr::str_replace(pattern = "^2", replacement = "5") %>% stringr::str_replace(pattern = "^3", replacement = "6"),
+    start_date = test_project$start_date + 12,
+    end_date = test_project$end_date + 12
+  )
+)
 
 
-ganttrify(project = test_project_df,
-          size_text_relative = 1.2,
-          month_breaks = 2,
-          project_start_date = "2023-01",
-          font_family = "Roboto Condensed",
-          colour_palette =  MetBrewer::met.brewer("Lakota")) # or e.g. colour_palette = c("#6ACCEA", "#00FFB8", "#B90000", "#6C919C")
+ganttrify(
+  project = test_project_df,
+  size_text_relative = 1.2,
+  month_breaks = 2,
+  project_start_date = "2023-01",
+  font_family = "Roboto Condensed",
+  colour_palette = MetBrewer::met.brewer("Lakota")
+) # or e.g. colour_palette = c("#6ACCEA", "#00FFB8", "#B90000", "#6C919C")
 #> Registered S3 method overwritten by 'MetBrewer':
 #>   method        from       
 #>   print.palette wesanderson
@@ -280,23 +299,25 @@ ganttrify(project = test_project_df,
 Does right-aligned text bother you?
 
 ``` r
-
-ganttrify(project = ganttrify::test_project,
-          spots = ganttrify::test_spots,
-          project_start_date = "2021-04",
-          axis_text_align = "left",
-          font_family = "Roboto Condensed") 
+ganttrify(
+  project = ganttrify::test_project,
+  spots = ganttrify::test_spots,
+  project_start_date = "2021-04",
+  axis_text_align = "left",
+  font_family = "Roboto Condensed"
+)
 ```
 
 <img src="man/figures/README-gantt_left_aligned-1.png" width="100%" />
 
 ``` r
-
-ganttrify(project = ganttrify::test_project,
-          spots = ganttrify::test_spots,
-          project_start_date = "2021-04",
-          axis_text_align = "centre",
-          font_family = "Roboto Condensed") 
+ganttrify(
+  project = ganttrify::test_project,
+  spots = ganttrify::test_spots,
+  project_start_date = "2021-04",
+  axis_text_align = "centre",
+  font_family = "Roboto Condensed"
+)
 ```
 
 <img src="man/figures/README-gantt_centre_aligned-1.png" width="100%" />
@@ -305,14 +326,18 @@ Do you have *very* long names for your activities? The parameter
 `label_wrap` is there to help you.
 
 ``` r
-tibble::tribble(~wp, ~activity, ~start_date, ~end_date,
-                "WP 1", "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Aliquet eget sit amet tellus", 1, 6,
-                "WP 2", "Proin sed libero enim sed faucibus turpis in eu mi. Massa ultricies mi quis hendrerit dolor magna eget est.", 6, 7, 
-                                "WP 2", "Proin sed libero enim sed faucibus turpis in eu mi. Massa ultricies mi quis hendrerit dolor magna eget est.", 3, 4, 
-                "WP 2", "Neque laoreet suspendisse interdum consectetur libero id faucibus nisl tincidunt.", 4, 8) %>% 
-  ganttrify(label_wrap = 32, 
-            project_start_date = "2023-01",
-            font_family = "Roboto Condensed") 
+tibble::tribble(
+  ~wp, ~activity, ~start_date, ~end_date,
+  "WP 1", "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Aliquet eget sit amet tellus", 1, 6,
+  "WP 2", "Proin sed libero enim sed faucibus turpis in eu mi. Massa ultricies mi quis hendrerit dolor magna eget est.", 6, 7,
+  "WP 2", "Proin sed libero enim sed faucibus turpis in eu mi. Massa ultricies mi quis hendrerit dolor magna eget est.", 3, 4,
+  "WP 2", "Neque laoreet suspendisse interdum consectetur libero id faucibus nisl tincidunt.", 4, 8
+) %>%
+  ganttrify(
+    label_wrap = 32,
+    project_start_date = "2023-01",
+    font_family = "Roboto Condensed"
+  )
 ```
 
 <img src="man/figures/README-gantt_long_labels-1.png" width="100%" />
@@ -323,13 +348,17 @@ adding title, subtitle, and captions can be done as you would normally
 do with any `ggplot2` graph.
 
 ``` r
-ganttrify(project = ganttrify::test_project,
-          spots = ganttrify::test_spots,
-          project_start_date = "2020-01",
-          font_family = "Roboto Condensed") +
-  ggplot2::labs(title = "My beautiful plans for 2020",
-                subtitle = "I will definitely comply with the exact timing of each and all activities*",
-                caption = "* I mean, I'll do my best, but if there's a pandemic or something, it's not my fault really")
+ganttrify(
+  project = ganttrify::test_project,
+  spots = ganttrify::test_spots,
+  project_start_date = "2020-01",
+  font_family = "Roboto Condensed"
+) +
+  ggplot2::labs(
+    title = "My beautiful plans for 2020",
+    subtitle = "I will definitely comply with the exact timing of each and all activities*",
+    caption = "* I mean, I'll do my best, but if there's a pandemic or something, it's not my fault really"
+  )
 ```
 
 <img src="man/figures/README-gantt_with_text-1.png" width="100%" />
@@ -409,12 +438,14 @@ knitr::kable(ganttrify::test_project_date_month)
 | WP3 - Dissemination        | 3.2. Disseminate far        | 2021-08    | 2021-12  |
 
 ``` r
-ganttrify(project = ganttrify::test_project_date_month,
-          spots = ganttrify::test_spots_date_month,
-          by_date = TRUE,
-          size_text_relative = 1.2, 
-          mark_quarters = TRUE,
-          font_family = "Roboto Condensed")
+ganttrify(
+  project = ganttrify::test_project_date_month,
+  spots = ganttrify::test_spots_date_month,
+  by_date = TRUE,
+  size_text_relative = 1.2,
+  mark_quarters = TRUE,
+  font_family = "Roboto Condensed"
+)
 ```
 
 <img src="man/figures/README-gantt_date_month-1.png" width="100%" />
@@ -441,13 +472,15 @@ knitr::kable(ganttrify::test_project_date_day)
 | Social media team  | Active promo       | 2020-10-31 | 2020-12-15 |
 
 ``` r
-ganttrify(project = ganttrify::test_project_date_day,
-          spots = ganttrify::test_spots_date_day,
-          by_date = TRUE,
-          exact_date = TRUE,
-          size_text_relative = 1.2,
-          month_number_label = FALSE,
-          font_family = "Roboto Condensed")
+ganttrify(
+  project = ganttrify::test_project_date_day,
+  spots = ganttrify::test_spots_date_day,
+  by_date = TRUE,
+  exact_date = TRUE,
+  size_text_relative = 1.2,
+  month_number_label = FALSE,
+  font_family = "Roboto Condensed"
+)
 ```
 
 <img src="man/figures/README-gantt_date_day-1.png" width="100%" />

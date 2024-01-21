@@ -77,9 +77,11 @@ If you prefer to include dates instead of month numbers, please see additional e
 ```{r gantt_chart}
 library("ganttrify")
 
-ganttrify(project = ganttrify::test_project,
-          project_start_date = "2021-03",
-          font_family = "Roboto Condensed")
+ganttrify(
+  project = ganttrify::test_project,
+  project_start_date = "2021-03",
+  font_family = "Roboto Condensed"
+)
 ```
 [all examples in this page will use the `Roboto condensed` font; if it is not installed, you can use the default `sans`. See the *Troubleshooting* section at the bottom of this readme.]
 
@@ -92,10 +94,12 @@ knitr::kable(ganttrify::test_spots)
 ```
 
 ```{r gantt_charts_with_events}
-ganttrify(project = ganttrify::test_project,
-          spots = ganttrify::test_spots,
-          project_start_date = "2021-03",
-          font_family = "Roboto Condensed")
+ganttrify(
+  project = ganttrify::test_project,
+  spots = ganttrify::test_spots,
+  project_start_date = "2021-03",
+  font_family = "Roboto Condensed"
+)
 ```
 
 "I can't read the text, can I change the text size?", I heard. 
@@ -104,28 +108,34 @@ ganttrify(project = ganttrify::test_project,
 You're welcome. 
 
 ```{r gantt_charts_resized_text}
-ganttrify(project = ganttrify::test_project,
-          spots = ganttrify::test_spots,
-          project_start_date = "2021-03",
-          size_text_relative = 1.2, 
-          mark_quarters = TRUE,
-          font_family = "Roboto Condensed")
+ganttrify(
+  project = ganttrify::test_project,
+  spots = ganttrify::test_spots,
+  project_start_date = "2021-03",
+  size_text_relative = 1.2,
+  mark_quarters = TRUE,
+  font_family = "Roboto Condensed"
+)
 ```
 
 
 It appears that some of you don't like having a line for the working package and are fine with just lines for activities. Did you mean it like this?
 
 ```{r gantt_no_wp}
-ganttrify(project = ganttrify::test_project,
-          hide_wp = TRUE,
-          font_family = "Roboto Condensed")
+ganttrify(
+  project = ganttrify::test_project,
+  hide_wp = TRUE,
+  font_family = "Roboto Condensed"
+)
 ```
 Or perhaps, you did want to keep the name of working package on the left, but just felt that the horizontal line for the WP is redundant? Let's make the WP lines invisible, and nobody will ever know they're there!
 
 ```{r gantt_no_wp_with_title}
-ganttrify(project = ganttrify::test_project,
-          alpha_wp = 0,
-          font_family = "Roboto Condensed")
+ganttrify(
+  project = ganttrify::test_project,
+  alpha_wp = 0,
+  font_family = "Roboto Condensed"
+)
 ```
 
 I felt that rounded line endings for the working packages, and "butt" ending for activities is the best combination of elegance and clarity. 
@@ -133,38 +143,42 @@ I felt that rounded line endings for the working packages, and "butt" ending for
 Also, I like full opacity for the lines, but it's ok if you don't:
   
 ```{r gantt_butt_line_transparency}
-ganttrify(project = ganttrify::test_project,
-          project_start_date = "2021-04",
-          alpha_wp = 0.9,
-          alpha_activity = 0.6,
-          line_end_wp = "round", # alternative values: "butt" or "square"
-          line_end_activity = "round", # alternative values: "butt" or "square"
-          font_family = "Roboto Condensed")
+ganttrify(
+  project = ganttrify::test_project,
+  project_start_date = "2021-04",
+  alpha_wp = 0.9,
+  alpha_activity = 0.6,
+  line_end_wp = "round", # alternative values: "butt" or "square"
+  line_end_activity = "round", # alternative values: "butt" or "square"
+  font_family = "Roboto Condensed"
+)
 ```
 If you use spot events, then there's all sorts of opinions you can have about the color and transparency of spot events, as well as the size and padding around the text. Say, you want a larger box around the text, but a semi-transparent background? There you go!
 
 ```{r spot_customisations}
-ganttrify(project = ganttrify::test_project,
-          spots = ganttrify::test_spots,
-          project_start_date = "2021-04",
-          font_family = "Roboto Condensed",
-          spot_size_text_relative = 1.5,
-          spot_fill = ggplot2::alpha(c("white"), 0.7),
-          spot_padding = ggplot2::unit(0.4, "lines")
-          ) 
+ganttrify(
+  project = ganttrify::test_project,
+  spots = ganttrify::test_spots,
+  project_start_date = "2021-04",
+  font_family = "Roboto Condensed",
+  spot_size_text_relative = 1.5,
+  spot_fill = ggplot2::alpha(c("white"), 0.7),
+  spot_padding = ggplot2::unit(0.4, "lines")
+)
 ```
 Or perhaps you actually just want the label text, without any background, or perhaps change the text colour. Be mindful that the text may become hard to read on darker backgrounds, especially if reviewers then print your proposal, but... you have been warned:
 
 ```{r spot_text}
-ganttrify(project = ganttrify::test_project,
-          spots = ganttrify::test_spots,
-          project_start_date = "2021-04",
-          font_family = "Roboto Condensed",
-          spot_text_colour = "grey10",
-          spot_fontface = "bold",
-          spot_fill = NA,
-          spot_border = NA
-          ) 
+ganttrify(
+  project = ganttrify::test_project,
+  spots = ganttrify::test_spots,
+  project_start_date = "2021-04",
+  font_family = "Roboto Condensed",
+  spot_text_colour = "grey10",
+  spot_fontface = "bold",
+  spot_fill = NA,
+  spot_border = NA
+)
 ```
 
 Some of us work on very long projects, and may need to declutter the chart to increase readability. So let's show the month number only once every three months, and hide the thin vertical lines included by default.
@@ -172,87 +186,99 @@ Some of us work on very long projects, and may need to declutter the chart to in
 
 ```{r gantt_36_months}
 test_36 <- ganttrify::test_project
-test_36[11,4] <- 36
+test_36[11, 4] <- 36
 
-ganttrify(project = test_36,
-          project_start_date = "2021-04", 
-          month_breaks = 3,
-          show_vertical_lines = FALSE,
-          font_family = "Roboto Condensed")
-  
+ganttrify(
+  project = test_36,
+  project_start_date = "2021-04",
+  month_breaks = 3,
+  show_vertical_lines = FALSE,
+  font_family = "Roboto Condensed"
+)
 ```
 
 If you have many working packages, you may want to adjust the size of the output, and choose palettes with more colours. You can always pass a custom palette (e.g. by setting `colour_palette = c("#6ACCEA", "#00FFB8", "#B90000", "#6C919C")`), but if you're looking for some inspiration, the package [`MetBrewer`](https://github.com/BlakeRMills/MetBrewer) with palettes inspired by works at the Metropolitan Museum of Art in New York has some options that may make your gantt chart even fancier. 
 
 ```{r lakota, fig.width=7, fig.height=7}
-
 test_project_df <- dplyr::bind_rows(
   ganttrify::test_project,
   tibble::tibble(
-    wp = ganttrify::test_project$wp %>% stringr::str_replace(pattern = "1", replacement = "4") %>% stringr::str_replace(pattern = "2", replacement = "5") %>%  stringr::str_replace(pattern = "3", replacement = "6"),
-    activity = ganttrify::test_project$activity %>% stringr::str_replace(pattern = "^1", replacement = "4") %>% stringr::str_replace(pattern = "^2", replacement = "5") %>%  stringr::str_replace(pattern = "^3", replacement = "6"), 
-    start_date = test_project$start_date + 12, 
-    end_date = test_project$end_date + 12))
+    wp = ganttrify::test_project$wp %>% stringr::str_replace(pattern = "1", replacement = "4") %>% stringr::str_replace(pattern = "2", replacement = "5") %>% stringr::str_replace(pattern = "3", replacement = "6"),
+    activity = ganttrify::test_project$activity %>% stringr::str_replace(pattern = "^1", replacement = "4") %>% stringr::str_replace(pattern = "^2", replacement = "5") %>% stringr::str_replace(pattern = "^3", replacement = "6"),
+    start_date = test_project$start_date + 12,
+    end_date = test_project$end_date + 12
+  )
+)
 
 
-ganttrify(project = test_project_df,
-          size_text_relative = 1.2,
-          month_breaks = 2,
-          project_start_date = "2023-01",
-          font_family = "Roboto Condensed",
-          colour_palette =  MetBrewer::met.brewer("Lakota")) # or e.g. colour_palette = c("#6ACCEA", "#00FFB8", "#B90000", "#6C919C")
-
+ganttrify(
+  project = test_project_df,
+  size_text_relative = 1.2,
+  month_breaks = 2,
+  project_start_date = "2023-01",
+  font_family = "Roboto Condensed",
+  colour_palette = MetBrewer::met.brewer("Lakota")
+) # or e.g. colour_palette = c("#6ACCEA", "#00FFB8", "#B90000", "#6C919C")
 ``` 
 
 
 ```{r}
-
 ```
 
 Does right-aligned text bother you?
 
 ```{r gantt_left_aligned}
-
-ganttrify(project = ganttrify::test_project,
-          spots = ganttrify::test_spots,
-          project_start_date = "2021-04",
-          axis_text_align = "left",
-          font_family = "Roboto Condensed") 
+ganttrify(
+  project = ganttrify::test_project,
+  spots = ganttrify::test_spots,
+  project_start_date = "2021-04",
+  axis_text_align = "left",
+  font_family = "Roboto Condensed"
+)
 ```
 
 ```{r gantt_centre_aligned}
-
-ganttrify(project = ganttrify::test_project,
-          spots = ganttrify::test_spots,
-          project_start_date = "2021-04",
-          axis_text_align = "centre",
-          font_family = "Roboto Condensed") 
+ganttrify(
+  project = ganttrify::test_project,
+  spots = ganttrify::test_spots,
+  project_start_date = "2021-04",
+  axis_text_align = "centre",
+  font_family = "Roboto Condensed"
+)
 ```
   
 Do you have *very* long names for your activities? The parameter `label_wrap` is there to help you.
 
 ```{r gantt_long_labels}
-tibble::tribble(~wp, ~activity, ~start_date, ~end_date,
-                "WP 1", "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Aliquet eget sit amet tellus", 1, 6,
-                "WP 2", "Proin sed libero enim sed faucibus turpis in eu mi. Massa ultricies mi quis hendrerit dolor magna eget est.", 6, 7, 
-                                "WP 2", "Proin sed libero enim sed faucibus turpis in eu mi. Massa ultricies mi quis hendrerit dolor magna eget est.", 3, 4, 
-                "WP 2", "Neque laoreet suspendisse interdum consectetur libero id faucibus nisl tincidunt.", 4, 8) %>% 
-  ganttrify(label_wrap = 32, 
-            project_start_date = "2023-01",
-            font_family = "Roboto Condensed") 
+tibble::tribble(
+  ~wp, ~activity, ~start_date, ~end_date,
+  "WP 1", "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Aliquet eget sit amet tellus", 1, 6,
+  "WP 2", "Proin sed libero enim sed faucibus turpis in eu mi. Massa ultricies mi quis hendrerit dolor magna eget est.", 6, 7,
+  "WP 2", "Proin sed libero enim sed faucibus turpis in eu mi. Massa ultricies mi quis hendrerit dolor magna eget est.", 3, 4,
+  "WP 2", "Neque laoreet suspendisse interdum consectetur libero id faucibus nisl tincidunt.", 4, 8
+) %>%
+  ganttrify(
+    label_wrap = 32,
+    project_start_date = "2023-01",
+    font_family = "Roboto Condensed"
+  )
 ```
 
 
 Finally, keep in mind that ganttrify outputs `ggplot` objects. Some theming options may not behave exactly as you expect, but for example adding title, subtitle, and captions can be done as you would normally do with any `ggplot2` graph. 
 
 ```{r gantt_with_text}
-ganttrify(project = ganttrify::test_project,
-          spots = ganttrify::test_spots,
-          project_start_date = "2020-01",
-          font_family = "Roboto Condensed") +
-  ggplot2::labs(title = "My beautiful plans for 2020",
-                subtitle = "I will definitely comply with the exact timing of each and all activities*",
-                caption = "* I mean, I'll do my best, but if there's a pandemic or something, it's not my fault really")
+ganttrify(
+  project = ganttrify::test_project,
+  spots = ganttrify::test_spots,
+  project_start_date = "2020-01",
+  font_family = "Roboto Condensed"
+) +
+  ggplot2::labs(
+    title = "My beautiful plans for 2020",
+    subtitle = "I will definitely comply with the exact timing of each and all activities*",
+    caption = "* I mean, I'll do my best, but if there's a pandemic or something, it's not my fault really"
+  )
 ```
 
 And since it's a `ggplot2` object, you can export it as you would any other ggplot graph, by using `ggplot2::ggsave`. This allows also to customise the size of the final input, running e.g. `ggplot2::ggsave(filename = "my_gantt.png", width = 12, height = 8, bg = "white")` after you run the `ganttrify` function (if you set the file extension to `pdf` or `svg`, you will get the chart in vector format for more clarity at different zoom levels).
@@ -301,12 +327,14 @@ knitr::kable(ganttrify::test_project_date_month)
 ```
 
 ```{r gantt_date_month}
-ganttrify(project = ganttrify::test_project_date_month,
-          spots = ganttrify::test_spots_date_month,
-          by_date = TRUE,
-          size_text_relative = 1.2, 
-          mark_quarters = TRUE,
-          font_family = "Roboto Condensed")
+ganttrify(
+  project = ganttrify::test_project_date_month,
+  spots = ganttrify::test_spots_date_month,
+  by_date = TRUE,
+  size_text_relative = 1.2,
+  mark_quarters = TRUE,
+  font_family = "Roboto Condensed"
+)
 ```
 
 As it turns out, someone wants more detail: they'd like to be able to input activities with an exact start and end date. I start to suspect that `ganttrify` at this stage may not be exactly what you're looking for, but perhaps this works for you?
@@ -317,13 +345,15 @@ knitr::kable(ganttrify::test_project_date_day)
 
 
 ```{r gantt_date_day}
-ganttrify(project = ganttrify::test_project_date_day,
-          spots = ganttrify::test_spots_date_day,
-          by_date = TRUE,
-          exact_date = TRUE,
-          size_text_relative = 1.2,
-          month_number_label = FALSE,
-          font_family = "Roboto Condensed")
+ganttrify(
+  project = ganttrify::test_project_date_day,
+  spots = ganttrify::test_spots_date_day,
+  by_date = TRUE,
+  exact_date = TRUE,
+  size_text_relative = 1.2,
+  month_number_label = FALSE,
+  font_family = "Roboto Condensed"
+)
 ```
 
 ## Troubleshooting
