@@ -79,7 +79,7 @@ ganttrify <- function(project,
                       axis_text_align = "right") {
   
   # repeat colours if not enough colours given
-  if (length(unique(project$wp))>length(as.character(wesanderson::wes_palette("Darjeeling1")))) {
+  if (length(unique(project$wp))>length(as.character(colour_palette))) {
     colour_palette <- rep(colour_palette, length(unique(project$wp)))[1:length(unique(project$wp))]
   }
   
