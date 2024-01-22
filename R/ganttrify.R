@@ -380,7 +380,7 @@ ganttrify <- function(project,
     ggplot2::geom_segment(
       data = df_yearmon_fct,
       lineend = line_end_wp,
-      size = size_wp,
+      linewidth = size_wp,
       alpha = df_yearmon_fct$wp_alpha
     )
 
