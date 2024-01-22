@@ -16,6 +16,7 @@ ganttrify(
   mark_years = FALSE,
   size_wp = 6,
   hide_wp = FALSE,
+  wp_label_bold = TRUE,
   size_activity = 4,
   size_text_relative = 1,
   label_wrap = FALSE,
@@ -82,6 +83,11 @@ used to represent WPs.}
 
 \item{hide_wp}{Logical, defaults to FALSE. If TRUE, the lines of the WP are
 hidden and only activities are shown.}
+
+\item{wp_label_bold}{Logical, defaults to \code{TRUE}. If \code{TRUE}, the
+label for working packages is set to bold face, while activities remain
+plain. Set to \code{FALSE} to keep have all labels in plain face or for
+further customisation (`ganttrify` offers basic markdown support).}
 
 \item{size_activity}{Numeric, defaults to 4. It defines the thickness of the
 line used to represent activities.}

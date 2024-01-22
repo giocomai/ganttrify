@@ -375,6 +375,33 @@ If you are using this in an `rmarkdown` document, keep in mind that you
 can set the size at the chunk level, e.g. with something like
 `{r fig.width=12, fig.height=8}` in the chunk header.
 
+### Markdown, html, images… it’s all there
+
+Now, to be honest, nobody asked for this. And I’m not even sure it’s a
+good idea. But if you are interested in more customisations of how the
+wp and activity labels appear, anything supported by
+[`ggtext`](https://wilkelab.org/ggtext/) should work here: markdown,
+basic html tags, and even inline images.
+
+``` r
+funky_project <- tibble::tribble(
+  ~wp, ~activity, ~start_date, ~end_date,
+  "<span style = 'color:red;'>Red</span> flavour", "Considering <sup>upper</sup> styles", 1, 6,
+  "<span style = 'color:red;'>Red</span> flavour", "Or **bold**, or *italic*", 3, 6,
+  "Don't forget <span style = 'font-size:6pt'>the small things</span>", "Contribute to Wikidata <img src='https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Wikidata-logo.svg/320px-Wikidata-logo.svg.png' width=20>", 5, 10,
+  "Don't forget <span style = 'font-size:6pt'>the small things</span>", "And to OpenStreetMap <img src='https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/Openstreetmap_logo.svg/256px-Openstreetmap_logo.svg.png' width=20>", 7, 12
+)
+
+ganttrify(
+  project = funky_project,
+  project_start_date = "2024-01",
+  font_family = "Roboto Condensed"
+) +
+  ggplot2::ggtitle("Custom activity labels, nothing else to see here")
+```
+
+<img src="man/figures/README-funky_project-1.png" width="100%" />
+
 ## Shiny app
 
 If you prefer interactive web interfaces to coding, you can still have a

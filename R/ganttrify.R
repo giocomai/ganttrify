@@ -33,6 +33,10 @@
 #'   used to represent WPs.
 #' @param hide_wp Logical, defaults to FALSE. If TRUE, the lines of the WP are
 #'   hidden and only activities are shown.
+#' @param wp_label_bold Logical, defaults to \code{TRUE}. If \code{TRUE}, the
+#'   label for working packages is set to bold face, while activities remain
+#'   plain. Set to \code{FALSE} to keep have all labels in plain face or for
+#'   further customisation (`ganttrify` offers basic markdown support).
 #' @param size_activity Numeric, defaults to 4. It defines the thickness of the
 #'   line used to represent activities.
 #' @param size_text_relative Numeric, defaults to 1. Changes the size of all
@@ -109,6 +113,7 @@ ganttrify <- function(project,
                       mark_years = FALSE,
                       size_wp = 6,
                       hide_wp = FALSE,
+                      wp_label_bold = TRUE,
                       size_activity = 4,
                       size_text_relative = 1,
                       label_wrap = FALSE,
@@ -262,12 +267,20 @@ ganttrify <- function(project,
     dplyr::group_by(wp) %>%
     dplyr::summarise(wp_activity = list(wp_activity)) %>%
     dplyr::group_by(wp) %>%
-    dplyr::mutate(wp = stringr::str_c(wp, wp, sep = "_"))
+    dplyr::mutate(wp = stringr::str_c(wp, wp, sep = "_")) %>%
+    dplyr::ungroup()
 
   distinct_yearmon_labels_df <- df_yearmon %>%
     dplyr::distinct(wp, activity) %>%
     dplyr::group_by(wp) %>%
-    dplyr::summarise(activity = list(activity))
+    dplyr::summarise(activity = list(activity)) %>%
+    dplyr::ungroup()
+
+  if (wp_label_bold) {
+    distinct_yearmon_labels_df <- distinct_yearmon_labels_df %>%
+      dplyr::mutate(wp = stringr::str_c("<b>", wp, "</b>"))
+  }
+
 
   level_labels_df <- tibble::tibble(
     levels = rev(unlist(t(matrix(c(distinct_yearmon_levels_df$wp, distinct_yearmon_levels_df$wp_activity), ncol = 2)))),
@@ -413,7 +426,7 @@ ganttrify <- function(project,
     axis_text_align_n <- 1
   }
 
-  gg_gantt <- suppressWarnings(gg_gantt +
+  gg_gantt <- gg_gantt +
     ggplot2::scale_y_discrete(
       name = NULL,
       breaks = level_labels_df$levels,
@@ -423,16 +436,13 @@ ganttrify <- function(project,
     ggplot2::scale_colour_manual(values = colour_palette) +
     ggplot2::theme(
       text = ggplot2::element_text(family = font_family),
-      axis.text.y.left = ggplot2::element_text(
-        face = ifelse(test = df_yearmon_fct %>%
-          dplyr::distinct(activity, wp, type) %>%
-          dplyr::pull(type) == "wp", yes = "bold", no = "plain"),
+      axis.text.y.left = ggtext::element_markdown(
         size = ggplot2::rel(size_text_relative),
         hjust = axis_text_align_n
       ),
       axis.text.x = ggplot2::element_text(size = ggplot2::rel(size_text_relative)),
       legend.position = "none"
-    ))
+    )
 
   if (is.null(spots) == FALSE) {
     if (is.data.frame(spots) == TRUE) {
