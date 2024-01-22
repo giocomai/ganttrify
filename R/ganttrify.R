@@ -383,7 +383,7 @@ ganttrify <- function(project,
     ggplot2::geom_segment(
       data = df_yearmon_fct,
       lineend = line_end_activity,
-      size = size_activity,
+      linewidth = size_activity,
       alpha = df_yearmon_fct$activity_alpha
     ) +
     ### wp
