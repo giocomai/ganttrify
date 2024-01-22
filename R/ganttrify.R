@@ -210,7 +210,6 @@ ganttrify <- function(project,
       )
   }
 
-
   sequence_months <- seq.Date(
     from = min(df_yearmon[["start_date"]]),
     to = max(df_yearmon[["end_date"]]),
@@ -255,20 +254,41 @@ ganttrify <- function(project,
     by = "1 year"
   )
 
-  df_levels <- rev(df_yearmon %>%
-    dplyr::select(wp, activity) %>%
-    t() %>%
-    as.character() %>%
-    unique())
+  # deal with the possibility that activities in different WPs have the same name
+
+  distinct_yearmon_levels_df <- df_yearmon %>%
+    dplyr::distinct(wp, activity) %>%
+    tidyr::unite(col = "wp_activity", wp, activity, remove = FALSE, sep = "_") %>%
+    dplyr::group_by(wp) %>%
+    dplyr::summarise(wp_activity = list(wp_activity)) %>%
+    dplyr::group_by(wp) %>%
+    dplyr::mutate(wp = stringr::str_c(wp, wp, sep = "_"))
+
+  distinct_yearmon_labels_df <- df_yearmon %>%
+    dplyr::distinct(wp, activity) %>%
+    dplyr::group_by(wp) %>%
+    dplyr::summarise(activity = list(activity))
+
+  level_labels_df <- tibble::tibble(
+    levels = rev(unlist(t(matrix(c(distinct_yearmon_levels_df$wp, distinct_yearmon_levels_df$wp_activity), ncol = 2)))),
+    labels = rev(unlist(t(matrix(c(distinct_yearmon_labels_df$wp, distinct_yearmon_labels_df$activity), ncol = 2))))
+  )
+
   if (exact_date == TRUE) {
     df_yearmon_fct <-
       dplyr::bind_rows(
         activity = df,
         wp = df %>%
           dplyr::group_by(wp) %>%
-          dplyr::summarise(activity = unique(wp), start_date = min(start_date), end_date = max(end_date)), .id = "type"
+          dplyr::summarise(
+            activity = unique(wp),
+            start_date = min(start_date),
+            end_date = max(end_date)
+          ),
+        .id = "type"
       ) %>%
-      dplyr::mutate(activity = factor(x = activity, levels = df_levels)) %>%
+      tidyr::unite(col = "activity", wp, activity, remove = FALSE) %>%
+      dplyr::mutate(activity = factor(x = activity, levels = level_labels_df$levels)) %>%
       dplyr::arrange(activity)
   } else {
     df_yearmon_fct <-
@@ -276,11 +296,18 @@ ganttrify <- function(project,
         activity = df_yearmon,
         wp = df_yearmon %>%
           dplyr::group_by(wp) %>%
-          dplyr::summarise(activity = unique(wp), start_date = min(start_date), end_date = max(end_date)), .id = "type"
+          dplyr::summarise(
+            activity = unique(wp),
+            start_date = min(start_date),
+            end_date = max(end_date)
+          ),
+        .id = "type"
       ) %>%
-      dplyr::mutate(activity = factor(x = activity, levels = df_levels)) %>%
+      tidyr::unite(col = "activity", wp, activity, remove = FALSE) %>%
+      dplyr::mutate(activity = factor(x = activity, levels = level_labels_df$levels)) %>%
       dplyr::arrange(activity)
   }
+
 
   if (hide_wp == TRUE) {
     df_yearmon_fct <- df_yearmon_fct %>%
@@ -386,9 +413,12 @@ ganttrify <- function(project,
     axis_text_align_n <- 1
   }
 
-
   gg_gantt <- suppressWarnings(gg_gantt +
-    ggplot2::scale_y_discrete("") +
+    ggplot2::scale_y_discrete(
+      name = NULL,
+      breaks = level_labels_df$levels,
+      labels = level_labels_df$labels
+    ) +
     ggplot2::theme_minimal() +
     ggplot2::scale_colour_manual(values = colour_palette) +
     ggplot2::theme(
@@ -406,43 +436,48 @@ ganttrify <- function(project,
 
   if (is.null(spots) == FALSE) {
     if (is.data.frame(spots) == TRUE) {
+      spots_df <- spots %>%
+        tidyr::drop_na() %>%
+        dplyr::left_join(
+          y = level_labels_df %>%
+            dplyr::rename(activity = labels),
+          by = "activity"
+        ) %>%
+        dplyr::mutate(activity = levels) %>%
+        dplyr::select(-"levels")
+
       if (by_date == FALSE) {
-        spots_date <- spots %>%
-          tidyr::drop_na() %>%
+        spots_date <- spots_df %>%
           dplyr::mutate(
             spot_date = as.numeric(spot_date),
             activity = as.character(activity),
             spot_type = as.character(spot_type)
           ) %>%
           dplyr::mutate(
-            activity = factor(x = activity, levels = df_levels),
+            activity = factor(x = activity, levels = level_labels_df$levels),
             spot_date = zoo::as.Date(start_yearmon + (1 / 12) * zoo::as.yearmon(spot_date), frac = 0.5),
             end_date = as.Date(NA),
             wp = NA
           )
       } else {
         if (exact_date == TRUE) {
-          spots_date <- spots %>%
-            tidyr::drop_na() %>%
-            dplyr::mutate(activity = as.character(activity)) %>%
+          spots_date <- spots_df %>%
             dplyr::mutate(
-              activity = factor(x = activity, levels = df_levels),
+              activity = factor(x = activity, levels = level_labels_df$levels),
               spot_date = as.Date(spot_date),
               end_date = as.Date(NA),
               wp = NA
             )
         } else {
-          spots_date <- spots %>%
-            tidyr::drop_na() %>%
+          spots_date <- spots_df %>%
             dplyr::mutate(
-              activity = factor(x = activity, levels = df_levels),
+              activity = factor(x = activity, levels = level_labels_df$levels),
               spot_date = zoo::as.Date(zoo::as.yearmon(spot_date), frac = 0.5),
               end_date = as.Date(NA),
               wp = NA
             )
         }
       }
-
 
       gg_gantt <- gg_gantt +
         ggplot2::geom_label(

@@ -1,6 +1,6 @@
 Package: ganttrify
 Title: Create beautiful Gantt charts with ggplot2
-Version: 0.0.0.9010
+Version: 0.0.0.9011
 Authors@R: 
     person(given = "Giorgio",
            family = "Comai (OBCT/CCI)",
@@ -31,6 +31,8 @@ Suggests:
     googlesheets4,
     extrafont,
     svglite,
-    readxl
+    readxl,
+    testthat (>= 3.0.0)
 Depends: 
     R (>= 2.10)
+Config/testthat/edition: 3

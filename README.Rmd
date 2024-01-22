@@ -222,9 +222,6 @@ ganttrify(
 ``` 
 
 
-```{r}
-```
-
 Does right-aligned text bother you?
 
 ```{r gantt_left_aligned}
@@ -267,6 +264,7 @@ tibble::tribble(
 
 Finally, keep in mind that ganttrify outputs `ggplot` objects. Some theming options may not behave exactly as you expect, but for example adding title, subtitle, and captions can be done as you would normally do with any `ggplot2` graph. 
 
+
 ```{r gantt_with_text}
 ganttrify(
   project = ganttrify::test_project,
@@ -284,8 +282,6 @@ ganttrify(
 And since it's a `ggplot2` object, you can export it as you would any other ggplot graph, by using `ggplot2::ggsave`. This allows also to customise the size of the final input, running e.g. `ggplot2::ggsave(filename = "my_gantt.png", width = 12, height = 8, bg = "white")` after you run the `ganttrify` function (if you set the file extension to `pdf` or `svg`, you will get the chart in vector format for more clarity at different zoom levels).
 
 If you are using this in an `rmarkdown` document, keep in mind that you can set the size at the chunk level, e.g. with something like `{r fig.width=12, fig.height=8}` in the chunk header.
-
-
 
 
 ## Shiny app
@@ -360,13 +356,37 @@ ganttrify(
 
 ### Structure of the input table
 
-At this stage, the package has strong expectations about the input format, and does not provide meaningful error messages. If you see unexpected results, please consider that:
+At this stage, the package has strong expectations about the input format, and does not provide meaningful error messages. If you see unexpected results, please consider that ideally:
 
 - no cell in the activity column must be empty
 - an activity cannot be called the same as a wp
 - activities in different wp should have different names (or at least add a space at the end or something so that they look different to the computer).
 
-Some of this limitations should be dealt with in a future update.
+Some of these limitations have been mitigated in recent versions. For example, it is now possible to have activities with the same name in different working packages, e.g.:
+
+```{r activities_with_same_name_in_different_wp_project}
+activities_with_same_name_in_different_wp_project <- tibble::tribble(
+  ~wp, ~activity, ~start_date, ~end_date,
+  "WP1", "Admin", 1, 6,
+  "WP1", "Research", 3, 6,
+  "WP1", "Dissemination", 4, 7,
+  "WP2", "Admin", 5, 10,
+  "WP2", "Research", 6, 12,
+  "WP2", "Research", 9, 12,
+  "WP2", "Dissemination", 3, 5,
+  "WP2", "Dissemination", 8, 9,
+  "WP3", "Admin", 6, 9,
+  "WP3", "Admin", 12, 12
+)
+
+ganttrify(
+  project = activities_with_same_name_in_different_wp_project,
+  project_start_date = "2024-01",
+  font_family = "Roboto Condensed"
+)
+```
+
+But be mindful that this may lead to unexpected results if you're using `spots`; since their placement is currently based exclusively on the activity name, possible long term fixes would inevitably involve a change in the input format. An easy (if inelegant) workaround is simply to add one or more spaces at the end of activities that need to be differentiated: e.g.to differentiate an activity named admin and present in both WP1 and WP2 you could name it "Admin" in WP1, but "Admin " in WP2 (notice the additional space in the second case). 
 
 ### Fonts
 

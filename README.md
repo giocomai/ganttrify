@@ -491,7 +491,7 @@ ganttrify(
 
 At this stage, the package has strong expectations about the input
 format, and does not provide meaningful error messages. If you see
-unexpected results, please consider that:
+unexpected results, please consider that ideally:
 
 - no cell in the activity column must be empty
 - an activity cannot be called the same as a wp
@@ -499,7 +499,42 @@ unexpected results, please consider that:
   add a space at the end or something so that they look different to the
   computer).
 
-Some of this limitations should be dealt with in a future update.
+Some of these limitations have been mitigated in recent versions. For
+example, it is now possible to have activities with the same name in
+different working packages, e.g.:
+
+``` r
+activities_with_same_name_in_different_wp_project <- tibble::tribble(
+  ~wp, ~activity, ~start_date, ~end_date,
+  "WP1", "Admin", 1, 6,
+  "WP1", "Research", 3, 6,
+  "WP1", "Dissemination", 4, 7,
+  "WP2", "Admin", 5, 10,
+  "WP2", "Research", 6, 12,
+  "WP2", "Research", 9, 12,
+  "WP2", "Dissemination", 3, 5,
+  "WP2", "Dissemination", 8, 9,
+  "WP3", "Admin", 6, 9,
+  "WP3", "Admin", 12, 12
+)
+
+ganttrify(
+  project = activities_with_same_name_in_different_wp_project,
+  project_start_date = "2024-01",
+  font_family = "Roboto Condensed"
+)
+```
+
+<img src="man/figures/README-activities_with_same_name_in_different_wp_project-1.png" width="100%" />
+
+But be mindful that this may lead to unexpected results if you’re using
+`spots`; since their placement is currently based exclusively on the
+activity name, possible long term fixes would inevitably involve a
+change in the input format. An easy (if inelegant) workaround is simply
+to add one or more spaces at the end of activities that need to be
+differentiated: e.g.to differentiate an activity named admin and present
+in both WP1 and WP2 you could name it “Admin” in WP1, but “Admin” in WP2
+(notice the additional space in the second case).
 
 ### Fonts
 
