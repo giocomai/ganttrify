@@ -387,7 +387,7 @@ ganttrify <- function(project,
   if (month_number_label == TRUE & month_date_label == TRUE) {
     gg_gantt <- gg_gantt +
       ggplot2::scale_x_date(
-        name = "",
+        name = NULL,
         breaks = date_breaks,
         date_labels = "%b\n%Y",
         minor_breaks = NULL,
@@ -396,7 +396,7 @@ ganttrify <- function(project,
   } else if (month_number_label == FALSE & month_date_label == TRUE) {
     gg_gantt <- gg_gantt +
       ggplot2::scale_x_date(
-        name = "",
+        name = NULL,
         breaks = date_breaks,
         date_labels = "%b\n%Y",
         minor_breaks = NULL,
@@ -405,7 +405,7 @@ ganttrify <- function(project,
   } else if (month_number_label == TRUE & month_date_label == FALSE) {
     gg_gantt <- gg_gantt +
       ggplot2::scale_x_date(
-        name = "",
+        name = NULL,
         breaks = date_breaks,
         date_labels = paste0(month_label_string, seq_along(date_breaks)),
         minor_breaks = NULL,
@@ -413,7 +413,7 @@ ganttrify <- function(project,
       )
   } else if (month_number_label == FALSE & month_date_label == FALSE) {
     gg_gantt <- gg_gantt +
-      ggplot2::scale_x_date(name = "")
+      ggplot2::scale_x_date(name = NULL)
   }
 
   if (axis_text_align == "right") {
