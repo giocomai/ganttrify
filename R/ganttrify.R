@@ -436,8 +436,6 @@ ganttrify <- function(project,
     axis_text_align_n <- 1
   }
 
-
-
   gg_gantt <- gg_gantt +
     ggplot2::scale_y_discrete(
       name = NULL,
@@ -522,7 +520,7 @@ ganttrify <- function(project,
 
   if (show_vertical_lines == FALSE) {
     gg_gantt <- gg_gantt +
-      ggplot2::theme(panel.grid.major.x = ggplot2::element_line(size = 0))
+      ggplot2::theme(panel.grid.major.x = ggplot2::element_line(linewidth = 0))
   }
 
   return(gg_gantt)
