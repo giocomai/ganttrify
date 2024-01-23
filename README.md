@@ -159,7 +159,8 @@ ganttrify(
 
 It appears that some of you don’t like having a line for the working
 package and are fine with just lines for activities. Did you mean it
-like this?
+like this? (also, consider setting `hide_activities` to TRUE if on the
+contrary you want to hide activities and keep only working packages)
 
 ``` r
 ganttrify(
@@ -169,10 +170,12 @@ ganttrify(
 )
 ```
 
-<img src="man/figures/README-gantt_no_wp-1.png" width="100%" /> Or
-perhaps, you did want to keep the name of working package on the left,
-but just felt that the horizontal line for the WP is redundant? Let’s
-make the WP lines invisible, and nobody will ever know they’re there!
+<img src="man/figures/README-gantt_no_wp-1.png" width="100%" />
+
+Or perhaps, you did want to keep the name of working package on the
+left, but just felt that the horizontal line for the WP is redundant?
+Let’s make the WP lines invisible, and nobody will ever know they’re
+there!
 
 ``` r
 ganttrify(

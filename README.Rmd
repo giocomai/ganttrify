@@ -118,8 +118,7 @@ ganttrify(
 )
 ```
 
-
-It appears that some of you don't like having a line for the working package and are fine with just lines for activities. Did you mean it like this?
+It appears that some of you don't like having a line for the working package and are fine with just lines for activities. Did you mean it like this? (also, consider setting `hide_activities` to TRUE if on the contrary you want to hide activities and keep only working packages)
 
 ```{r gantt_no_wp}
 ganttrify(
@@ -128,6 +127,7 @@ ganttrify(
   font_family = "Roboto Condensed"
 )
 ```
+
 Or perhaps, you did want to keep the name of working package on the left, but just felt that the horizontal line for the WP is redundant? Let's make the WP lines invisible, and nobody will ever know they're there!
 
 ```{r gantt_no_wp_with_title}

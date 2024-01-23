@@ -33,6 +33,8 @@
 #'   used to represent WPs.
 #' @param hide_wp Logical, defaults to FALSE. If TRUE, the lines of the WP are
 #'   hidden and only activities are shown.
+#' @param hide_activities Logical, defaults to FALSE. If TRUE, the lines of
+#'   activities are hidden and only activities are shown.
 #' @param wp_label_bold Logical, defaults to \code{TRUE}. If \code{TRUE}, the
 #'   label for working packages is set to bold face, while activities remain
 #'   plain. Set to \code{FALSE} to keep have all labels in plain face or for
@@ -113,6 +115,7 @@ ganttrify <- function(project,
                       mark_years = FALSE,
                       size_wp = 6,
                       hide_wp = FALSE,
+                      hide_activities = FALSE,
                       wp_label_bold = TRUE,
                       size_activity = 4,
                       size_text_relative = 1,
@@ -136,6 +139,11 @@ ganttrify <- function(project,
                       month_breaks = 1,
                       show_vertical_lines = TRUE,
                       axis_text_align = "right") {
+  # arguments consistency check
+  if (hide_wp & hide_activities) {
+    cli::cli_abort("At least one of {.arg hide_wp} or {.arg hide_activities} must be {.code TRUE}, otherwise there's nothing left to show.")
+  }
+
   # repeat colours if not enough colours given
   if (length(unique(project$wp)) > length(as.character(colour_palette))) {
     colour_palette <- rep(colour_palette, length(unique(project$wp)))[1:length(unique(project$wp))]
@@ -335,6 +343,11 @@ ganttrify <- function(project,
   if (hide_wp == TRUE) {
     df_yearmon_fct <- df_yearmon_fct %>%
       dplyr::filter(type != "wp")
+  }
+
+  if (hide_activities == TRUE) {
+    df_yearmon_fct <- df_yearmon_fct %>%
+      dplyr::filter(type != "activity")
   }
 
   gg_gantt <- ggplot2::ggplot(
