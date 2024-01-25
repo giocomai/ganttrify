@@ -139,6 +139,12 @@ ganttrify <- function(project,
                       month_breaks = 1,
                       show_vertical_lines = TRUE,
                       axis_text_align = "right") {
+  project <- gantt_verify(
+    project = project,
+    by_date = by_date,
+    exact_date = exact_date
+  )
+
   # arguments consistency check
   if (hide_wp & hide_activities) {
     cli::cli_abort("At least one of {.arg hide_wp} or {.arg hide_activities} must be {.code TRUE}, otherwise there's nothing left to show.")
