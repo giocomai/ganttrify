@@ -58,6 +58,13 @@ actually need to submit this project.
 \[Thanks to all who contributed suggestions via issues and pull
 requests!\]
 
+\[This package has been developed as a personal endeavour, originally
+conceived for grant writing at my employer
+([OBCT](https://www.balcanicaucaso.org/)/[CCI](https://www.cci.tn.it/))\].
+The Shiny interface, now hosted in [a separate repository](), has been
+developed for [EDJNet](https://www.europeandatajournalism.eu/), the
+European Data Journalism Network.
+
 ## Features
 
 Take an adequately formatted spreadsheet and turn it into a Gantt chart
@@ -408,26 +415,29 @@ ganttrify(
 ## Shiny app
 
 If you prefer interactive web interfaces to coding, you can still have a
-fancy *ganttrified* chart.
+fancy *ganttrified* chart. In order to reduce dependencies and
+facilitate checks, this is now available in a separate package,
+[`shinyganttrify`](https://github.com/giocomai/shinyganttrify).
+
+Step 1: Make sure you have installed both `ganttrify` and
+`shinyganttrify`
 
 ``` r
-shiny_ganttrify()
+remotes::install_github("giocomai/ganttrify")
+remotes::install_github("giocomai/shinyganttrify")
 ```
 
-And there you go!
+Then run:
 
-<figure>
-<img src="man/figures/shiny_ganttrify_screenshot.png"
-alt="A screenshot of the Shiny app" />
-<figcaption aria-hidden="true">A screenshot of the Shiny
-app</figcaption>
-</figure>
+``` r
+shinyganttrify::shiny_ganttrify()
+```
 
 You can check it online with no further ado at the following link:
 
 <https://ganttrify.europeandatajournalism.eu/>
 
-(N.B.: not all features are exposed in the shiny app)
+(N.B.: not all features are exposed in the Shiny app)
 
 ### Shiny app on Docker
 

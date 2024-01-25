@@ -3,5 +3,4 @@
 export("%>%")
 export(gantt_verify)
 export(ganttrify)
-export(shiny_ganttrify)
 importFrom(magrittr,"%>%")
