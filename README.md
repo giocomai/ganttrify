@@ -596,16 +596,3 @@ installing the `extrafont` package, and running
 
 You can check available fonts also with the package `systemfonts` and
 the command `systemfonts::system_fonts()`.
-
-### Dependencies
-
-To reduce the number of dependencies, `extrafont`, as well as the
-packages used by the Shiny app needed to import data (`googlesheets4`,
-`readxl`) and to export the chart in svg (`svglite`) are only suggested.
-
-You can install them independently (they’re all on CRAN), or together
-with this package with:
-
-``` r
-remotes::install_github("giocomai/ganttrify", dependencies = TRUE)
-```
