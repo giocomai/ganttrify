@@ -1,4 +1,7 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^Dockerfile$
+^Dockerfile_shinyproxy
 ^\.dockerignore$
+^README\.Rmd$
+^LICENSE\.md$

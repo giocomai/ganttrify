@@ -8,7 +8,7 @@ Authors@R:
            email = "g@giorgiocomai.eu",
            comment = c(ORCID = "0000-0002-0515-9542"))
 Description: 'ganttrify' facilitates the creation of nice-looking Gantt charts, commonly used in project proposals and project management.
-License: GPL-3
+License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.3.1
