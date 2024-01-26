@@ -1,6 +1,6 @@
 Package: ganttrify
 Title: Create beautiful Gantt charts with ggplot2
-Version: 0.0.1.9001
+Version: 0.0.1.9002
 Authors@R: 
     person(given = "Giorgio",
            family = "Comai (OBCT/CCI)",
@@ -22,7 +22,8 @@ Imports:
     lubridate,
     tidyr,
     ggtext,
-    cli
+    cli,
+    rlang
 URL: https://github.com/giocomai/ganttrify
 BugReports: https://github.com/giocomai/ganttrify/issues
 Language: en-US

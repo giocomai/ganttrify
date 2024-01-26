@@ -9,6 +9,7 @@
 #'
 #' @examples
 #' gantt_verify(project = ganttrify::test_project)
+#' @importFrom rlang .data
 gantt_verify <- function(project,
                          by_date = FALSE,
                          exact_date = FALSE) {
@@ -34,28 +35,28 @@ gantt_verify <- function(project,
   if (by_date) {
     project <- project %>%
       dplyr::mutate(
-        wp = as.character(wp),
-        activity = as.character(activity),
-        start_date = as.character(start_date),
-        end_date = as.character(end_date)
+        wp = as.character(.data[["wp"]]),
+        activity = as.character(.data[["activity"]]),
+        start_date = as.character(.data[["start_date"]]),
+        end_date = as.character(.data[["end_date"]])
       )
   } else {
     project <- project %>%
       dplyr::mutate(
-        wp = as.character(wp),
-        activity = as.character(activity),
-        start_date = as.numeric(start_date),
-        end_date = as.numeric(end_date)
+        wp = as.character(.data[["wp"]]),
+        activity = as.character(.data[["activity"]]),
+        start_date = as.numeric(.data[["start_date"]]),
+        end_date = as.numeric(.data[["end_date"]])
       )
   }
 
   if (exact_date) {
     project <- project %>%
       dplyr::mutate(
-        wp = as.character(wp),
-        activity = as.character(activity),
-        start_date = lubridate::as_date(start_date),
-        end_date = lubridate::as_date(end_date)
+        wp = as.character(.data[["wp"]]),
+        activity = as.character(.data[["activity"]]),
+        start_date = lubridate::as_date(.data[["start_date"]]),
+        end_date = lubridate::as_date(.data[["end_date"]])
       )
   }
 
