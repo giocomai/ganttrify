@@ -45,3 +45,30 @@ test_that("NAs are caught by gantt_verify", {
     expected = 1L
   )
 })
+
+
+test_that("Standard inputs are returned correctly", {
+  expect_equal(
+    object = ganttrify::gantt_verify(ganttrify::test_project),
+    expected = tibble::as_tibble(ganttrify::test_project)
+  )
+
+  expect_equal(
+    object = ganttrify::gantt_verify(ganttrify::test_project_date_month,
+      by_date = TRUE
+    ),
+    expected = tibble::as_tibble(ganttrify::test_project_date_month)
+  )
+
+  expect_equal(
+    object = ganttrify::gantt_verify(ganttrify::test_project_date_day,
+      by_date = TRUE,
+      exact_date = TRUE
+    ),
+    expected = tibble::as_tibble(ganttrify::test_project_date_day %>%
+      dplyr::mutate(
+        start_date = lubridate::as_date(start_date),
+        end_date = lubridate::as_date(end_date)
+      ))
+  )
+})
