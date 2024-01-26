@@ -5,8 +5,8 @@
 
 <!-- badges: start -->
 
-[![Lifecycle:
-experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
+[![ganttrify status
+badge](https://giocomai.r-universe.dev/badges/ganttrify)](https://giocomai.r-universe.dev/ganttrify)
 <!-- badges: end -->
 
 `ganttrify` facilitates the creation of nice-looking Gantt charts,
