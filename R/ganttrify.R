@@ -397,21 +397,39 @@ ganttrify <- function(project,
   df_yearmon_fct <- df_yearmon_fct %>%
     dplyr::mutate(wp_alpha = ifelse(type == "wp", alpha_wp, 0))
 
-  gg_gantt <- gg_gantt +
-    ### activities
-    ggplot2::geom_segment(
-      data = df_yearmon_fct,
-      lineend = line_end_activity,
-      linewidth = size_activity,
-      alpha = df_yearmon_fct$activity_alpha
-    ) +
-    ### wp
-    ggplot2::geom_segment(
-      data = df_yearmon_fct,
-      lineend = line_end_wp,
-      linewidth = size_wp,
-      alpha = df_yearmon_fct$wp_alpha
-    )
+  if (utils::packageVersion("ggplot2") > "3.3.6") {
+    gg_gantt <- gg_gantt +
+      ### activities
+      ggplot2::geom_segment(
+        data = df_yearmon_fct,
+        lineend = line_end_activity,
+        linewidth = size_activity,
+        alpha = df_yearmon_fct$activity_alpha
+      ) +
+      ### wp
+      ggplot2::geom_segment(
+        data = df_yearmon_fct,
+        lineend = line_end_wp,
+        linewidth = size_wp,
+        alpha = df_yearmon_fct$wp_alpha
+      )
+  } else {
+    gg_gantt <- gg_gantt +
+      ### activities
+      ggplot2::geom_segment(
+        data = df_yearmon_fct,
+        lineend = line_end_activity,
+        size = size_activity,
+        alpha = df_yearmon_fct$activity_alpha
+      ) +
+      ### wp
+      ggplot2::geom_segment(
+        data = df_yearmon_fct,
+        lineend = line_end_wp,
+        size = size_wp,
+        alpha = df_yearmon_fct$wp_alpha
+      )
+  }
 
   if (month_number_label == TRUE & month_date_label == TRUE) {
     gg_gantt <- gg_gantt +
@@ -538,8 +556,13 @@ ganttrify <- function(project,
   }
 
   if (show_vertical_lines == FALSE) {
-    gg_gantt <- gg_gantt +
-      ggplot2::theme(panel.grid.major.x = ggplot2::element_line(linewidth = 0))
+    if (utils::packageVersion("ggplot2") > "3.3.6") {
+      gg_gantt <- gg_gantt +
+        ggplot2::theme(panel.grid.major.x = ggplot2::element_line(linewidth = 0))
+    } else {
+      gg_gantt <- gg_gantt +
+        ggplot2::theme(panel.grid.major.x = ggplot2::element_line(size = 0))
+    }
   }
 
   return(gg_gantt)
