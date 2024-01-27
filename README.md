@@ -166,7 +166,7 @@ ganttrify(
 
 It appears that some of you don’t like having a line for the working
 package and are fine with just lines for activities. Did you mean it
-like this? (also, consider setting `hide_activities` to TRUE if on the
+like this? (also, consider setting `hide_activity` to TRUE if on the
 contrary you want to hide activities and keep only working packages)
 
 ``` r

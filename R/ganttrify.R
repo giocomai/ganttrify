@@ -33,7 +33,7 @@
 #'   used to represent WPs.
 #' @param hide_wp Logical, defaults to FALSE. If TRUE, the lines of the WP are
 #'   hidden and only activities are shown.
-#' @param hide_activities Logical, defaults to FALSE. If TRUE, the lines of
+#' @param hide_activity Logical, defaults to FALSE. If TRUE, the lines of
 #'   activities are hidden and only activities are shown.
 #' @param wp_label_bold Logical, defaults to \code{TRUE}. If \code{TRUE}, the
 #'   label for working packages is set to bold face, while activities remain
@@ -115,9 +115,9 @@ ganttrify <- function(project,
                       mark_years = FALSE,
                       size_wp = 6,
                       hide_wp = FALSE,
-                      hide_activities = FALSE,
                       wp_label_bold = TRUE,
                       size_activity = 4,
+                      hide_activity = FALSE,
                       size_text_relative = 1,
                       label_wrap = FALSE,
                       month_number_label = TRUE,
@@ -144,426 +144,31 @@ ganttrify <- function(project,
     by_date = by_date,
     exact_date = exact_date
   )
-
+  
   # arguments consistency check
-  if (hide_wp & hide_activities) {
-    cli::cli_abort("At least one of {.arg hide_wp} or {.arg hide_activities} must be {.code TRUE}, otherwise there's nothing left to show.")
+  if (hide_wp & hide_activity) {
+    cli::cli_abort("At least one of {.arg hide_wp} or {.arg hide_activity} must be {.code TRUE}, otherwise there's nothing left to show.")
   }
-
-  # repeat colours if not enough colours given
-  if (length(unique(project$wp)) > length(as.character(colour_palette))) {
-    colour_palette <- rep(colour_palette, length(unique(project$wp)))[1:length(unique(project$wp))]
-  }
-
-  if (is.null(line_end) == FALSE) {
-    line_end_wp <- line_end
-    line_end_activity <- line_end
-  }
-
-  if (by_date == FALSE) {
-    df <- project %>%
-      dplyr::mutate(
-        start_date = as.numeric(start_date),
-        end_date = as.numeric(end_date)
-      )
-
-    if (sum(is.na(df$start_date)) == nrow(df)) {
-      stop("Make sure that the input data are properly formatted and/or you have selected the right paramaters.")
-    }
-
-    start_yearmon <- zoo::as.yearmon(project_start_date) - (1 / 12)
-
-    df_yearmon <- df %>%
-      dplyr::mutate(
-        start_date_yearmon = start_yearmon + (1 / 12) * start_date,
-        end_date_yearmon = start_yearmon + (1 / 12) * zoo::as.yearmon(end_date)
-      ) %>%
-      dplyr::transmute(
-        wp = as.character(wp),
-        activity = as.character(activity),
-        start_date = zoo::as.Date(start_date_yearmon, frac = 0),
-        end_date = zoo::as.Date(end_date_yearmon, frac = 1)
-      )
-  } else {
-    if (exact_date == TRUE) {
-      # do nothing
-    } else {
-      df_yearmon <- project %>%
-        dplyr::mutate(
-          start_date_yearmon = zoo::as.yearmon(start_date),
-          end_date_yearmon = zoo::as.yearmon(end_date)
-        ) %>%
-        dplyr::transmute(
-          wp = as.character(wp),
-          activity = as.character(activity),
-          start_date = zoo::as.Date(start_date_yearmon, frac = 0),
-          end_date = zoo::as.Date(end_date_yearmon, frac = 1)
-        )
-    }
-  }
-
-  if (exact_date == TRUE) {
-    df <- project %>%
-      dplyr::mutate(
-        start_date = as.Date(start_date),
-        end_date = as.Date(end_date),
-        wp = as.character(wp),
-        activity = as.character(activity)
-      )
-
-    df_yearmon <- df %>%
-      dplyr::mutate(
-        start_date = zoo::as.Date(zoo::as.yearmon(start_date), frac = 0),
-        end_date = zoo::as.Date(zoo::as.yearmon(end_date), frac = 1)
-      )
-  }
-
-  sequence_months <- seq.Date(
-    from = min(df_yearmon[["start_date"]]),
-    to = max(df_yearmon[["end_date"]]),
-    by = "1 month"
-  )
-
-  if (length(sequence_months) %% 2 != 0) {
-    sequence_months <- seq.Date(
-      from = min(df_yearmon[["start_date"]]),
-      to = max(df_yearmon[["end_date"]]) + 1,
-      by = "1 month"
-    )
-  }
-
-  date_range_matrix <- matrix(as.numeric(sequence_months),
-    ncol = 2,
-    byrow = TRUE
-  )
-
-  date_range_df <- tibble::tibble(
-    start = zoo::as.Date.numeric(date_range_matrix[, 1]),
-    end = zoo::as.Date.numeric(date_range_matrix[, 2])
-  )
-
-  # date breaks in the middle of the month
-  date_breaks <- zoo::as.Date(zoo::as.yearmon(seq.Date(
-    from = min(df_yearmon[["start_date"]] + 15),
-    to = max(df_yearmon[["end_date"]] + 15),
-    by = paste(month_breaks, "month")
-  )), frac = 0.5)
-
-
-  date_breaks_q <- seq.Date(
-    from = lubridate::floor_date(x = min(df_yearmon[["start_date"]]), unit = "year"),
-    to = lubridate::ceiling_date(x = max(df_yearmon[["end_date"]]), unit = "year"),
-    by = "1 quarter"
-  )
-
-  date_breaks_y <- seq.Date(
-    from = lubridate::floor_date(x = min(df_yearmon[["start_date"]]), unit = "year"),
-    to = lubridate::ceiling_date(x = max(df_yearmon[["end_date"]]), unit = "year"),
-    by = "1 year"
-  )
-
-  # deal with the possibility that activities in different WPs have the same name
-
-  distinct_yearmon_levels_df <- df_yearmon %>%
-    dplyr::distinct(wp, activity) %>%
-    tidyr::unite(col = "wp_activity", wp, activity, remove = FALSE, sep = "_") %>%
-    dplyr::group_by(wp) %>%
-    dplyr::summarise(wp_activity = list(wp_activity)) %>%
-    dplyr::group_by(wp) %>%
-    dplyr::mutate(wp = stringr::str_c(wp, wp, sep = "_")) %>%
-    dplyr::ungroup()
-
-  distinct_yearmon_labels_df <- df_yearmon %>%
-    dplyr::distinct(wp, activity) %>%
-    dplyr::group_by(wp) %>%
-    dplyr::summarise(activity = list(activity)) %>%
-    dplyr::ungroup()
-
-  if (wp_label_bold) {
-    distinct_yearmon_labels_df <- distinct_yearmon_labels_df %>%
-      dplyr::mutate(wp = stringr::str_c("<b>", wp, "</b>"))
-
-    if (is.null(spots) == FALSE) {
-      wp_v <- project %>%
-        dplyr::distinct(wp) %>%
-        dplyr::pull(wp)
-
-      spots[["activity"]][spots[["activity"]] %in% wp_v] <- stringr::str_c("<b>", spots[["activity"]][spots[["activity"]] %in% wp_v], "</b>")
-    }
-  }
-
-  level_labels_df <- tibble::tibble(
-    levels = rev(unlist(t(matrix(c(distinct_yearmon_levels_df$wp, distinct_yearmon_levels_df$wp_activity), ncol = 2)))),
-    labels = rev(unlist(t(matrix(c(distinct_yearmon_labels_df$wp, distinct_yearmon_labels_df$activity), ncol = 2))))
-  )
-
-  if (label_wrap != FALSE) {
-    if (isTRUE(label_wrap)) {
-      label_wrap <- 32
-    }
-
-    level_labels_df$labels <- stringr::str_wrap(string = level_labels_df$labels, width = label_wrap)
-    level_labels_df$labels <- stringr::str_replace_all(string = level_labels_df$labels, pattern = "\n", replacement = "<br />")
-
-    if (is.null(spots) == FALSE) {
-      spots$activity <- stringr::str_wrap(string = spots$activity, width = label_wrap)
-      spots$activity <- stringr::str_replace_all(string = spots$activity, pattern = "\n", replacement = "<br />")
-    }
-  }
-
-  if (exact_date == TRUE) {
-    df_yearmon_fct <-
-      dplyr::bind_rows(
-        activity = df,
-        wp = df %>%
-          dplyr::group_by(wp) %>%
-          dplyr::summarise(
-            activity = unique(wp),
-            start_date = min(start_date),
-            end_date = max(end_date)
-          ),
-        .id = "type"
-      ) %>%
-      tidyr::unite(col = "activity", wp, activity, remove = FALSE) %>%
-      dplyr::mutate(activity = factor(x = activity, levels = level_labels_df$levels)) %>%
-      dplyr::arrange(activity)
-  } else {
-    df_yearmon_fct <-
-      dplyr::bind_rows(
-        activity = df_yearmon,
-        wp = df_yearmon %>%
-          dplyr::group_by(wp) %>%
-          dplyr::summarise(
-            activity = unique(wp),
-            start_date = min(start_date),
-            end_date = max(end_date)
-          ),
-        .id = "type"
-      ) %>%
-      tidyr::unite(col = "activity", wp, activity, remove = FALSE) %>%
-      dplyr::mutate(activity = factor(x = activity, levels = level_labels_df$levels)) %>%
-      dplyr::arrange(activity)
-  }
-
-
-  if (hide_wp == TRUE) {
-    df_yearmon_fct <- df_yearmon_fct %>%
-      dplyr::filter(type != "wp")
-  }
-
-  if (hide_activities == TRUE) {
-    df_yearmon_fct <- df_yearmon_fct %>%
-      dplyr::filter(type != "activity")
-  }
-
-  gg_gantt <- ggplot2::ggplot(
-    data = df_yearmon_fct,
-    mapping = ggplot2::aes(
-      x = start_date,
-      y = activity,
-      xend = end_date,
-      yend = activity,
-      colour = wp
-    )
-  ) +
-    # background shaded bands
-    ggplot2::geom_rect(
-      data = date_range_df, ggplot2::aes(
-        xmin = start,
-        xmax = end,
-        ymin = -Inf,
-        ymax = Inf
-      ),
-      inherit.aes = FALSE,
-      alpha = 0.4,
-      fill = colour_stripe
-    )
-
-  if (mark_quarters == TRUE) {
-    gg_gantt <- gg_gantt +
-      ggplot2::geom_vline(xintercept = date_breaks_q, colour = "gray50")
-  }
-
-  if (mark_years == TRUE) {
-    gg_gantt <- gg_gantt +
-      ggplot2::geom_vline(xintercept = date_breaks_y, colour = "gray50")
-  }
-
-  # set alpha to 0 for wp
-  df_yearmon_fct$wp_alpha <- 0
-  df_yearmon_fct$activity_alpha <- 0
-  df_yearmon_fct <- df_yearmon_fct %>%
-    dplyr::mutate(activity_alpha = ifelse(type == "activity", alpha_activity, 0))
-  df_yearmon_fct <- df_yearmon_fct %>%
-    dplyr::mutate(wp_alpha = ifelse(type == "wp", alpha_wp, 0))
-
-  if (utils::packageVersion("ggplot2") > "3.3.6") {
-    gg_gantt <- gg_gantt +
-      ### activities
-      ggplot2::geom_segment(
-        data = df_yearmon_fct,
-        lineend = line_end_activity,
-        linewidth = size_activity,
-        alpha = df_yearmon_fct$activity_alpha
-      ) +
-      ### wp
-      ggplot2::geom_segment(
-        data = df_yearmon_fct,
-        lineend = line_end_wp,
-        linewidth = size_wp,
-        alpha = df_yearmon_fct$wp_alpha
-      )
-  } else {
-    gg_gantt <- gg_gantt +
-      ### activities
-      ggplot2::geom_segment(
-        data = df_yearmon_fct,
-        lineend = line_end_activity,
-        size = size_activity,
-        alpha = df_yearmon_fct$activity_alpha
-      ) +
-      ### wp
-      ggplot2::geom_segment(
-        data = df_yearmon_fct,
-        lineend = line_end_wp,
-        size = size_wp,
-        alpha = df_yearmon_fct$wp_alpha
-      )
-  }
-
-  if (month_number_label == TRUE & month_date_label == TRUE) {
-    gg_gantt <- gg_gantt +
-      ggplot2::scale_x_date(
-        name = NULL,
-        breaks = date_breaks,
-        date_labels = "%b\n%Y",
-        minor_breaks = NULL,
-        sec.axis = ggplot2::dup_axis(labels = paste0(month_label_string, seq_along(date_breaks) * month_breaks - (month_breaks - 1)))
-      )
-  } else if (month_number_label == FALSE & month_date_label == TRUE) {
-    gg_gantt <- gg_gantt +
-      ggplot2::scale_x_date(
-        name = NULL,
-        breaks = date_breaks,
-        date_labels = "%b\n%Y",
-        minor_breaks = NULL,
-        position = x_axis_position
-      )
-  } else if (month_number_label == TRUE & month_date_label == FALSE) {
-    gg_gantt <- gg_gantt +
-      ggplot2::scale_x_date(
-        name = NULL,
-        breaks = date_breaks,
-        date_labels = paste0(month_label_string, seq_along(date_breaks) * month_breaks - (month_breaks - 1)),
-        minor_breaks = NULL,
-        position = x_axis_position
-      )
-  } else if (month_number_label == FALSE & month_date_label == FALSE) {
-    gg_gantt <- gg_gantt +
-      ggplot2::scale_x_date(name = NULL)
-  }
-
-  if (axis_text_align == "right") {
-    axis_text_align_n <- 1
-  } else if (axis_text_align == "centre" | axis_text_align == "center") {
-    axis_text_align_n <- 0.5
-  } else if (axis_text_align == "left") {
-    axis_text_align_n <- 0
-  } else {
-    axis_text_align_n <- 1
-  }
-
-  gg_gantt <- gg_gantt +
-    ggplot2::scale_y_discrete(
-      name = NULL,
-      breaks = level_labels_df$levels,
-      labels = level_labels_df$labels
-    ) +
-    ggplot2::theme_minimal() +
-    ggplot2::scale_colour_manual(values = colour_palette) +
-    ggplot2::theme(
-      text = ggplot2::element_text(family = font_family),
-      axis.text.y.left = ggtext::element_markdown(
-        size = ggplot2::rel(size_text_relative),
-        hjust = axis_text_align_n
-      ),
-      axis.text.x = ggplot2::element_text(size = ggplot2::rel(size_text_relative)),
-      legend.position = "none"
-    )
-
-  if (is.null(spots) == FALSE) {
-    if (is.data.frame(spots) == TRUE) {
-      spots_df <- spots %>%
-        tidyr::drop_na() %>%
-        dplyr::left_join(
-          y = level_labels_df %>%
-            dplyr::rename(activity = labels),
-          by = "activity"
-        ) %>%
-        dplyr::mutate(activity = levels) %>%
-        dplyr::select(-"levels")
-
-      if (by_date == FALSE) {
-        spots_date <- spots_df %>%
-          dplyr::mutate(
-            spot_date = as.numeric(spot_date),
-            activity = as.character(activity),
-            spot_type = as.character(spot_type)
-          ) %>%
-          dplyr::mutate(
-            activity = factor(x = activity, levels = level_labels_df$levels),
-            spot_date = zoo::as.Date(start_yearmon + (1 / 12) * zoo::as.yearmon(spot_date), frac = 0.5),
-            end_date = as.Date(NA),
-            wp = NA
-          )
-      } else {
-        if (exact_date == TRUE) {
-          spots_date <- spots_df %>%
-            dplyr::mutate(
-              activity = factor(x = activity, levels = level_labels_df$levels),
-              spot_date = as.Date(spot_date),
-              end_date = as.Date(NA),
-              wp = NA
-            )
-        } else {
-          spots_date <- spots_df %>%
-            dplyr::mutate(
-              activity = factor(x = activity, levels = level_labels_df$levels),
-              spot_date = zoo::as.Date(zoo::as.yearmon(spot_date), frac = 0.5),
-              end_date = as.Date(NA),
-              wp = NA
-            )
-        }
-      }
-
-      gg_gantt <- gg_gantt +
-        ggplot2::geom_label(
-          data = spots_date,
-          mapping = ggplot2::aes(
-            x = spot_date,
-            y = activity,
-            label = spot_type
-          ),
-          label.padding = spot_padding,
-          label.size = spot_border,
-          colour = spot_text_colour,
-          fontface = spot_fontface,
-          family = font_family,
-          size = 3 * size_text_relative * spot_size_text_relative,
-          fill = spot_fill
-        )
-    }
-  }
-
-  if (show_vertical_lines == FALSE) {
-    if (utils::packageVersion("ggplot2") > "3.3.6") {
-      gg_gantt <- gg_gantt +
-        ggplot2::theme(panel.grid.major.x = ggplot2::element_line(linewidth = 0))
-    } else {
-      gg_gantt <- gg_gantt +
-        ggplot2::theme(panel.grid.major.x = ggplot2::element_line(size = 0))
-    }
-  }
-
-  return(gg_gantt)
+  
+  projectified <- gantt_projectify(project = project,
+                                      by_date = by_date,
+                                      exact_date = exact_date,
+                                      project_start_date = project_start_date,
+                                      colour_palette = colour_palette,
+                                      size_wp = size_wp,
+                                      hide_wp = hide_wp,
+                                      wp_label_bold = wp_label_bold,
+                                      size_activity = size_activity,
+                                      hide_activity = hide_activity,
+                                      label_wrap = label_wrap,
+                                      alpha_wp = alpha_wp,
+                                      alpha_activity = alpha_activity,
+                                      line_end = line_end,
+                                      line_end_wp = line_end_wp,
+                                      line_end_activity = line_end_activity,
+                                      month_breaks = month_breaks)
+  
+  gg_gantt <- gantt_plotify(projectified = projectified)
+  
+  gg_gantt
 }
