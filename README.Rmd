@@ -391,6 +391,37 @@ ganttrify(
 )
 ```
 
+## Internals
+
+For a long time, `ganttrify` was basically one big function that did both the processing and the visualisation. But with time, as interest in the package has become clearer, it occurred to me that probably I should turn this into a respectable package, with functions, tests, and the likes... perhaps even submit it to CRAN, and have sit along all the serious packages. 
+
+When a new gantt chart is created, i.e. when you run `ganttrify()`, the following functions are effectively called one after the other (please indulge my ridiculous stubborness in insisting beyond decency in this ridiculous function naming convention):
+
+- `gantt_verify()` - checks that the initial `project` given as input is structured as expected, and provides meaningful error messages when this is not the case - it outputs a `verified` data frame.
+- `gantt_projectify()` reshapes the input in a format that is amenable to plotting with `ggplot2`; it is much less human-readable than the original input, but it is not imperscrutable, and more adventurous users may want to tinker with the `projectified` output of this step.
+- `gantt_sequencify()` (really, this function naming convention is obviously unforgivable) takes the inputs and creates some of the time sequences needed for the `ggplot2` object, including labels, vertical lines, gray bands in the background, and such. 
+- [optional step, only if you use `spots` for spot events] `gantt_spotify()` (oh, this function-naming convention is just so witty...), as you'd expect, takes the input, processes the `spots` input, and returns all the data in a consistent format (effectively, a list with a `projectified` project, data about sequences, and a standardised `spots` input)
+- things are then ready for the final `gantt_plotify`, which takes all the inputs and returns the long-awaited `ggplot2` object.
+
+In brief the following command:
+
+```{r one_step_example, eval = FALSE}
+ganttrify(project = ganttrify::test_project)
+```
+
+is exactly the same as the following:
+
+```{r multi_step_example, eval = FALSE}
+ganttrify::test_project %>% 
+  gantt_verify() %>% 
+  gantt_projectify() %>% 
+  gantt_sequencify() %>% 
+  gantt_plotify()
+```
+
+By breaking up the process, the package mantainer (i.e. me) can better take care of the codebase and include meaningful testing, and the brave package user (if you're still reading this increadibly long readme, this may well be you) can troubleshoot and customise the outputs. This approach may also make it possible to extend further `ganttrify` without breaking it for users that just care about its more basic functionality.
+
+
 ## Troubleshooting
 
 ### Structure of the input table
