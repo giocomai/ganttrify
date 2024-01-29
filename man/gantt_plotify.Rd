@@ -7,8 +7,6 @@
 gantt_plotify(project = NULL, projectified = NULL, ...)
 }
 \arguments{
-\item{project}{Defaults to NULL. Expected to be a valid `ganttrify` project data frame. Ignored if `projectified` given.}
-
 \item{projectified}{Defaults to NULL. Expected to have the exact same format as the data frames generated with [gantt_projectify()]. Takes precedence of `project`.}
 
 \item{...}{Arguments passed to [gantt_projectify()]. Ignored if `projectified` is not NULL}

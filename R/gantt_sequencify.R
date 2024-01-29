@@ -1,6 +1,5 @@
 #' Establish data sequences that are need for separate elements of the Gantt chart
 #'
-#' @param project Defaults to NULL. Expected to be a valid `ganttrify` project data frame. Ignored if `projectified` given.
 #' @param projectified Defaults to NULL. Expected to have the exact same format as the data frames generated with [gantt_projectify()]. Takes precedence of `project`.
 #' @param ... Arguments passed to [gantt_projectify()]. Ignored if `projectified` is not NULL
 #'
@@ -9,16 +8,13 @@
 #'
 #' @examples
 #' gantt_sequencify(project = ganttrify::test_project)
-gantt_sequencify <- function(project = NULL, 
-                             projectified = NULL,
+gantt_sequencify <- function(projectified,
                              ...) {
+
   if (is.null(projectified)) {
-    if (is.null(project)) {
-      cli::cli_abort(message = c(x = "Either {.arg project} or {.arg projectified} must not be {.code NULL}"))
-    }
-    projectified <- gantt_projectify(project = project,
-                                        ...)
+    cli::cli_abort(message = c(x = "{.arg projectified} must not be {.code NULL}"))
   }
+  
   
   sequence_months <- seq.Date(
     from = min(projectified[["start_date"]]),
@@ -71,7 +67,8 @@ gantt_sequencify <- function(project = NULL,
     by = "1 year"
   )
   
-  list(date_range_df = date_range_df,
+  list(projectified = projectified, 
+       date_range_df = date_range_df,
        date_breaks = date_breaks,
        date_breaks_q = date_breaks_q,
        date_breaks_y = date_breaks_y)

@@ -4,11 +4,9 @@
 \alias{gantt_sequencify}
 \title{Establish data sequences that are need for separate elements of the Gantt chart}
 \usage{
-gantt_sequencify(project = NULL, projectified = NULL, ...)
+gantt_sequencify(projectified, ...)
 }
 \arguments{
-\item{project}{Defaults to NULL. Expected to be a valid `ganttrify` project data frame. Ignored if `projectified` given.}
-
 \item{projectified}{Defaults to NULL. Expected to have the exact same format as the data frames generated with [gantt_projectify()]. Takes precedence of `project`.}
 
 \item{...}{Arguments passed to [gantt_projectify()]. Ignored if `projectified` is not NULL}
