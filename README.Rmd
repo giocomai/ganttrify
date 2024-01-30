@@ -412,10 +412,10 @@ ganttrify(project = ganttrify::test_project)
 is exactly the same as the following:
 
 ```{r multi_step_example, eval = FALSE}
-ganttrify::test_project %>% 
-  gantt_verify() %>% 
-  gantt_projectify() %>% 
-  gantt_sequencify() %>% 
+ganttrify::test_project %>%
+  gantt_verify() %>%
+  gantt_projectify() %>%
+  gantt_sequencify() %>%
   gantt_plotify()
 ```
 

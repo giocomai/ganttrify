@@ -144,31 +144,33 @@ ganttrify <- function(project,
     by_date = by_date,
     exact_date = exact_date
   )
-  
+
   # arguments consistency check
   if (hide_wp & hide_activity) {
     cli::cli_abort("At least one of {.arg hide_wp} or {.arg hide_activity} must be {.code TRUE}, otherwise there's nothing left to show.")
   }
-  
-  projectified <- gantt_projectify(project = project,
-                                      by_date = by_date,
-                                      exact_date = exact_date,
-                                      project_start_date = project_start_date,
-                                      colour_palette = colour_palette,
-                                      size_wp = size_wp,
-                                      hide_wp = hide_wp,
-                                      wp_label_bold = wp_label_bold,
-                                      size_activity = size_activity,
-                                      hide_activity = hide_activity,
-                                      label_wrap = label_wrap,
-                                      alpha_wp = alpha_wp,
-                                      alpha_activity = alpha_activity,
-                                      line_end = line_end,
-                                      line_end_wp = line_end_wp,
-                                      line_end_activity = line_end_activity,
-                                      month_breaks = month_breaks)
-  
+
+  projectified <- gantt_projectify(
+    project = project,
+    by_date = by_date,
+    exact_date = exact_date,
+    project_start_date = project_start_date,
+    colour_palette = colour_palette,
+    size_wp = size_wp,
+    hide_wp = hide_wp,
+    wp_label_bold = wp_label_bold,
+    size_activity = size_activity,
+    hide_activity = hide_activity,
+    label_wrap = label_wrap,
+    alpha_wp = alpha_wp,
+    alpha_activity = alpha_activity,
+    line_end = line_end,
+    line_end_wp = line_end_wp,
+    line_end_activity = line_end_activity,
+    month_breaks = month_breaks
+  )
+
   gg_gantt <- gantt_plotify(projectified = projectified)
-  
+
   gg_gantt
 }

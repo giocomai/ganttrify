@@ -1,5 +1,5 @@
 #' Create a Gantt chart based on a valid `ganttrify` project
-#' 
+#'
 #' Pre-processed or customised inputs welcome.
 #'
 #' @inheritParams gantt_sequencify
@@ -9,18 +9,19 @@
 #'
 #' @examples
 #' gantt_plotify(project = ganttrify::test_project)
-gantt_plotify <- function(project = NULL, 
+gantt_plotify <- function(project = NULL,
                           projectified = NULL,
                           ...) {
-  
   if (is.null(projectified)) {
     if (is.null(project)) {
       cli::cli_abort(message = c(x = "Either {.arg project} or {.arg projectified} must not be {.code NULL}"))
     }
-    projectified <- gantt_projectify(project = project,
-                                        ...)
+    projectified <- gantt_projectify(
+      project = project,
+      ...
+    )
   }
-  
+
   gg_gantt <- ggplot2::ggplot(
     data = projectified,
     mapping = ggplot2::aes(
@@ -44,17 +45,17 @@ gantt_plotify <- function(project = NULL,
       alpha = 0.4,
       fill = colour_stripe
     )
-  
+
   if (mark_quarters == TRUE) {
     gg_gantt <- gg_gantt +
       ggplot2::geom_vline(xintercept = date_breaks_q, colour = "gray50")
   }
-  
+
   if (mark_years == TRUE) {
     gg_gantt <- gg_gantt +
       ggplot2::geom_vline(xintercept = date_breaks_y, colour = "gray50")
   }
-  
+
   # set alpha to 0 for wp
   projectified$wp_alpha <- 0
   projectified$activity_alpha <- 0
@@ -62,7 +63,7 @@ gantt_plotify <- function(project = NULL,
     dplyr::mutate(activity_alpha = ifelse(type == "activity", alpha_activity, 0))
   projectified <- projectified %>%
     dplyr::mutate(wp_alpha = ifelse(type == "wp", alpha_wp, 0))
-  
+
   if (utils::packageVersion("ggplot2") > "3.3.6") {
     gg_gantt <- gg_gantt +
       ### activities
@@ -96,7 +97,7 @@ gantt_plotify <- function(project = NULL,
         alpha = projectified$wp_alpha
       )
   }
-  
+
   if (month_number_label == TRUE & month_date_label == TRUE) {
     gg_gantt <- gg_gantt +
       ggplot2::scale_x_date(
@@ -128,7 +129,7 @@ gantt_plotify <- function(project = NULL,
     gg_gantt <- gg_gantt +
       ggplot2::scale_x_date(name = NULL)
   }
-  
+
   if (axis_text_align == "right") {
     axis_text_align_n <- 1
   } else if (axis_text_align == "centre" | axis_text_align == "center") {
@@ -138,7 +139,7 @@ gantt_plotify <- function(project = NULL,
   } else {
     axis_text_align_n <- 1
   }
-  
+
   gg_gantt <- gg_gantt +
     ggplot2::scale_y_discrete(
       name = NULL,
@@ -156,7 +157,7 @@ gantt_plotify <- function(project = NULL,
       axis.text.x = ggplot2::element_text(size = ggplot2::rel(size_text_relative)),
       legend.position = "none"
     )
-  
+
   if (is.null(spots) == FALSE) {
     if (is.data.frame(spots) == TRUE) {
       spots_df <- spots %>%
@@ -168,7 +169,7 @@ gantt_plotify <- function(project = NULL,
         ) %>%
         dplyr::mutate(activity = levels) %>%
         dplyr::select(-"levels")
-      
+
       if (by_date == FALSE) {
         spots_date <- spots_df %>%
           dplyr::mutate(
@@ -201,7 +202,7 @@ gantt_plotify <- function(project = NULL,
             )
         }
       }
-      
+
       gg_gantt <- gg_gantt +
         ggplot2::geom_label(
           data = spots_date,
@@ -220,7 +221,7 @@ gantt_plotify <- function(project = NULL,
         )
     }
   }
-  
+
   if (show_vertical_lines == FALSE) {
     if (utils::packageVersion("ggplot2") > "3.3.6") {
       gg_gantt <- gg_gantt +
@@ -230,6 +231,6 @@ gantt_plotify <- function(project = NULL,
         ggplot2::theme(panel.grid.major.x = ggplot2::element_line(size = 0))
     }
   }
-  
+
   gg_gantt
 }
