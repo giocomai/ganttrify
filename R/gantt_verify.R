@@ -48,6 +48,13 @@ gantt_verify <- function(project,
         start_date = as.numeric(.data[["start_date"]]),
         end_date = as.numeric(.data[["end_date"]])
       )
+
+    if (sum(is.na(project[["start_date"]])) == nrow(project) | sum(is.na(project[["end_date"]])) == nrow(project)) {
+      cli::cli_abort(c(
+        x = "When you set {.arg by_date} to {.val FALSE}, both {.arg start_date} and {.arg end_date} should be numeric, and are assumed to correspond to time units (e.g. number of months) since the start of the project.",
+        i = "Check your input, and consider setting {.arg by_date} to {.val TRUE} if your {.arg start_date} and {.arg end_date} are in the date or (year month) format."
+      ))
+    }
   }
 
   if (exact_date) {
@@ -75,5 +82,6 @@ gantt_verify <- function(project,
     ))
   }
 
+  attr(x = project, which = "ganttrify_status") <- "verified"
   project
 }
