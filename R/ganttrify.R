@@ -151,8 +151,9 @@ ganttrify <- function(project,
   }
 
   # repeat colours if not enough colours given
-  colour_palette <- rev(rep(colour_palette, length(unique(project$wp)))[1:length(unique(project$wp))])
-
+  colour_palette <- rep(colour_palette, length(unique(project$wp)))[1:length(unique(project$wp))]
+  names(colour_palette) <- colour_palette
+  
   if (is.null(line_end) == FALSE) {
     line_end_wp <- line_end
     line_end_activity <- line_end
