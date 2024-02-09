@@ -151,9 +151,7 @@ ganttrify <- function(project,
   }
 
   # repeat colours if not enough colours given
-  if (length(unique(project$wp)) > length(as.character(colour_palette))) {
-    colour_palette <- rep(colour_palette, length(unique(project$wp)))[1:length(unique(project$wp))]
-  }
+  colour_palette <- rev(rep(colour_palette, length(unique(project$wp)))[1:length(unique(project$wp))])
 
   if (is.null(line_end) == FALSE) {
     line_end_wp <- line_end
@@ -270,8 +268,18 @@ ganttrify <- function(project,
     dplyr::group_by(wp) %>%
     dplyr::summarise(wp_activity = list(wp_activity)) %>%
     dplyr::group_by(wp) %>%
-    dplyr::mutate(wp = stringr::str_c(wp, wp, sep = "_")) %>%
-    dplyr::ungroup()
+    dplyr::mutate(wp = stringr::str_c("wp", wp, wp, sep = "_")) %>%
+    dplyr::ungroup() %>% 
+    dplyr::mutate(gantt_colour = colour_palette)
+  
+  distinct_colours_df <- dplyr::bind_rows(distinct_yearmon_levels_df %>% 
+                                           dplyr::transmute(activity = wp, 
+                                                            gantt_colour = gantt_colour),
+                                         
+                                         distinct_yearmon_levels_df %>% 
+                                           tidyr::unnest(wp_activity) %>% 
+                                           dplyr::transmute(activity = wp_activity, 
+                                                            gantt_colour = gantt_colour))
 
   distinct_yearmon_labels_df <- df_yearmon %>%
     dplyr::distinct(wp, activity) %>%
@@ -321,12 +329,15 @@ ganttrify <- function(project,
             activity = unique(wp),
             start_date = min(start_date),
             end_date = max(end_date)
-          ),
+          ) %>% 
+          dplyr::mutate(wp = stringr::str_c("wp", wp, sep = "_")),
         .id = "type"
       ) %>%
       tidyr::unite(col = "activity", wp, activity, remove = FALSE) %>%
+      dplyr::left_join(y = distinct_colours_df,
+                       by = "activity") %>% 
       dplyr::mutate(activity = factor(x = activity, levels = level_labels_df$levels)) %>%
-      dplyr::arrange(activity)
+      dplyr::arrange(activity) 
   } else {
     df_yearmon_fct <-
       dplyr::bind_rows(
@@ -337,10 +348,13 @@ ganttrify <- function(project,
             activity = unique(wp),
             start_date = min(start_date),
             end_date = max(end_date)
-          ),
+          ) %>% 
+          dplyr::mutate(wp = stringr::str_c("wp", wp, sep = "_")),
         .id = "type"
       ) %>%
       tidyr::unite(col = "activity", wp, activity, remove = FALSE) %>%
+      dplyr::left_join(y = distinct_colours_df,
+                       by = "activity") %>% 
       dplyr::mutate(activity = factor(x = activity, levels = level_labels_df$levels)) %>%
       dplyr::arrange(activity)
   }
@@ -363,7 +377,7 @@ ganttrify <- function(project,
       y = activity,
       xend = end_date,
       yend = activity,
-      colour = wp
+      colour = gantt_colour
     )
   ) +
     # background shaded bands
