@@ -80,6 +80,17 @@ You can install the development version from
 remotes::install_github("giocomai/ganttrify")
 ```
 
+Or from R-universe:
+
+``` r
+install.packages("ganttrify",
+  repos = c(
+    "https://giocomai.r-universe.dev",
+    "https://cloud.r-project.org"
+  )
+)
+```
+
 ## Example
 
 Here is an example project:
