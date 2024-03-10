@@ -153,7 +153,7 @@ ganttrify <- function(project,
   # repeat colours if not enough colours given
   colour_palette <- rep(colour_palette, length(unique(project$wp)))[1:length(unique(project$wp))]
   names(colour_palette) <- colour_palette
-  
+
   if (is.null(line_end) == FALSE) {
     line_end_wp <- line_end
     line_end_activity <- line_end
@@ -262,31 +262,43 @@ ganttrify <- function(project,
   )
 
   # deal with the possibility that activities in different WPs have the same name
-
   distinct_yearmon_levels_df <- df_yearmon %>%
     dplyr::distinct(wp, activity) %>%
     tidyr::unite(col = "wp_activity", wp, activity, remove = FALSE, sep = "_") %>%
     dplyr::group_by(wp) %>%
     dplyr::summarise(wp_activity = list(wp_activity)) %>%
+    dplyr::left_join(
+      x = tibble::tibble(wp = unique(df_yearmon[["wp"]])),
+      by = "wp"
+    ) %>%
     dplyr::group_by(wp) %>%
     dplyr::mutate(wp = stringr::str_c("wp", wp, wp, sep = "_")) %>%
-    dplyr::ungroup() %>% 
+    dplyr::ungroup() %>%
     dplyr::mutate(gantt_colour = colour_palette)
-  
-  distinct_colours_df <- dplyr::bind_rows(distinct_yearmon_levels_df %>% 
-                                           dplyr::transmute(activity = wp, 
-                                                            gantt_colour = gantt_colour),
-                                         
-                                         distinct_yearmon_levels_df %>% 
-                                           tidyr::unnest(wp_activity) %>% 
-                                           dplyr::transmute(activity = wp_activity, 
-                                                            gantt_colour = gantt_colour))
+
+  distinct_colours_df <- dplyr::bind_rows(
+    distinct_yearmon_levels_df %>%
+      dplyr::transmute(
+        activity = wp,
+        gantt_colour = gantt_colour
+      ),
+    distinct_yearmon_levels_df %>%
+      tidyr::unnest(wp_activity) %>%
+      dplyr::transmute(
+        activity = wp_activity,
+        gantt_colour = gantt_colour
+      )
+  )
 
   distinct_yearmon_labels_df <- df_yearmon %>%
     dplyr::distinct(wp, activity) %>%
     dplyr::group_by(wp) %>%
     dplyr::summarise(activity = list(activity)) %>%
-    dplyr::ungroup()
+    dplyr::ungroup() %>%
+    dplyr::left_join(
+      x = tibble::tibble(wp = unique(df_yearmon[["wp"]])),
+      by = "wp"
+    )
 
   if (wp_label_bold) {
     distinct_yearmon_labels_df <- distinct_yearmon_labels_df %>%
@@ -330,15 +342,17 @@ ganttrify <- function(project,
             activity = unique(wp),
             start_date = min(start_date),
             end_date = max(end_date)
-          ) %>% 
+          ) %>%
           dplyr::mutate(wp = stringr::str_c("wp", wp, sep = "_")),
         .id = "type"
       ) %>%
       tidyr::unite(col = "activity", wp, activity, remove = FALSE) %>%
-      dplyr::left_join(y = distinct_colours_df,
-                       by = "activity") %>% 
+      dplyr::left_join(
+        y = distinct_colours_df,
+        by = "activity"
+      ) %>%
       dplyr::mutate(activity = factor(x = activity, levels = level_labels_df$levels)) %>%
-      dplyr::arrange(activity) 
+      dplyr::arrange(activity)
   } else {
     df_yearmon_fct <-
       dplyr::bind_rows(
@@ -349,13 +363,15 @@ ganttrify <- function(project,
             activity = unique(wp),
             start_date = min(start_date),
             end_date = max(end_date)
-          ) %>% 
+          ) %>%
           dplyr::mutate(wp = stringr::str_c("wp", wp, sep = "_")),
         .id = "type"
       ) %>%
       tidyr::unite(col = "activity", wp, activity, remove = FALSE) %>%
-      dplyr::left_join(y = distinct_colours_df,
-                       by = "activity") %>% 
+      dplyr::left_join(
+        y = distinct_colours_df,
+        by = "activity"
+      ) %>%
       dplyr::mutate(activity = factor(x = activity, levels = level_labels_df$levels)) %>%
       dplyr::arrange(activity)
   }
