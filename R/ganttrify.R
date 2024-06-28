@@ -14,6 +14,7 @@
 #' @param project_start_date The date when the project starts. It can be a date,
 #'   or a string in the format "2020-03" or "2020-03-01". Ignored if
 #'   `month_number_date` is set to FALSE.
+#' @param colour_by The input data field that should inform colours. Default being project$wp
 #' @param colour_palette A character vector of colours or a colour palette. If
 #'   necessary, colours are recycled as needed. Defaults to
 #'   `wesanderson::wes_palette("Darjeeling1")`. For more palettes, consider also
@@ -109,6 +110,7 @@ ganttrify <- function(project,
                       by_date = FALSE,
                       exact_date = FALSE,
                       project_start_date = Sys.Date(),
+                      colour_by = "wp",
                       colour_palette = wesanderson::wes_palette("Darjeeling1"),
                       font_family = "sans",
                       mark_quarters = FALSE,
@@ -139,6 +141,7 @@ ganttrify <- function(project,
                       month_breaks = 1,
                       show_vertical_lines = TRUE,
                       axis_text_align = "right") {
+  # use gannt_verify function (written in eponymously named script) to ensure input data is formatted properly
   project <- gantt_verify(
     project = project,
     by_date = by_date,
@@ -149,11 +152,24 @@ ganttrify <- function(project,
   if (hide_wp & hide_activities) {
     cli::cli_abort("At least one of {.arg hide_wp} or {.arg hide_activities} must be {.code TRUE}, otherwise there's nothing left to show.")
   }
+  
+  #define colour field as colour_by arg indicates
+  colour_field <- unique(project[[colour_by]])
 
-  # repeat colours if not enough colours given
-  colour_palette <- rep(colour_palette, length(unique(project$wp)))[1:length(unique(project$wp))]
-  names(colour_palette) <- colour_palette
-
+  # repeat colours if not enough colours given ------------------- NOTE -- if trying to use colour to uniquely
+  #     identify groups, then repeating colour will not work
+  if(length(colour_palette != length(colour_field))){
+    message("You do not have the same number of colours in your palette as unique values of your colour_by var. Repeating palette as needed to match number of unique colour_by values.")
+    # repear colours if needed
+    colour_palette <- rep(colour_palette, length(colour_field))[1:length(colour_field)]
+    # Name colours using the colour_by field mapped to said color
+    names(colour_palette) <- colour_field # -------------------- NOTE: will want to verify if this works when things actually coloured
+    #names(colour_palette) <- colour_palette 
+  } else {
+    message("Hooray! You have the same number of colours in your palette as unique values of your colour_by var.")
+    names(colour_palette) <- colour_field
+  }
+  
   if (is.null(line_end) == FALSE) {
     line_end_wp <- line_end
     line_end_activity <- line_end
