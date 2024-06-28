@@ -22,6 +22,7 @@
 #'   MetBrewer::met.brewer("Lakota")`. Colours can be passed as a vector of hex
 #'   codes (e.g. `colour_palette = c("#6ACCEA", "#00FFB8", "#B90000",
 #'   "#6C919C")`)
+#' @param order_by How should the bars in the chart be ordered? Character indicating field name to order by; default is by activity
 #' @param font_family A character vector of length 1, defaults to "sans". It is
 #'   recommended to use a narrow/condensed font such as Roboto Condensed for
 #'   more efficient use of text space.
@@ -112,6 +113,7 @@ ganttrify <- function(project,
                       project_start_date = Sys.Date(),
                       colour_by = "wp",
                       colour_palette = wesanderson::wes_palette("Darjeeling1"),
+                      order_by = NULL,
                       font_family = "sans",
                       mark_quarters = FALSE,
                       mark_years = FALSE,
@@ -170,11 +172,13 @@ ganttrify <- function(project,
     names(colour_palette) <- colour_field
   }
   
+  #Defining line endings (round or butt)
   if (is.null(line_end) == FALSE) {
     line_end_wp <- line_end
     line_end_activity <- line_end
   }
 
+  # ensuring fields are proper type based on whether the dates are already formatted
   if (by_date == FALSE) {
     df <- project %>%
       dplyr::mutate(
@@ -218,6 +222,7 @@ ganttrify <- function(project,
   }
 
   if (exact_date == TRUE) {
+    # ensure df is properly formatted - dates are dates, wp & project are characters
     df <- project %>%
       dplyr::mutate(
         start_date = as.Date(start_date),
@@ -226,6 +231,7 @@ ganttrify <- function(project,
         activity = as.character(activity)
       )
 
+    # create a df that pushes start date to earliest day of indicated month, and end date to latest day of indicated month
     df_yearmon <- df %>%
       dplyr::mutate(
         start_date = zoo::as.Date(zoo::as.yearmon(start_date), frac = 0),
@@ -233,12 +239,14 @@ ganttrify <- function(project,
       )
   }
 
+  # create ordered character vector of the first day of the month dates from start of df time period to end
   sequence_months <- seq.Date(
     from = min(df_yearmon[["start_date"]]),
     to = max(df_yearmon[["end_date"]]),
     by = "1 month"
   )
 
+  # modify sequence_months if an odd number of months by adding one month to end date
   if (length(sequence_months) %% 2 != 0) {
     sequence_months <- seq.Date(
       from = min(df_yearmon[["start_date"]]),
@@ -247,11 +255,13 @@ ganttrify <- function(project,
     )
   }
 
+  # not sure why this is done ---------------------------------- NOTE: figure out purpose of this matrix
   date_range_matrix <- matrix(as.numeric(sequence_months),
     ncol = 2,
     byrow = TRUE
   )
 
+  # create tibble using matrix containing only start and end dates --- NOTE: why not just subset to date cols and rename from df_yearmon?
   date_range_df <- tibble::tibble(
     start = zoo::as.Date.numeric(date_range_matrix[, 1]),
     end = zoo::as.Date.numeric(date_range_matrix[, 2])
@@ -265,12 +275,16 @@ ganttrify <- function(project,
   )), frac = 0.5)
 
 
+  # create vector of quarter date breaks corresponding to start of first year in start_date to start of year following end date
+  #  -- used for mark_quarter = TRUE arg
   date_breaks_q <- seq.Date(
     from = lubridate::floor_date(x = min(df_yearmon[["start_date"]]), unit = "year"),
     to = lubridate::ceiling_date(x = max(df_yearmon[["end_date"]]), unit = "year"),
     by = "1 quarter"
   )
 
+  # create vector of year start date breaks corresponding to start of first year in start_date to start of year following end date
+  #  -- used for mark_year = TRUE arg
   date_breaks_y <- seq.Date(
     from = lubridate::floor_date(x = min(df_yearmon[["start_date"]]), unit = "year"),
     to = lubridate::ceiling_date(x = max(df_yearmon[["end_date"]]), unit = "year"),
@@ -292,6 +306,7 @@ ganttrify <- function(project,
     dplyr::ungroup() %>%
     dplyr::mutate(gantt_colour = colour_palette)
 
+  #mapping colours to wp (?)
   distinct_colours_df <- dplyr::bind_rows(
     distinct_yearmon_levels_df %>%
       dplyr::transmute(
@@ -306,6 +321,7 @@ ganttrify <- function(project,
       )
   )
 
+  # tibble with unduplicated wp name and list of corresponding activities per unique wp
   distinct_yearmon_labels_df <- df_yearmon %>%
     dplyr::distinct(wp, activity) %>%
     dplyr::group_by(wp) %>%
@@ -316,10 +332,12 @@ ganttrify <- function(project,
       by = "wp"
     )
 
+  # adding html code to wp values to enable bold script upon rendering if arg set to true
   if (wp_label_bold) {
     distinct_yearmon_labels_df <- distinct_yearmon_labels_df %>%
       dplyr::mutate(wp = stringr::str_c("<b>", wp, "</b>"))
 
+    #if adding spots
     if (is.null(spots) == FALSE) {
       wp_v <- project %>%
         dplyr::distinct(wp) %>%
@@ -329,11 +347,13 @@ ganttrify <- function(project,
     }
   }
 
+  # creating tibble of labels
   level_labels_df <- tibble::tibble(
     levels = rev(unlist(t(matrix(c(distinct_yearmon_levels_df$wp, distinct_yearmon_levels_df$wp_activity), ncol = 2)))),
     labels = rev(unlist(t(matrix(c(distinct_yearmon_labels_df$wp, distinct_yearmon_labels_df$activity), ncol = 2))))
   )
 
+  # if indicated to wrap labels, then setting arg 'label_wrap' to character count at which to wrap and setting labels to wrap using html code
   if (label_wrap != FALSE) {
     if (isTRUE(label_wrap)) {
       label_wrap <- 32
@@ -347,7 +367,8 @@ ganttrify <- function(project,
       spots$activity <- stringr::str_replace_all(string = spots$activity, pattern = "\n", replacement = "<br />")
     }
   }
-
+  
+  # creating df input for plotting -- here at the end, rows are ordered by activity, which has the WP appended to it
   if (exact_date == TRUE) {
     df_yearmon_fct <-
       dplyr::bind_rows(
@@ -369,6 +390,7 @@ ganttrify <- function(project,
       ) %>%
       dplyr::mutate(activity = factor(x = activity, levels = level_labels_df$levels)) %>%
       dplyr::arrange(activity)
+    
   } else {
     df_yearmon_fct <-
       dplyr::bind_rows(
@@ -392,17 +414,25 @@ ganttrify <- function(project,
       dplyr::arrange(activity)
   }
 
-
+  # arrange/order as arg indicates
+  if(is.null(order_by) == FALSE){
+    df_yearmon_fct <- df_yearmon_fct %>%
+      dplyr::arrange(df_yearmon_fct[[order_by]])
+  }
+  
+  # If hiding WP labels and rows, then must remove them from plotting df
   if (hide_wp == TRUE) {
     df_yearmon_fct <- df_yearmon_fct %>%
       dplyr::filter(type != "wp")
   }
 
+  # If hiding activity labels and rows, then must remove them from plotting df
   if (hide_activities == TRUE) {
     df_yearmon_fct <- df_yearmon_fct %>%
       dplyr::filter(type != "activity")
   }
 
+# -------------------------------------------- LET THE PLOTTING BEGIN -----------------------------------
   gg_gantt <- ggplot2::ggplot(
     data = df_yearmon_fct,
     mapping = ggplot2::aes(
