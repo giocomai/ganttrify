@@ -23,6 +23,7 @@
 #'   codes (e.g. `colour_palette = c("#6ACCEA", "#00FFB8", "#B90000",
 #'   "#6C919C")`)
 #' @param order_by How should the bars in the chart be ordered? Character indicating field name to order by; default is by activity
+#' @param order_ascending TRUE/FALSE - ascending = TRUE, descending = FALSE
 #' @param include_legend TRUE/FALSE -- keep legend or not?
 #' @param legend_title Character with title to add to top of legend if keeping one
 #' @param font_family A character vector of length 1, defaults to "sans". It is
@@ -116,6 +117,7 @@ ganttrify <- function(project,
                       colour_by = "wp",
                       colour_palette = wesanderson::wes_palette("Darjeeling1"),
                       order_by = NULL,
+                      order_ascending = NULL,
                       include_legend = FALSE,
                       legend_title = NULL,
                       font_family = "sans",
@@ -169,12 +171,10 @@ ganttrify <- function(project,
     # repear colours if needed
     colour_palette <- rep(colour_palette, length(colour_field))[1:length(colour_field)]
     # Name colours using the colour_by field mapped to said color
-    names(colour_palette) <- colour_field # -------------------- NOTE: will want to verify if this works when things actually coloured
-    #names(colour_palette) <- colour_palette 
+    names(colour_palette) <- colour_field 
   } else {
     message("Hooray! You have the same number of colours in your palette as unique values of your colour_by var.")
     names(colour_palette) <- colour_field
-    #names(colour_palette) <- colour_palette
   }
   
   #Defining line endings (round or butt)
@@ -419,12 +419,17 @@ ganttrify <- function(project,
       dplyr::arrange(activity)
   }
 
-  # arrange/order as arg indicates
-  if(is.null(order_by) == FALSE){
+  # arrange/order as arg indicates then create a row enumeration by which to order within ggplot calls
+  if(is.null(order_by) == FALSE & order_ascending == TRUE){
     df_yearmon_fct <- df_yearmon_fct %>%
-      dplyr::arrange(df_yearmon_fct[[order_by]])
+      dplyr::arrange(df_yearmon_fct[[order_by]]) %>%
+      mutate(order_id = row_number())
+  } else if (is.null(order_by) == FALSE & order_ascending == FALSE){
+    df_yearmon_fct <- df_yearmon_fct %>%
+      dplyr::arrange(desc(df_yearmon_fct[[order_by]])) %>%
+      mutate(order_id = row_number())
   }
-  
+
   # If hiding WP labels and rows, then must remove them from plotting df
   if (hide_wp == TRUE) {
     df_yearmon_fct <- df_yearmon_fct %>%
@@ -439,29 +444,55 @@ ganttrify <- function(project,
 
 # -------------------------------------------- LET THE PLOTTING BEGIN -----------------------------------
   #initial base gg plot
-  gg_gantt <- ggplot2::ggplot(
-    data = df_yearmon_fct,
-    mapping = ggplot2::aes(
-      x = start_date,
-      y = activity,
-      xend = end_date,
-      yend = activity,
-      #colour = gantt_colour
-      colour = .data[[colour_by]]
-    )
-  ) +
-    # background shaded bands
-    ggplot2::geom_rect(
-      data = date_range_df, ggplot2::aes(
-        xmin = start,
-        xmax = end,
-        ymin = -Inf,
-        ymax = Inf
-      ),
-      inherit.aes = FALSE,
-      alpha = 0.4,
-      fill = colour_stripe
-    )
+  if(is.null(order_by) == FALSE){
+    gg_gantt <- ggplot2::ggplot(
+      data = df_yearmon_fct,
+      mapping = ggplot2::aes(
+        x = start_date,
+        y = reorder(activity, order_id),
+        xend = end_date,
+        yend = activity,
+        #colour = gantt_colour
+        colour = .data[[colour_by]]
+      )
+    ) +
+      # background shaded bands
+      ggplot2::geom_rect(
+        data = date_range_df, ggplot2::aes(
+          xmin = start,
+          xmax = end,
+          ymin = -Inf,
+          ymax = Inf
+        ),
+        inherit.aes = FALSE,
+        alpha = 0.4,
+        fill = colour_stripe
+      )
+  } else {
+    gg_gantt <- ggplot2::ggplot(
+      data = df_yearmon_fct,
+      mapping = ggplot2::aes(
+        x = start_date,
+        y = activity,
+        xend = end_date,
+        yend = activity,
+        #colour = gantt_colour
+        colour = .data[[colour_by]]
+      )
+    ) +
+      # background shaded bands
+      ggplot2::geom_rect(
+        data = date_range_df, ggplot2::aes(
+          xmin = start,
+          xmax = end,
+          ymin = -Inf,
+          ymax = Inf
+        ),
+        inherit.aes = FALSE,
+        alpha = 0.4,
+        fill = colour_stripe
+      )
+  }
 
   if (mark_quarters == TRUE) {
     gg_gantt <- gg_gantt +
@@ -517,7 +548,7 @@ ganttrify <- function(project,
       )
   }
 
-  # X-axis labels -- just years? years + relative month number? month date?
+  # X-axis labels -- just years? years + relative month number? month date? As user specifies in function args
   if (month_number_label == TRUE & month_date_label == TRUE) {
     gg_gantt <- gg_gantt +
       ggplot2::scale_x_date(
