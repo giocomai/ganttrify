@@ -23,6 +23,8 @@
 #'   codes (e.g. `colour_palette = c("#6ACCEA", "#00FFB8", "#B90000",
 #'   "#6C919C")`)
 #' @param order_by How should the bars in the chart be ordered? Character indicating field name to order by; default is by activity
+#' @param include_legend TRUE/FALSE -- keep legend or not?
+#' @param legend_title Character with title to add to top of legend if keeping one
 #' @param font_family A character vector of length 1, defaults to "sans". It is
 #'   recommended to use a narrow/condensed font such as Roboto Condensed for
 #'   more efficient use of text space.
@@ -114,6 +116,8 @@ ganttrify <- function(project,
                       colour_by = "wp",
                       colour_palette = wesanderson::wes_palette("Darjeeling1"),
                       order_by = NULL,
+                      include_legend = FALSE,
+                      legend_title = NULL,
                       font_family = "sans",
                       mark_quarters = FALSE,
                       mark_years = FALSE,
@@ -170,6 +174,7 @@ ganttrify <- function(project,
   } else {
     message("Hooray! You have the same number of colours in your palette as unique values of your colour_by var.")
     names(colour_palette) <- colour_field
+    #names(colour_palette) <- colour_palette
   }
   
   #Defining line endings (round or butt)
@@ -433,6 +438,7 @@ ganttrify <- function(project,
   }
 
 # -------------------------------------------- LET THE PLOTTING BEGIN -----------------------------------
+  #initial base gg plot
   gg_gantt <- ggplot2::ggplot(
     data = df_yearmon_fct,
     mapping = ggplot2::aes(
@@ -440,7 +446,8 @@ ganttrify <- function(project,
       y = activity,
       xend = end_date,
       yend = activity,
-      colour = gantt_colour
+      #colour = gantt_colour
+      colour = .data[[colour_by]]
     )
   ) +
     # background shaded bands
@@ -474,6 +481,8 @@ ganttrify <- function(project,
   df_yearmon_fct <- df_yearmon_fct %>%
     dplyr::mutate(wp_alpha = ifelse(type == "wp", alpha_wp, 0))
 
+  # adding lines for each project ------------------------NOTE: legend exists here, and shows values of hex codes, 
+  #        also seems the order of projects is not corresponding to start date but are instead grouped by WP again
   if (utils::packageVersion("ggplot2") > "3.3.6") {
     gg_gantt <- gg_gantt +
       ### activities
@@ -508,6 +517,7 @@ ganttrify <- function(project,
       )
   }
 
+  # X-axis labels -- just years? years + relative month number? month date?
   if (month_number_label == TRUE & month_date_label == TRUE) {
     gg_gantt <- gg_gantt +
       ggplot2::scale_x_date(
@@ -540,6 +550,7 @@ ganttrify <- function(project,
       ggplot2::scale_x_date(name = NULL)
   }
 
+  # align y axis labels
   if (axis_text_align == "right") {
     axis_text_align_n <- 1
   } else if (axis_text_align == "centre" | axis_text_align == "center") {
@@ -550,23 +561,64 @@ ganttrify <- function(project,
     axis_text_align_n <- 1
   }
 
-  gg_gantt <- gg_gantt +
-    ggplot2::scale_y_discrete(
-      name = NULL,
-      breaks = level_labels_df$levels,
-      labels = level_labels_df$labels
-    ) +
-    ggplot2::theme_minimal() +
-    ggplot2::scale_colour_manual(values = colour_palette) +
-    ggplot2::theme(
-      text = ggplot2::element_text(family = font_family),
-      axis.text.y.left = ggtext::element_markdown(
-        size = ggplot2::rel(size_text_relative),
-        hjust = axis_text_align_n
-      ),
-      axis.text.x = ggplot2::element_text(size = ggplot2::rel(size_text_relative)),
-      legend.position = "none"
-    )
+  # updating plot aesthetics:
+  #   project labels - removing WP appended label, wrapping text, and other markdown/html encoded functionalities
+  #   color project lines by WP/colour field
+  #   legend
+  if(include_legend == TRUE & is.null(legend_title) == FALSE){
+    gg_gantt <- gg_gantt +
+      ggplot2::scale_y_discrete(
+        name = NULL,
+        breaks = level_labels_df$levels,
+        labels = level_labels_df$labels
+      ) +
+      ggplot2::theme_minimal() +
+      ggplot2::scale_colour_manual(values = colour_palette, name = (legend_title)) +
+      ggplot2::theme(
+        text = ggplot2::element_text(family = font_family),
+        axis.text.y.left = ggtext::element_markdown(
+          size = ggplot2::rel(size_text_relative),
+          hjust = axis_text_align_n
+        ),
+        axis.text.x = ggplot2::element_text(size = ggplot2::rel(size_text_relative))
+      )
+  } else if(include_legend == TRUE & is.null(legend_title) == TRUE){
+    gg_gantt <- gg_gantt +
+      ggplot2::scale_y_discrete(
+        name = NULL,
+        breaks = level_labels_df$levels,
+        labels = level_labels_df$labels
+      ) +
+      ggplot2::theme_minimal() +
+      ggplot2::scale_colour_manual(values = colour_palette, name = "") +
+      ggplot2::theme(
+        text = ggplot2::element_text(family = font_family),
+        axis.text.y.left = ggtext::element_markdown(
+          size = ggplot2::rel(size_text_relative),
+          hjust = axis_text_align_n
+        ),
+        axis.text.x = ggplot2::element_text(size = ggplot2::rel(size_text_relative))
+      )
+  } else if(include_legend == FALSE){
+    gg_gantt <- gg_gantt +
+      ggplot2::scale_y_discrete(
+        name = NULL,
+        breaks = level_labels_df$levels,
+        labels = level_labels_df$labels
+      ) +
+      ggplot2::theme_minimal() +
+      ggplot2::scale_colour_manual(values = colour_palette, name = "") +
+      ggplot2::theme(
+        text = ggplot2::element_text(family = font_family),
+        axis.text.y.left = ggtext::element_markdown(
+          size = ggplot2::rel(size_text_relative),
+          hjust = axis_text_align_n
+        ),
+        axis.text.x = ggplot2::element_text(size = ggplot2::rel(size_text_relative)),
+        legend.position = "none"
+      )
+  }
+ 
 
   if (is.null(spots) == FALSE) {
     if (is.data.frame(spots) == TRUE) {
