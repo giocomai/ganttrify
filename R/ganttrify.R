@@ -171,7 +171,7 @@ ganttrify <- function(project,
 
   # repeat colours if not enough colours given ------------------- NOTE -- if trying to use colour to uniquely
   #     identify groups, then repeating colour will not work
-  if(length(colour_palette != length(colour_field))){
+  if(length(colour_palette) != length(colour_field)){
     message("You do not have the same number of colours in your palette as unique values of your colour_by var. Repeating palette as needed to match number of unique colour_by values.")
     # repear colours if needed
     colour_palette <- rep(colour_palette, length(colour_field))[1:length(colour_field)]
