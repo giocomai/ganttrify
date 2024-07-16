@@ -49,6 +49,10 @@
 #' @param size_text_relative Numeric, defaults to 1. Changes the size of all
 #'   textual elements relative to their default size. If you set this to e.g.
 #'   1.5 all text elements will be 50\% bigger.
+#' @param add_border Default set to FALSE, but if TRUE, adds a gray border 
+#'   around each line by creating a gray line shape under the activity using 
+#'   size_activity + 1 for setting size. Could eventually add more args here to 
+#'   let user determine color and width. 
 #' @param label_wrap Defaults to FALSE. If given, must be numeric, referring to
 #'   the number of characters per line allowed in the labels of projects and
 #'   activities, or logical (if set to TRUE, it will default to 32). To be used
@@ -129,6 +133,7 @@ ganttrify <- function(project,
                       wp_label_bold = TRUE,
                       size_activity = 4,
                       size_text_relative = 1,
+                      add_border = FALSE,
                       label_wrap = FALSE,
                       month_number_label = TRUE,
                       month_label_string = "M",
@@ -514,7 +519,7 @@ ganttrify <- function(project,
 
   # adding lines for each project ------------------------NOTE: legend exists here, and shows values of hex codes, 
   #        also seems the order of projects is not corresponding to start date but are instead grouped by WP again
-  if (utils::packageVersion("ggplot2") > "3.3.6") {
+  if (utils::packageVersion("ggplot2") > "3.3.6" & add_border == FALSE) {
     gg_gantt <- gg_gantt +
       ### activities
       ggplot2::geom_segment(
@@ -528,6 +533,55 @@ ganttrify <- function(project,
         data = df_yearmon_fct,
         lineend = line_end_wp,
         linewidth = size_wp,
+        alpha = df_yearmon_fct$wp_alpha
+      )
+  } else if (utils::packageVersion("ggplot2") > "3.3.6" & add_border == TRUE){
+    gg_gantt <- gg_gantt +
+      ### background -- acts like an outline
+      ggplot2::geom_segment(
+        data = df_yearmon_fct,
+        lineend = line_end_activity,
+        linewidth = (size_activity + 1),
+        alpha = df_yearmon_fct$activity_alpha,
+        colour = "gray"
+      ) +
+      ### activities
+      ggplot2::geom_segment(
+        data = df_yearmon_fct,
+        lineend = line_end_activity,
+        linewidth = size_activity,
+        alpha = df_yearmon_fct$activity_alpha
+      ) +
+      ### wp
+      ggplot2::geom_segment(
+        data = df_yearmon_fct,
+        lineend = line_end_wp,
+        linewidth = size_wp,
+        alpha = df_yearmon_fct$wp_alpha
+      )
+    
+  } else if (utils::packageVersion("ggplot2") <= "3.3.6" & add_border == TRUE){
+    gg_gantt <- gg_gantt +
+      ### background -- acts like an outline
+      ggplot2::geom_segment(
+        data = df_yearmon_fct,
+        lineend = line_end_activity,
+        size = (size_activity + 1),
+        alpha = df_yearmon_fct$activity_alpha,
+        colour = "gray"
+      ) +
+      ### activities
+      ggplot2::geom_segment(
+        data = df_yearmon_fct,
+        lineend = line_end_activity,
+        size = size_activity,
+        alpha = df_yearmon_fct$activity_alpha
+      ) +
+      ### wp
+      ggplot2::geom_segment(
+        data = df_yearmon_fct,
+        lineend = line_end_wp,
+        size = size_wp,
         alpha = df_yearmon_fct$wp_alpha
       )
   } else {
