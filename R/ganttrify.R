@@ -14,6 +14,7 @@
 #' @param project_start_date The date when the project starts. It can be a date,
 #'   or a string in the format "2020-03" or "2020-03-01". Ignored if
 #'   `month_number_date` is set to FALSE.
+#' @param colour_by The input data field that should inform colours. Default being project$wp
 #' @param colour_palette A character vector of colours or a colour palette. If
 #'   necessary, colours are recycled as needed. Defaults to
 #'   `wesanderson::wes_palette("Darjeeling1")`. For more palettes, consider also
@@ -21,6 +22,10 @@
 #'   MetBrewer::met.brewer("Lakota")`. Colours can be passed as a vector of hex
 #'   codes (e.g. `colour_palette = c("#6ACCEA", "#00FFB8", "#B90000",
 #'   "#6C919C")`)
+#' @param order_by How should the bars in the chart be ordered? Character indicating field name to order by; default is by activity
+#' @param order_ascending TRUE/FALSE - ascending = TRUE, descending = FALSE
+#' @param include_legend TRUE/FALSE -- keep legend or not?
+#' @param legend_title Character with title to add to top of legend if keeping one
 #' @param font_family A character vector of length 1, defaults to "sans". It is
 #'   recommended to use a narrow/condensed font such as Roboto Condensed for
 #'   more efficient use of text space.
@@ -44,6 +49,10 @@
 #' @param size_text_relative Numeric, defaults to 1. Changes the size of all
 #'   textual elements relative to their default size. If you set this to e.g.
 #'   1.5 all text elements will be 50\% bigger.
+#' @param add_border Default set to FALSE, but if TRUE, adds a gray border 
+#'   around each line by creating a gray line shape under the activity using 
+#'   size_activity + 1 for setting size. Could eventually add more args here to 
+#'   let user determine color and width. 
 #' @param label_wrap Defaults to FALSE. If given, must be numeric, referring to
 #'   the number of characters per line allowed in the labels of projects and
 #'   activities, or logical (if set to TRUE, it will default to 32). To be used
@@ -109,7 +118,12 @@ ganttrify <- function(project,
                       by_date = FALSE,
                       exact_date = FALSE,
                       project_start_date = Sys.Date(),
+                      colour_by = "wp",
                       colour_palette = wesanderson::wes_palette("Darjeeling1"),
+                      order_by = NULL,
+                      order_ascending = NULL,
+                      include_legend = FALSE,
+                      legend_title = NULL,
                       font_family = "sans",
                       mark_quarters = FALSE,
                       mark_years = FALSE,
@@ -119,6 +133,7 @@ ganttrify <- function(project,
                       wp_label_bold = TRUE,
                       size_activity = 4,
                       size_text_relative = 1,
+                      add_border = FALSE,
                       label_wrap = FALSE,
                       month_number_label = TRUE,
                       month_label_string = "M",
@@ -139,6 +154,7 @@ ganttrify <- function(project,
                       month_breaks = 1,
                       show_vertical_lines = TRUE,
                       axis_text_align = "right") {
+  # use gannt_verify function (written in eponymously named script) to ensure input data is formatted properly
   project <- gantt_verify(
     project = project,
     by_date = by_date,
@@ -149,16 +165,30 @@ ganttrify <- function(project,
   if (hide_wp & hide_activities) {
     cli::cli_abort("At least one of {.arg hide_wp} or {.arg hide_activities} must be {.code TRUE}, otherwise there's nothing left to show.")
   }
+  
+  #define colour field as colour_by arg indicates
+  colour_field <- unique(project[[colour_by]])
 
-  # repeat colours if not enough colours given
-  colour_palette <- rep(colour_palette, length(unique(project$wp)))[1:length(unique(project$wp))]
-  names(colour_palette) <- colour_palette
-
+  # repeat colours if not enough colours given ------------------- NOTE -- if trying to use colour to uniquely
+  #     identify groups, then repeating colour will not work
+  if(length(colour_palette != length(colour_field))){
+    message("You do not have the same number of colours in your palette as unique values of your colour_by var. Repeating palette as needed to match number of unique colour_by values.")
+    # repear colours if needed
+    colour_palette <- rep(colour_palette, length(colour_field))[1:length(colour_field)]
+    # Name colours using the colour_by field mapped to said color
+    names(colour_palette) <- colour_field 
+  } else {
+    message("Hooray! You have the same number of colours in your palette as unique values of your colour_by var.")
+    names(colour_palette) <- colour_field
+  }
+  
+  #Defining line endings (round or butt)
   if (is.null(line_end) == FALSE) {
     line_end_wp <- line_end
     line_end_activity <- line_end
   }
 
+  # ensuring fields are proper type based on whether the dates are already formatted
   if (by_date == FALSE) {
     df <- project %>%
       dplyr::mutate(
@@ -202,6 +232,7 @@ ganttrify <- function(project,
   }
 
   if (exact_date == TRUE) {
+    # ensure df is properly formatted - dates are dates, wp & project are characters
     df <- project %>%
       dplyr::mutate(
         start_date = as.Date(start_date),
@@ -210,6 +241,7 @@ ganttrify <- function(project,
         activity = as.character(activity)
       )
 
+    # create a df that pushes start date to earliest day of indicated month, and end date to latest day of indicated month
     df_yearmon <- df %>%
       dplyr::mutate(
         start_date = zoo::as.Date(zoo::as.yearmon(start_date), frac = 0),
@@ -217,12 +249,14 @@ ganttrify <- function(project,
       )
   }
 
+  # create ordered character vector of the first day of the month dates from start of df time period to end
   sequence_months <- seq.Date(
     from = min(df_yearmon[["start_date"]]),
     to = max(df_yearmon[["end_date"]]),
     by = "1 month"
   )
 
+  # modify sequence_months if an odd number of months by adding one month to end date
   if (length(sequence_months) %% 2 != 0) {
     sequence_months <- seq.Date(
       from = min(df_yearmon[["start_date"]]),
@@ -231,11 +265,13 @@ ganttrify <- function(project,
     )
   }
 
+  # not sure why this is done ---------------------------------- NOTE: figure out purpose of this matrix
   date_range_matrix <- matrix(as.numeric(sequence_months),
     ncol = 2,
     byrow = TRUE
   )
 
+  # create tibble using matrix containing only start and end dates --- NOTE: why not just subset to date cols and rename from df_yearmon?
   date_range_df <- tibble::tibble(
     start = zoo::as.Date.numeric(date_range_matrix[, 1]),
     end = zoo::as.Date.numeric(date_range_matrix[, 2])
@@ -249,12 +285,16 @@ ganttrify <- function(project,
   )), frac = 0.5)
 
 
+  # create vector of quarter date breaks corresponding to start of first year in start_date to start of year following end date
+  #  -- used for mark_quarter = TRUE arg
   date_breaks_q <- seq.Date(
     from = lubridate::floor_date(x = min(df_yearmon[["start_date"]]), unit = "year"),
     to = lubridate::ceiling_date(x = max(df_yearmon[["end_date"]]), unit = "year"),
     by = "1 quarter"
   )
 
+  # create vector of year start date breaks corresponding to start of first year in start_date to start of year following end date
+  #  -- used for mark_year = TRUE arg
   date_breaks_y <- seq.Date(
     from = lubridate::floor_date(x = min(df_yearmon[["start_date"]]), unit = "year"),
     to = lubridate::ceiling_date(x = max(df_yearmon[["end_date"]]), unit = "year"),
@@ -276,6 +316,7 @@ ganttrify <- function(project,
     dplyr::ungroup() %>%
     dplyr::mutate(gantt_colour = colour_palette)
 
+  #mapping colours to wp (?)
   distinct_colours_df <- dplyr::bind_rows(
     distinct_yearmon_levels_df %>%
       dplyr::transmute(
@@ -290,6 +331,7 @@ ganttrify <- function(project,
       )
   )
 
+  # tibble with unduplicated wp name and list of corresponding activities per unique wp
   distinct_yearmon_labels_df <- df_yearmon %>%
     dplyr::distinct(wp, activity) %>%
     dplyr::group_by(wp) %>%
@@ -300,10 +342,12 @@ ganttrify <- function(project,
       by = "wp"
     )
 
+  # adding html code to wp values to enable bold script upon rendering if arg set to true
   if (wp_label_bold) {
     distinct_yearmon_labels_df <- distinct_yearmon_labels_df %>%
       dplyr::mutate(wp = stringr::str_c("<b>", wp, "</b>"))
 
+    #if adding spots
     if (is.null(spots) == FALSE) {
       wp_v <- project %>%
         dplyr::distinct(wp) %>%
@@ -313,11 +357,13 @@ ganttrify <- function(project,
     }
   }
 
+  # creating tibble of labels
   level_labels_df <- tibble::tibble(
     levels = rev(unlist(t(matrix(c(distinct_yearmon_levels_df$wp, distinct_yearmon_levels_df$wp_activity), ncol = 2)))),
     labels = rev(unlist(t(matrix(c(distinct_yearmon_labels_df$wp, distinct_yearmon_labels_df$activity), ncol = 2))))
   )
 
+  # if indicated to wrap labels, then setting arg 'label_wrap' to character count at which to wrap and setting labels to wrap using html code
   if (label_wrap != FALSE) {
     if (isTRUE(label_wrap)) {
       label_wrap <- 32
@@ -331,7 +377,8 @@ ganttrify <- function(project,
       spots$activity <- stringr::str_replace_all(string = spots$activity, pattern = "\n", replacement = "<br />")
     }
   }
-
+  
+  # creating df input for plotting -- here at the end, rows are ordered by activity, which has the WP appended to it
   if (exact_date == TRUE) {
     df_yearmon_fct <-
       dplyr::bind_rows(
@@ -353,6 +400,7 @@ ganttrify <- function(project,
       ) %>%
       dplyr::mutate(activity = factor(x = activity, levels = level_labels_df$levels)) %>%
       dplyr::arrange(activity)
+    
   } else {
     df_yearmon_fct <-
       dplyr::bind_rows(
@@ -376,39 +424,80 @@ ganttrify <- function(project,
       dplyr::arrange(activity)
   }
 
+  # arrange/order as arg indicates then create a row enumeration by which to order within ggplot calls
+  if(is.null(order_by) == FALSE & order_ascending == TRUE){
+    df_yearmon_fct <- df_yearmon_fct %>%
+      dplyr::arrange(df_yearmon_fct[[order_by]]) %>%
+      mutate(order_id = row_number())
+  } else if (is.null(order_by) == FALSE & order_ascending == FALSE){
+    df_yearmon_fct <- df_yearmon_fct %>%
+      dplyr::arrange(desc(df_yearmon_fct[[order_by]])) %>%
+      mutate(order_id = row_number())
+  }
 
+  # If hiding WP labels and rows, then must remove them from plotting df
   if (hide_wp == TRUE) {
     df_yearmon_fct <- df_yearmon_fct %>%
       dplyr::filter(type != "wp")
   }
 
+  # If hiding activity labels and rows, then must remove them from plotting df
   if (hide_activities == TRUE) {
     df_yearmon_fct <- df_yearmon_fct %>%
       dplyr::filter(type != "activity")
   }
 
-  gg_gantt <- ggplot2::ggplot(
-    data = df_yearmon_fct,
-    mapping = ggplot2::aes(
-      x = start_date,
-      y = activity,
-      xend = end_date,
-      yend = activity,
-      colour = gantt_colour
-    )
-  ) +
-    # background shaded bands
-    ggplot2::geom_rect(
-      data = date_range_df, ggplot2::aes(
-        xmin = start,
-        xmax = end,
-        ymin = -Inf,
-        ymax = Inf
-      ),
-      inherit.aes = FALSE,
-      alpha = 0.4,
-      fill = colour_stripe
-    )
+# -------------------------------------------- LET THE PLOTTING BEGIN -----------------------------------
+  #initial base gg plot
+  if(is.null(order_by) == FALSE){
+    gg_gantt <- ggplot2::ggplot(
+      data = df_yearmon_fct,
+      mapping = ggplot2::aes(
+        x = start_date,
+        y = reorder(activity, order_id),
+        xend = end_date,
+        yend = activity,
+        #colour = gantt_colour
+        colour = .data[[colour_by]]
+      )
+    ) +
+      # background shaded bands
+      ggplot2::geom_rect(
+        data = date_range_df, ggplot2::aes(
+          xmin = start,
+          xmax = end,
+          ymin = -Inf,
+          ymax = Inf
+        ),
+        inherit.aes = FALSE,
+        alpha = 0.4,
+        fill = colour_stripe
+      )
+  } else {
+    gg_gantt <- ggplot2::ggplot(
+      data = df_yearmon_fct,
+      mapping = ggplot2::aes(
+        x = start_date,
+        y = activity,
+        xend = end_date,
+        yend = activity,
+        #colour = gantt_colour
+        colour = .data[[colour_by]]
+      )
+    ) +
+      # background shaded bands
+      ggplot2::geom_rect(
+        data = date_range_df, ggplot2::aes(
+          xmin = start,
+          xmax = end,
+          ymin = -Inf,
+          ymax = Inf
+        ),
+        inherit.aes = FALSE,
+        alpha = 0.4,
+        fill = colour_stripe
+      )
+  }
 
   if (mark_quarters == TRUE) {
     gg_gantt <- gg_gantt +
@@ -428,7 +517,9 @@ ganttrify <- function(project,
   df_yearmon_fct <- df_yearmon_fct %>%
     dplyr::mutate(wp_alpha = ifelse(type == "wp", alpha_wp, 0))
 
-  if (utils::packageVersion("ggplot2") > "3.3.6") {
+  # adding lines for each project ------------------------NOTE: legend exists here, and shows values of hex codes, 
+  #        also seems the order of projects is not corresponding to start date but are instead grouped by WP again
+  if (utils::packageVersion("ggplot2") > "3.3.6" & add_border == FALSE) {
     gg_gantt <- gg_gantt +
       ### activities
       ggplot2::geom_segment(
@@ -442,6 +533,55 @@ ganttrify <- function(project,
         data = df_yearmon_fct,
         lineend = line_end_wp,
         linewidth = size_wp,
+        alpha = df_yearmon_fct$wp_alpha
+      )
+  } else if (utils::packageVersion("ggplot2") > "3.3.6" & add_border == TRUE){
+    gg_gantt <- gg_gantt +
+      ### background -- acts like an outline
+      ggplot2::geom_segment(
+        data = df_yearmon_fct,
+        lineend = line_end_activity,
+        linewidth = (size_activity + 1),
+        alpha = df_yearmon_fct$activity_alpha,
+        colour = "gray"
+      ) +
+      ### activities
+      ggplot2::geom_segment(
+        data = df_yearmon_fct,
+        lineend = line_end_activity,
+        linewidth = size_activity,
+        alpha = df_yearmon_fct$activity_alpha
+      ) +
+      ### wp
+      ggplot2::geom_segment(
+        data = df_yearmon_fct,
+        lineend = line_end_wp,
+        linewidth = size_wp,
+        alpha = df_yearmon_fct$wp_alpha
+      )
+    
+  } else if (utils::packageVersion("ggplot2") <= "3.3.6" & add_border == TRUE){
+    gg_gantt <- gg_gantt +
+      ### background -- acts like an outline
+      ggplot2::geom_segment(
+        data = df_yearmon_fct,
+        lineend = line_end_activity,
+        size = (size_activity + 1),
+        alpha = df_yearmon_fct$activity_alpha,
+        colour = "gray"
+      ) +
+      ### activities
+      ggplot2::geom_segment(
+        data = df_yearmon_fct,
+        lineend = line_end_activity,
+        size = size_activity,
+        alpha = df_yearmon_fct$activity_alpha
+      ) +
+      ### wp
+      ggplot2::geom_segment(
+        data = df_yearmon_fct,
+        lineend = line_end_wp,
+        size = size_wp,
         alpha = df_yearmon_fct$wp_alpha
       )
   } else {
@@ -462,6 +602,7 @@ ganttrify <- function(project,
       )
   }
 
+  # X-axis labels -- just years? years + relative month number? month date? As user specifies in function args
   if (month_number_label == TRUE & month_date_label == TRUE) {
     gg_gantt <- gg_gantt +
       ggplot2::scale_x_date(
@@ -494,6 +635,7 @@ ganttrify <- function(project,
       ggplot2::scale_x_date(name = NULL)
   }
 
+  # align y axis labels
   if (axis_text_align == "right") {
     axis_text_align_n <- 1
   } else if (axis_text_align == "centre" | axis_text_align == "center") {
@@ -504,23 +646,64 @@ ganttrify <- function(project,
     axis_text_align_n <- 1
   }
 
-  gg_gantt <- gg_gantt +
-    ggplot2::scale_y_discrete(
-      name = NULL,
-      breaks = level_labels_df$levels,
-      labels = level_labels_df$labels
-    ) +
-    ggplot2::theme_minimal() +
-    ggplot2::scale_colour_manual(values = colour_palette) +
-    ggplot2::theme(
-      text = ggplot2::element_text(family = font_family),
-      axis.text.y.left = ggtext::element_markdown(
-        size = ggplot2::rel(size_text_relative),
-        hjust = axis_text_align_n
-      ),
-      axis.text.x = ggplot2::element_text(size = ggplot2::rel(size_text_relative)),
-      legend.position = "none"
-    )
+  # updating plot aesthetics:
+  #   project labels - removing WP appended label, wrapping text, and other markdown/html encoded functionalities
+  #   color project lines by WP/colour field
+  #   legend
+  if(include_legend == TRUE & is.null(legend_title) == FALSE){
+    gg_gantt <- gg_gantt +
+      ggplot2::scale_y_discrete(
+        name = NULL,
+        breaks = level_labels_df$levels,
+        labels = level_labels_df$labels
+      ) +
+      ggplot2::theme_minimal() +
+      ggplot2::scale_colour_manual(values = colour_palette, name = (legend_title)) +
+      ggplot2::theme(
+        text = ggplot2::element_text(family = font_family),
+        axis.text.y.left = ggtext::element_markdown(
+          size = ggplot2::rel(size_text_relative),
+          hjust = axis_text_align_n
+        ),
+        axis.text.x = ggplot2::element_text(size = ggplot2::rel(size_text_relative))
+      )
+  } else if(include_legend == TRUE & is.null(legend_title) == TRUE){
+    gg_gantt <- gg_gantt +
+      ggplot2::scale_y_discrete(
+        name = NULL,
+        breaks = level_labels_df$levels,
+        labels = level_labels_df$labels
+      ) +
+      ggplot2::theme_minimal() +
+      ggplot2::scale_colour_manual(values = colour_palette, name = "") +
+      ggplot2::theme(
+        text = ggplot2::element_text(family = font_family),
+        axis.text.y.left = ggtext::element_markdown(
+          size = ggplot2::rel(size_text_relative),
+          hjust = axis_text_align_n
+        ),
+        axis.text.x = ggplot2::element_text(size = ggplot2::rel(size_text_relative))
+      )
+  } else if(include_legend == FALSE){
+    gg_gantt <- gg_gantt +
+      ggplot2::scale_y_discrete(
+        name = NULL,
+        breaks = level_labels_df$levels,
+        labels = level_labels_df$labels
+      ) +
+      ggplot2::theme_minimal() +
+      ggplot2::scale_colour_manual(values = colour_palette, name = "") +
+      ggplot2::theme(
+        text = ggplot2::element_text(family = font_family),
+        axis.text.y.left = ggtext::element_markdown(
+          size = ggplot2::rel(size_text_relative),
+          hjust = axis_text_align_n
+        ),
+        axis.text.x = ggplot2::element_text(size = ggplot2::rel(size_text_relative)),
+        legend.position = "none"
+      )
+  }
+ 
 
   if (is.null(spots) == FALSE) {
     if (is.data.frame(spots) == TRUE) {
