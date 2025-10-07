@@ -549,7 +549,7 @@ ganttrify <- function(
       ggplot2::scale_x_date(
         name = NULL,
         breaks = date_breaks,
-        date_labels = paste0(
+        labels = paste0(
           month_label_string,
           seq_along(date_breaks) * month_breaks - (month_breaks - 1)
         ),
