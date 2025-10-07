@@ -272,6 +272,11 @@ ganttrify <- function(
     by = "1 quarter"
   )
 
+  date_breaks_q <- date_breaks_q[
+    date_breaks_q >= min(df_yearmon[["start_date"]]) &
+      date_breaks_q <= max(df_yearmon[["start_date"]])
+  ]
+
   date_breaks_y <- seq.Date(
     from = lubridate::floor_date(
       x = min(df_yearmon[["start_date"]]),
@@ -283,6 +288,11 @@ ganttrify <- function(
     ),
     by = "1 year"
   )
+
+  date_breaks_y <- date_breaks_y[
+    date_breaks_y >= min(df_yearmon[["start_date"]]) &
+      date_breaks_y <= max(df_yearmon[["start_date"]])
+  ]
 
   # deal with the possibility that activities in different WPs have the same name
   distinct_yearmon_levels_df <- df_yearmon %>%
