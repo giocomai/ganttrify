@@ -104,41 +104,43 @@
 #'
 #' @export
 
-ganttrify <- function(project,
-                      spots = NULL,
-                      by_date = FALSE,
-                      exact_date = FALSE,
-                      project_start_date = Sys.Date(),
-                      colour_palette = wesanderson::wes_palette("Darjeeling1"),
-                      font_family = "sans",
-                      mark_quarters = FALSE,
-                      mark_years = FALSE,
-                      size_wp = 6,
-                      hide_wp = FALSE,
-                      hide_activities = FALSE,
-                      wp_label_bold = TRUE,
-                      size_activity = 4,
-                      size_text_relative = 1,
-                      label_wrap = FALSE,
-                      month_number_label = TRUE,
-                      month_label_string = "M",
-                      month_date_label = TRUE,
-                      x_axis_position = "top",
-                      colour_stripe = "lightgray",
-                      alpha_wp = 1,
-                      alpha_activity = 1,
-                      line_end = NULL,
-                      line_end_wp = "round",
-                      line_end_activity = "butt",
-                      spot_padding = ggplot2::unit(0.2, "lines"),
-                      spot_fill = ggplot2::alpha(c("white"), 1),
-                      spot_text_colour = "gray20",
-                      spot_size_text_relative = 1,
-                      spot_fontface = "bold",
-                      spot_border = 0.25,
-                      month_breaks = 1,
-                      show_vertical_lines = TRUE,
-                      axis_text_align = "right") {
+ganttrify <- function(
+  project,
+  spots = NULL,
+  by_date = FALSE,
+  exact_date = FALSE,
+  project_start_date = Sys.Date(),
+  colour_palette = wesanderson::wes_palette("Darjeeling1"),
+  font_family = "sans",
+  mark_quarters = FALSE,
+  mark_years = FALSE,
+  size_wp = 6,
+  hide_wp = FALSE,
+  hide_activities = FALSE,
+  wp_label_bold = TRUE,
+  size_activity = 4,
+  size_text_relative = 1,
+  label_wrap = FALSE,
+  month_number_label = TRUE,
+  month_label_string = "M",
+  month_date_label = TRUE,
+  x_axis_position = "top",
+  colour_stripe = "lightgray",
+  alpha_wp = 1,
+  alpha_activity = 1,
+  line_end = NULL,
+  line_end_wp = "round",
+  line_end_activity = "butt",
+  spot_padding = ggplot2::unit(0.2, "lines"),
+  spot_fill = ggplot2::alpha(c("white"), 1),
+  spot_text_colour = "gray20",
+  spot_size_text_relative = 1,
+  spot_fontface = "bold",
+  spot_border = 0.25,
+  month_breaks = 1,
+  show_vertical_lines = TRUE,
+  axis_text_align = "right"
+) {
   project <- gantt_verify(
     project = project,
     by_date = by_date,
@@ -147,11 +149,15 @@ ganttrify <- function(project,
 
   # arguments consistency check
   if (hide_wp & hide_activities) {
-    cli::cli_abort("At least one of {.arg hide_wp} or {.arg hide_activities} must be {.code TRUE}, otherwise there's nothing left to show.")
+    cli::cli_abort(
+      "At least one of {.arg hide_wp} or {.arg hide_activities} must be {.code TRUE}, otherwise there's nothing left to show."
+    )
   }
 
   # repeat colours if not enough colours given
-  colour_palette <- rep(colour_palette, length(unique(project$wp)))[1:length(unique(project$wp))]
+  colour_palette <- rep(colour_palette, length(unique(project$wp)))[
+    1:length(unique(project$wp))
+  ]
   names(colour_palette) <- colour_palette
 
   if (is.null(line_end) == FALSE) {
@@ -167,7 +173,9 @@ ganttrify <- function(project,
       )
 
     if (sum(is.na(df$start_date)) == nrow(df)) {
-      stop("Make sure that the input data are properly formatted and/or you have selected the right paramaters.")
+      stop(
+        "Make sure that the input data are properly formatted and/or you have selected the right paramaters."
+      )
     }
 
     start_yearmon <- zoo::as.yearmon(project_start_date) - (1 / 12)
@@ -231,7 +239,8 @@ ganttrify <- function(project,
     )
   }
 
-  date_range_matrix <- matrix(as.numeric(sequence_months),
+  date_range_matrix <- matrix(
+    as.numeric(sequence_months),
     ncol = 2,
     byrow = TRUE
   )
@@ -242,29 +251,49 @@ ganttrify <- function(project,
   )
 
   # date breaks in the middle of the month
-  date_breaks <- zoo::as.Date(zoo::as.yearmon(seq.Date(
-    from = min(df_yearmon[["start_date"]] + 15),
-    to = max(df_yearmon[["end_date"]] + 15),
-    by = paste(month_breaks, "month")
-  )), frac = 0.5)
-
+  date_breaks <- zoo::as.Date(
+    zoo::as.yearmon(seq.Date(
+      from = min(df_yearmon[["start_date"]] + 15),
+      to = max(df_yearmon[["end_date"]] + 15),
+      by = paste(month_breaks, "month")
+    )),
+    frac = 0.5
+  )
 
   date_breaks_q <- seq.Date(
-    from = lubridate::floor_date(x = min(df_yearmon[["start_date"]]), unit = "year"),
-    to = lubridate::ceiling_date(x = max(df_yearmon[["end_date"]]), unit = "year"),
+    from = lubridate::floor_date(
+      x = min(df_yearmon[["start_date"]]),
+      unit = "year"
+    ),
+    to = lubridate::ceiling_date(
+      x = max(df_yearmon[["end_date"]]),
+      unit = "year"
+    ),
     by = "1 quarter"
   )
 
   date_breaks_y <- seq.Date(
-    from = lubridate::floor_date(x = min(df_yearmon[["start_date"]]), unit = "year"),
-    to = lubridate::ceiling_date(x = max(df_yearmon[["end_date"]]), unit = "year"),
+    from = lubridate::floor_date(
+      x = min(df_yearmon[["start_date"]]),
+      unit = "year"
+    ),
+    to = lubridate::ceiling_date(
+      x = max(df_yearmon[["end_date"]]),
+      unit = "year"
+    ),
     by = "1 year"
   )
 
   # deal with the possibility that activities in different WPs have the same name
   distinct_yearmon_levels_df <- df_yearmon %>%
     dplyr::distinct(wp, activity) %>%
-    tidyr::unite(col = "wp_activity", wp, activity, remove = FALSE, sep = "_") %>%
+    tidyr::unite(
+      col = "wp_activity",
+      wp,
+      activity,
+      remove = FALSE,
+      sep = "_"
+    ) %>%
     dplyr::group_by(wp) %>%
     dplyr::summarise(wp_activity = list(wp_activity)) %>%
     dplyr::left_join(
@@ -309,13 +338,23 @@ ganttrify <- function(project,
         dplyr::distinct(wp) %>%
         dplyr::pull(wp)
 
-      spots[["activity"]][spots[["activity"]] %in% wp_v] <- stringr::str_c("<b>", spots[["activity"]][spots[["activity"]] %in% wp_v], "</b>")
+      spots[["activity"]][spots[["activity"]] %in% wp_v] <- stringr::str_c(
+        "<b>",
+        spots[["activity"]][spots[["activity"]] %in% wp_v],
+        "</b>"
+      )
     }
   }
 
   level_labels_df <- tibble::tibble(
-    levels = rev(unlist(t(matrix(c(distinct_yearmon_levels_df$wp, distinct_yearmon_levels_df$wp_activity), ncol = 2)))),
-    labels = rev(unlist(t(matrix(c(distinct_yearmon_labels_df$wp, distinct_yearmon_labels_df$activity), ncol = 2))))
+    levels = rev(unlist(t(matrix(
+      c(distinct_yearmon_levels_df$wp, distinct_yearmon_levels_df$wp_activity),
+      ncol = 2
+    )))),
+    labels = rev(unlist(t(matrix(
+      c(distinct_yearmon_labels_df$wp, distinct_yearmon_labels_df$activity),
+      ncol = 2
+    ))))
   )
 
   if (label_wrap != FALSE) {
@@ -323,12 +362,26 @@ ganttrify <- function(project,
       label_wrap <- 32
     }
 
-    level_labels_df$labels <- stringr::str_wrap(string = level_labels_df$labels, width = label_wrap)
-    level_labels_df$labels <- stringr::str_replace_all(string = level_labels_df$labels, pattern = "\n", replacement = "<br />")
+    level_labels_df$labels <- stringr::str_wrap(
+      string = level_labels_df$labels,
+      width = label_wrap
+    )
+    level_labels_df$labels <- stringr::str_replace_all(
+      string = level_labels_df$labels,
+      pattern = "\n",
+      replacement = "<br />"
+    )
 
     if (is.null(spots) == FALSE) {
-      spots$activity <- stringr::str_wrap(string = spots$activity, width = label_wrap)
-      spots$activity <- stringr::str_replace_all(string = spots$activity, pattern = "\n", replacement = "<br />")
+      spots$activity <- stringr::str_wrap(
+        string = spots$activity,
+        width = label_wrap
+      )
+      spots$activity <- stringr::str_replace_all(
+        string = spots$activity,
+        pattern = "\n",
+        replacement = "<br />"
+      )
     }
   }
 
@@ -351,7 +404,9 @@ ganttrify <- function(project,
         y = distinct_colours_df,
         by = "activity"
       ) %>%
-      dplyr::mutate(activity = factor(x = activity, levels = level_labels_df$levels)) %>%
+      dplyr::mutate(
+        activity = factor(x = activity, levels = level_labels_df$levels)
+      ) %>%
       dplyr::arrange(activity)
   } else {
     df_yearmon_fct <-
@@ -372,10 +427,11 @@ ganttrify <- function(project,
         y = distinct_colours_df,
         by = "activity"
       ) %>%
-      dplyr::mutate(activity = factor(x = activity, levels = level_labels_df$levels)) %>%
+      dplyr::mutate(
+        activity = factor(x = activity, levels = level_labels_df$levels)
+      ) %>%
       dplyr::arrange(activity)
   }
-
 
   if (hide_wp == TRUE) {
     df_yearmon_fct <- df_yearmon_fct %>%
@@ -399,7 +455,8 @@ ganttrify <- function(project,
   ) +
     # background shaded bands
     ggplot2::geom_rect(
-      data = date_range_df, ggplot2::aes(
+      data = date_range_df,
+      ggplot2::aes(
         xmin = start,
         xmax = end,
         ymin = -Inf,
@@ -424,7 +481,9 @@ ganttrify <- function(project,
   df_yearmon_fct$wp_alpha <- 0
   df_yearmon_fct$activity_alpha <- 0
   df_yearmon_fct <- df_yearmon_fct %>%
-    dplyr::mutate(activity_alpha = ifelse(type == "activity", alpha_activity, 0))
+    dplyr::mutate(
+      activity_alpha = ifelse(type == "activity", alpha_activity, 0)
+    )
   df_yearmon_fct <- df_yearmon_fct %>%
     dplyr::mutate(wp_alpha = ifelse(type == "wp", alpha_wp, 0))
 
@@ -469,7 +528,12 @@ ganttrify <- function(project,
         breaks = date_breaks,
         date_labels = "%b\n%Y",
         minor_breaks = NULL,
-        sec.axis = ggplot2::dup_axis(labels = paste0(month_label_string, seq_along(date_breaks) * month_breaks - (month_breaks - 1)))
+        sec.axis = ggplot2::dup_axis(
+          labels = paste0(
+            month_label_string,
+            seq_along(date_breaks) * month_breaks - (month_breaks - 1)
+          )
+        )
       )
   } else if (month_number_label == FALSE & month_date_label == TRUE) {
     gg_gantt <- gg_gantt +
@@ -485,7 +549,10 @@ ganttrify <- function(project,
       ggplot2::scale_x_date(
         name = NULL,
         breaks = date_breaks,
-        date_labels = paste0(month_label_string, seq_along(date_breaks) * month_breaks - (month_breaks - 1)),
+        date_labels = paste0(
+          month_label_string,
+          seq_along(date_breaks) * month_breaks - (month_breaks - 1)
+        ),
         minor_breaks = NULL,
         position = x_axis_position
       )
@@ -518,7 +585,9 @@ ganttrify <- function(project,
         size = ggplot2::rel(size_text_relative),
         hjust = axis_text_align_n
       ),
-      axis.text.x = ggplot2::element_text(size = ggplot2::rel(size_text_relative)),
+      axis.text.x = ggplot2::element_text(
+        size = ggplot2::rel(size_text_relative)
+      ),
       legend.position = "none"
     )
 
@@ -543,7 +612,10 @@ ganttrify <- function(project,
           ) %>%
           dplyr::mutate(
             activity = factor(x = activity, levels = level_labels_df$levels),
-            spot_date = zoo::as.Date(start_yearmon + (1 / 12) * zoo::as.yearmon(spot_date), frac = 0.5),
+            spot_date = zoo::as.Date(
+              start_yearmon + (1 / 12) * zoo::as.yearmon(spot_date),
+              frac = 0.5
+            ),
             end_date = as.Date(NA),
             wp = NA
           )
@@ -589,7 +661,9 @@ ganttrify <- function(project,
   if (show_vertical_lines == FALSE) {
     if (utils::packageVersion("ggplot2") > "3.3.6") {
       gg_gantt <- gg_gantt +
-        ggplot2::theme(panel.grid.major.x = ggplot2::element_line(linewidth = 0))
+        ggplot2::theme(
+          panel.grid.major.x = ggplot2::element_line(linewidth = 0)
+        )
     } else {
       gg_gantt <- gg_gantt +
         ggplot2::theme(panel.grid.major.x = ggplot2::element_line(size = 0))
