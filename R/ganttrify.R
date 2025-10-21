@@ -274,7 +274,7 @@ ganttrify <- function(
 
   date_breaks_q <- date_breaks_q[
     date_breaks_q >= min(df_yearmon[["start_date"]]) &
-      date_breaks_q <= max(df_yearmon[["start_date"]])
+      date_breaks_q <= max(df_yearmon[["end_date"]])
   ]
 
   date_breaks_y <- seq.Date(
@@ -291,7 +291,7 @@ ganttrify <- function(
 
   date_breaks_y <- date_breaks_y[
     date_breaks_y >= min(df_yearmon[["start_date"]]) &
-      date_breaks_y <= max(df_yearmon[["start_date"]])
+      date_breaks_y <= max(df_yearmon[["end_date"]])
   ]
 
   # deal with the possibility that activities in different WPs have the same name
