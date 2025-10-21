@@ -23,7 +23,8 @@ Imports:
     tidyr,
     ggtext,
     cli,
-    rlang
+    rlang,
+    stringr
 URL: https://github.com/giocomai/ganttrify
 BugReports: https://github.com/giocomai/ganttrify/issues
 Language: en-US
